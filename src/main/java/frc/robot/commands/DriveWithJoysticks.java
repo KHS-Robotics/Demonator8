@@ -19,6 +19,7 @@ public class DriveWithJoysticks extends Command {
     this.drive = drive;
     this.left = left;
     this.right = right;
+    this.requires(drive);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -31,7 +32,7 @@ public class DriveWithJoysticks extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    drive.setDrive(left.getY(), right.getY());
+    drive.setDrive(-left.getY(), -right.getY());
   }
 
   // Make this return true when this Command no longer needs to run execute()

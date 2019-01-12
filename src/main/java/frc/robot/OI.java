@@ -30,8 +30,8 @@ public class OI {
 
   public Joystick leftJoystick = new Joystick(0);
   public Joystick rightJoystick = new Joystick(1);
-  Spark left = new Spark(0);
-  Spark right = new Spark(1);
+  Spark left = new Spark(1);
+  Spark right = new Spark(2);
   public TankDrive drive = new TankDrive(left, right);
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
