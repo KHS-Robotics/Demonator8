@@ -7,11 +7,32 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Spark;
+import frc.robot.subsystems.TankDrive;
+
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
+  private OI(){}
+  private static OI instance;
+
+  public static OI getInstance() 
+  {
+    if(instance == null)
+    {
+      instance = new OI();
+    }
+    return instance;
+  }
+
+  public Joystick leftJoystick = new Joystick(0);
+  public Joystick rightJoystick = new Joystick(1);
+  Spark left = new Spark(0);
+  Spark right = new Spark(1);
+  public TankDrive drive = new TankDrive(left, right);
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
   //// joystick.
