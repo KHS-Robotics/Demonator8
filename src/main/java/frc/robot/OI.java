@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import frc.robot.subsystems.TankDrive;
@@ -27,12 +30,12 @@ public class OI {
     }
     return instance;
   }
-
+  public AHRS navx = new AHRS(SPI.Port.kMXP,(byte)50);
   public Joystick leftJoystick = new Joystick(0);
   public Joystick rightJoystick = new Joystick(1);
   Spark left = new Spark(0);
   Spark right = new Spark(1);
-  public TankDrive drive = new TankDrive(left, right);
+  public TankDrive drive = new TankDrive(left, right, navx);
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
   //// joystick.
