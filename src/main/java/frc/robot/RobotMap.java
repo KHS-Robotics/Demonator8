@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
+import edu.wpi.first.wpilibj.SPI;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -14,6 +15,12 @@ package frc.robot;
  * floating around.
  */
 public class RobotMap {
+  public static final int LEFT_DRIVE_STICK_PORT = 0;
+  public static final int RIGHT_DRIVE_STICK_PORT = 1;
+  public static final int LEFT = 1;
+  public static final int RIGHT = 2;
+  public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;
+  public static final byte NAVX_UPDATE_RATE_HZ = (byte) 50;
   // For example to map the left and right motors, you could define the
   // following variables to use with your drivetrain subsystem.
   // public static int leftMotor = 1;

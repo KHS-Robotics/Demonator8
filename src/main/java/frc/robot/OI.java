@@ -8,7 +8,7 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.SPI;
+
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
@@ -30,11 +30,11 @@ public class OI {
     }
     return instance;
   }
-  public AHRS navx = new AHRS(SPI.Port.kMXP,(byte)50);
-  public Joystick leftJoystick = new Joystick(0);
-  public Joystick rightJoystick = new Joystick(1);
-  Spark left = new Spark(1);
-  Spark right = new Spark(2);
+  public AHRS navx = new AHRS(RobotMap.NAVX_PORT, RobotMap.NAVX_UPDATE_RATE_HZ);
+  public Joystick leftJoystick = new Joystick(RobotMap.LEFT_DRIVE_STICK_PORT);
+  public Joystick rightJoystick = new Joystick(RobotMap.RIGHT_DRIVE_STICK_PORT);
+  Spark left = new Spark(RobotMap.LEFT);
+  Spark right = new Spark(RobotMap.RIGHT);
   public TankDrive drive = new TankDrive(left, right, navx);
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
