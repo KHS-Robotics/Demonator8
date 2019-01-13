@@ -48,7 +48,7 @@ public void setDrive (double l, double r)
 		return output;
   }
   
-  public void stopMotors()
+  public void stop()
   {
     this.setDrive(0,0);
   }

@@ -8,27 +8,30 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 /**
- * Superclass for subsystems used on the robot for methods
- * that they may share
+ * Superclass of all subsystems
  */
-public abstract class SubsystemBase extends Subsystem 
-{
+public abstract class SubsystemBase extends Subsystem {
 	/**
-	 * Creates a new subsystem
-	 */
-	public SubsystemBase()
-	{
-		super();
-	}
-	
+     * Stops all motors associated with the subsystem
+     */
+	public abstract void stop();
+
 	/**
-	 * {@inheritDoc}
+	 * Sets the default command to <code>null</code>
 	 */
 	@Override
-	protected void initDefaultCommand() 
-	{
+	protected void initDefaultCommand() {
 		this.setDefaultCommand(null);
+	}
+
+	/**
+	 * <p>Builds values to send to the <code>SmartDashboard</code></p>
+	 */
+	@Override
+	public void initSendable(SendableBuilder builder) {
+		
 	}
 }
