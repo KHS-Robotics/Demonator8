@@ -19,7 +19,24 @@ import frc.robot.subsystems.TankDrive;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-  private OI(){}
+
+  public final AHRS navx;
+  public final Joystick leftJoystick;
+  public final Joystick rightJoystick;
+  public final Spark left;
+  public final Spark right;
+  public final TankDrive drive;
+
+  private OI(){
+
+   navx = new AHRS(RobotMap.NAVX_PORT, RobotMap.NAVX_UPDATE_RATE_HZ);
+   leftJoystick = new Joystick(RobotMap.LEFT_DRIVE_STICK_PORT);
+   rightJoystick = new Joystick(RobotMap.RIGHT_DRIVE_STICK_PORT);
+   left = new Spark(RobotMap.LEFT);
+   right = new Spark(RobotMap.RIGHT);
+   drive = new TankDrive(left, right, navx);
+
+  }
   private static OI instance;
 
   public static OI getInstance() 
@@ -30,12 +47,6 @@ public class OI {
     }
     return instance;
   }
-  public AHRS navx = new AHRS(RobotMap.NAVX_PORT, RobotMap.NAVX_UPDATE_RATE_HZ);
-  public Joystick leftJoystick = new Joystick(RobotMap.LEFT_DRIVE_STICK_PORT);
-  public Joystick rightJoystick = new Joystick(RobotMap.RIGHT_DRIVE_STICK_PORT);
-  Spark left = new Spark(RobotMap.LEFT);
-  Spark right = new Spark(RobotMap.RIGHT);
-  public TankDrive drive = new TankDrive(left, right, navx);
   //// CREATING BUTTONS
   // One type of button is a joystick button which is any button on a
   //// joystick.
