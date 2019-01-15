@@ -8,17 +8,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.subsystems.TankDrive;
+import frc.robot.subsystems.SubsystemBase;
 /**
  * Add your docs here.
  */
-public class StopDrive extends InstantCommand {
-    TankDrive drive;
+public class StopSubsystem extends InstantCommand {
+    SubsystemBase subsystem;
 
-  public StopDrive(TankDrive drive) {
+  public StopSubsystem(SubsystemBase subsystem) {
     super();
-    this.drive = drive;
-    requires(drive);
+    this.subsystem = subsystem;
+    requires(subsystem);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -26,7 +26,7 @@ public class StopDrive extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    drive.stop();
+    subsystem.stop();
   }
 
 }
