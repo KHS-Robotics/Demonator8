@@ -7,9 +7,10 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
-
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import frc.robot.subsystems.TankDrive;
@@ -23,18 +24,23 @@ public class OI {
   public final AHRS navx;
   public final Joystick leftJoystick;
   public final Joystick rightJoystick;
-  public final Spark left;
-  public final Spark right;
+  public final VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
   public final TankDrive drive;
+  public final DoubleSolenoid Shifter;
 
   private OI(){
 
    navx = new AHRS(RobotMap.NAVX_PORT, RobotMap.NAVX_UPDATE_RATE_HZ);
    leftJoystick = new Joystick(RobotMap.LEFT_DRIVE_STICK_PORT);
    rightJoystick = new Joystick(RobotMap.RIGHT_DRIVE_STICK_PORT);
-   left = new Spark(RobotMap.LEFT);
-   right = new Spark(RobotMap.RIGHT);
-   drive = new TankDrive(left, right, navx);
+   Shifter = new DoubleSolenoid(RobotMap.SHIFT_FORWARD_CHANNEL, RobotMap.SHIFT_REVERSE_CHANNEL);
+   FrontLeft = new VictorSPX(RobotMap.FRONT_LEFT);
+   FrontRight = new VictorSPX(RobotMap.FRONT_RIGHT);
+   MiddleLeft = new VictorSPX(RobotMap.MIDDLE_LEFT);
+   MiddleRight = new VictorSPX(RobotMap.MIDDLE_RIGHT);
+   RearLeft = new VictorSPX(RobotMap.REAR_LEFT);
+   RearRight = new VictorSPX(RobotMap.REAR_RIGHT);
+   drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, navx, Shifter);
 
   }
   private static OI instance;

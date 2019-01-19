@@ -7,9 +7,13 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.OI;
 import frc.robot.commands.DriveWithJoysticks;
 /**
@@ -18,20 +22,36 @@ import frc.robot.commands.DriveWithJoysticks;
 public class TankDrive extends SubsystemBase {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-private Spark left, right;
+private DoubleSolenoid Shifter;
+private VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
 private AHRS navx;
+private static final Value HIGH_GEAR = Value.kForward, LOW_GEAR = Value.kReverse;
+private Value currentGear;
 
-public TankDrive (Spark left, Spark right, AHRS navx)
+public TankDrive (VictorSPX fl, VictorSPX fr, VictorSPX ml, VictorSPX mr, VictorSPX rl, VictorSPX rr, AHRS navx, DoubleSolenoid Shifter)
 {
-  this.left = left;
-  this.right = right;
+  FrontLeft = fl;
+  FrontRight = fr;
+  MiddleLeft = ml;
+  MiddleRight = mr;
+  RearLeft = rl;
+  RearRight = rr;
   this.navx = navx;
+  this.Shifter = Shifter;
+  shiftLow();
 }
 
-public void setDrive (double l, double r)
+public void set(double left, double right)
 {
-  left.set(normalizeOutput(l));
-  right.set(normalizeOutput(r));
+  left = (normalizeOutput(left));
+  right = (normalizeOutput(right));
+
+  FrontLeft.set(ControlMode.PercentOutput, left);
+  FrontRight.set(ControlMode.PercentOutput, right);
+  MiddleLeft.set(ControlMode.PercentOutput, left);
+  MiddleRight.set(ControlMode.PercentOutput, right);
+  RearLeft.set(ControlMode.PercentOutput, left);
+  RearRight.set(ControlMode.PercentOutput, right);
 }
 
 /**
@@ -50,7 +70,7 @@ public void setDrive (double l, double r)
   
   public void stop()
   {
-    this.setDrive(0,0);
+    this.set(0,0);
   }
 
   public void resetNavx()
@@ -74,6 +94,31 @@ public void setDrive (double l, double r)
       yaw += 360;
     }
     return yaw;
+  }
+  
+  public void shiftLow() {
+    if(LOW_GEAR.equals(currentGear)) {
+      return;
+    }
+    Shifter.set(LOW_GEAR);
+    currentGear = LOW_GEAR;
+  }
+
+  public void shiftHigh() {
+    if(HIGH_GEAR.equals(currentGear)) {
+      return;
+    }
+    Shifter.set(HIGH_GEAR);
+    currentGear = HIGH_GEAR;
+  }
+  
+  public void shift() {
+    if(LOW_GEAR.equals(currentGear)) {
+      shiftHigh();
+    }
+    else {
+      shiftLow();
+    }
   }
 
   @Override

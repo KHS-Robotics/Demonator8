@@ -17,8 +17,14 @@ import edu.wpi.first.wpilibj.SPI;
 public class RobotMap {
   public static final int LEFT_DRIVE_STICK_PORT = 0;
   public static final int RIGHT_DRIVE_STICK_PORT = 1;
-  public static final int LEFT = 1;
-  public static final int RIGHT = 2;
+  public static final int SHIFT_FORWARD_CHANNEL = 0;
+  public static final int SHIFT_REVERSE_CHANNEL = 0;
+  public static final int FRONT_LEFT = 0;
+  public static final int FRONT_RIGHT = 0;
+  public static final int MIDDLE_LEFT = 0;
+  public static final int MIDDLE_RIGHT = 0;
+  public static final int REAR_LEFT = 0;
+  public static final int REAR_RIGHT = 0;
   public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;
   public static final byte NAVX_UPDATE_RATE_HZ = (byte) 50;
   // For example to map the left and right motors, you could define the
