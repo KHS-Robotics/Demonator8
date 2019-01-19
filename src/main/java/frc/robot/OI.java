@@ -13,6 +13,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
+import frc.robot.subsystems.Accumulator;
 import frc.robot.subsystems.TankDrive;
 
 /**
@@ -25,8 +26,12 @@ public class OI {
   public final Joystick leftJoystick;
   public final Joystick rightJoystick;
   public final VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
-  public final TankDrive drive;
+  public final Spark intake;
   public final DoubleSolenoid Shifter;
+
+  public final TankDrive drive;
+  public final Accumulator accumulator;
+
 
   private OI(){
 
@@ -40,6 +45,8 @@ public class OI {
    MiddleRight = new VictorSPX(RobotMap.MIDDLE_RIGHT);
    RearLeft = new VictorSPX(RobotMap.REAR_LEFT);
    RearRight = new VictorSPX(RobotMap.REAR_RIGHT);
+   intake = new Spark(RobotMap.INTAKE);
+   accumulator = new Accumulator(intake);
    drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, navx, Shifter);
 
   }

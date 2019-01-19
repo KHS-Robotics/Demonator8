@@ -25,12 +25,14 @@ public class RobotMap {
   public static final int MIDDLE_RIGHT = 0;
   public static final int REAR_LEFT = 0;
   public static final int REAR_RIGHT = 0;
+  public static final int INTAKE = 0;
   public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;
   public static final byte NAVX_UPDATE_RATE_HZ = (byte) 50;
   // For example to map the left and right motors, you could define the
   // following variables to use with your drivetrain subsystem.
   // public static int leftMotor = 1;
   // public static int rightMotor = 2;
+
 
   // If you are using multiple modules, make sure to define both the port
   // number and the module. For example you with a rangefinder:
