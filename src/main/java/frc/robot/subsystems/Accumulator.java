@@ -8,43 +8,34 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
-/**
- * Add your docs here.
- */
-public class Accumulator extends SubsystemBase
-{
+public class Accumulator extends SubsystemBase {
 	private boolean enabled;
-	
+
 	private Spark motor;
-	
-	public Accumulator(Spark motor)
-	{
+
+	public Accumulator(Spark motor) {
 		this.motor = motor;
 	}
-	
-	public void start()
-	{
-		if(enabled)
+
+	public void start() {
+		if (enabled)
 			return;
 		enabled = true;
-		
+
 		motor.set(-1);
 	}
-	
-	public void stop()
-	{
-		if(!enabled)
+
+	public void stop() {
+		if (!enabled)
 			return;
 		enabled = false;
-		
+
 		motor.set(0);
 	}
-	
-	public void toggle()
-	{
-		if(enabled)
+
+	public void toggle() {
+		if (enabled)
 			stop();
 		else
 			start();

@@ -6,36 +6,29 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
+
 import edu.wpi.first.wpilibj.SPI;
 
-/**
- * The RobotMap is a mapping from the ports sensors and actuators are wired into
- * to a variable name. This provides flexibility changing wiring, makes checking
- * the wiring easier and significantly reduces the number of magic numbers
- * floating around.
- */
 public class RobotMap {
+  // Joysticks
   public static final int LEFT_DRIVE_STICK_PORT = 0;
   public static final int RIGHT_DRIVE_STICK_PORT = 1;
+
+  // Pneumatics
   public static final int SHIFT_FORWARD_CHANNEL = 0;
   public static final int SHIFT_REVERSE_CHANNEL = 0;
+
+  // Tankdrive motors
   public static final int FRONT_LEFT = 0;
   public static final int FRONT_RIGHT = 0;
   public static final int MIDDLE_LEFT = 0;
   public static final int MIDDLE_RIGHT = 0;
   public static final int REAR_LEFT = 0;
   public static final int REAR_RIGHT = 0;
+
   public static final int INTAKE = 0;
+
+  // Navx
   public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;
   public static final byte NAVX_UPDATE_RATE_HZ = (byte) 50;
-  // For example to map the left and right motors, you could define the
-  // following variables to use with your drivetrain subsystem.
-  // public static int leftMotor = 1;
-  // public static int rightMotor = 2;
-
-
-  // If you are using multiple modules, make sure to define both the port
-  // number and the module. For example you with a rangefinder:
-  // public static int rangefinderPort = 1;
-  // public static int rangefinderModule = 1;
 }
