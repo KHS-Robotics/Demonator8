@@ -9,12 +9,12 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Spark;
 
-public class Accumulator extends SubsystemBase {
+public class CargoIntake extends SubsystemBase {
 	private boolean enabled;
 
 	private Spark motor;
 
-	public Accumulator(Spark motor) {
+	public CargoIntake(Spark motor) {
 		this.motor = motor;
 	}
 

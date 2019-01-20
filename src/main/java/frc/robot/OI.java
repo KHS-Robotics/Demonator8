@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
-import frc.robot.subsystems.Accumulator;
+import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.TankDrive;
 
 public class OI {
@@ -30,14 +30,14 @@ public class OI {
   private DoubleSolenoid Shifter;
 
   public TankDrive drive;
-  public Accumulator accumulator;
+  public CargoIntake cargoIntake;
 
   private OI() {
 
     leftJoystick = new Joystick(RobotMap.LEFT_DRIVE_STICK_PORT);
     rightJoystick = new Joystick(RobotMap.RIGHT_DRIVE_STICK_PORT);
 
-    initAccumulator();
+    initCargoIntake();
     initDrive();
   }
 
@@ -67,8 +67,8 @@ public class OI {
     drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx, LeftDriveEnc, RightDriveEnc);
   }
 
-  private void initAccumulator() {
+  private void initCargoIntake() {
     intake = new Spark(RobotMap.INTAKE);
-    accumulator = new Accumulator(intake);
+    cargoIntake = new CargoIntake(intake);
   }
 }
