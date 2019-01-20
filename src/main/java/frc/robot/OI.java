@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import frc.robot.subsystems.Accumulator;
@@ -22,6 +23,7 @@ public class OI {
   public Joystick rightJoystick;
 
   private AHRS navx;
+  private Encoder LeftDriveEnc, RightDriveEnc;
 
   private VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
   private Spark intake;
@@ -51,6 +53,9 @@ public class OI {
   private void initDrive() {
     navx = new AHRS(RobotMap.NAVX_PORT, RobotMap.NAVX_UPDATE_RATE_HZ);
 
+    LeftDriveEnc = new Encoder(RobotMap.LEFT_DRIVE_ENC_A, RobotMap.LEFT_DRIVE_ENC_B);
+    RightDriveEnc = new Encoder(RobotMap.RIGHT_DRIVE_ENC_A, RobotMap.RIGHT_DRIVE_ENC_B);
+
     Shifter = new DoubleSolenoid(RobotMap.SHIFT_FORWARD_CHANNEL, RobotMap.SHIFT_REVERSE_CHANNEL);
     FrontLeft = new VictorSPX(RobotMap.FRONT_LEFT);
     FrontRight = new VictorSPX(RobotMap.FRONT_RIGHT);
@@ -59,7 +64,7 @@ public class OI {
     RearLeft = new VictorSPX(RobotMap.REAR_LEFT);
     RearRight = new VictorSPX(RobotMap.REAR_RIGHT);
 
-    drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, navx, Shifter);
+    drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx, LeftDriveEnc, RightDriveEnc);
   }
 
   private void initAccumulator() {

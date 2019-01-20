@@ -12,25 +12,31 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.OI;
 import frc.robot.commands.DriveWithJoysticks;
 
 public class TankDrive extends SubsystemBase {
+  private AHRS navx;
+  private Encoder lEnc, rEnc;
+
   private DoubleSolenoid Shifter;
   private VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
-  private AHRS navx;
+
   private static final Value HIGH_GEAR = Value.kForward, LOW_GEAR = Value.kReverse;
   private Value currentGear;
 
-  public TankDrive(VictorSPX fl, VictorSPX fr, VictorSPX ml, VictorSPX mr, VictorSPX rl, VictorSPX rr, AHRS navx,
-      DoubleSolenoid Shifter) {
+  public TankDrive(VictorSPX fl, VictorSPX fr, VictorSPX ml, VictorSPX mr, VictorSPX rl, VictorSPX rr,
+      DoubleSolenoid Shifter, AHRS navx, Encoder LeftDriveEnc, Encoder RightDriveEnc) {
     FrontLeft = fl;
     FrontRight = fr;
     MiddleLeft = ml;
     MiddleRight = mr;
     RearLeft = rl;
     RearRight = rr;
+    lEnc = LeftDriveEnc;
+    rEnc = RightDriveEnc;
     this.navx = navx;
     this.Shifter = Shifter;
     shiftLow();
@@ -107,6 +113,55 @@ public class TankDrive extends SubsystemBase {
       shiftLow();
     }
   }
+
+  /**
+	 * Gets the right drive encoder's distance
+	 * @return the right drive encoder's distance
+	 */
+	public double getRightDistance()
+	{
+		return rEnc.getDistance();
+	}
+	
+	/**
+	 * Gets the left drive encoder's distance
+	 * @return the left drive encoder's distance
+	 */
+	public double getLeftDistance()
+	{
+		return lEnc.getDistance();
+	}
+	
+	/**
+	 * Resets the encoders, should only be used when testing
+	 */
+	public void resetEncoders()
+	{
+		lEnc.reset();
+		rEnc.reset();
+  }
+  
+  /**
+	 * Calculates the remaining distance the robot needs to drive before
+	 * reaching the desired distance
+	 * @param distance the desired distance (in inches)
+	 * @param initialLeft the initial left encoder distance (in inches, basically a snapshot of {@link #getLeftDistance()})
+	 * @param initialRight the initial right encoder distance (in inches, basically a snapshot of {@link #getRightDistance()})
+	 * @return the remaining distance the robot needs to drive
+	 */
+	public double remainingDistance(double distance, double initialLeft, double initialRight)
+	{
+		final double CURRENT_RIGHT_VAL = Math.abs(getRightDistance());
+		final double CURRENT_LEFT_VAL = Math.abs(getLeftDistance());
+		final double DELTA_RIGHT = Math.abs(CURRENT_RIGHT_VAL - initialRight);
+		final double DELTA_LEFT = Math.abs(CURRENT_LEFT_VAL - initialLeft);
+		
+		final double AVERAGE = (DELTA_RIGHT + DELTA_LEFT) / 2;
+		
+		final double REMAINING = distance - AVERAGE;
+		
+		return REMAINING;
+	}
 
   @Override
   public void initDefaultCommand() {

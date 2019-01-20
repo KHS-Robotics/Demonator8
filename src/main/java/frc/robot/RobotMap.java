@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.SPI;
 
 public class RobotMap {
@@ -31,4 +32,10 @@ public class RobotMap {
   // Navx
   public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;
   public static final byte NAVX_UPDATE_RATE_HZ = (byte) 50;
+
+  // Encoders
+  public static final DigitalSource RIGHT_DRIVE_ENC_A = null;
+  public static final DigitalSource RIGHT_DRIVE_ENC_B = null;
+  public static final DigitalSource LEFT_DRIVE_ENC_A = null;
+  public static final DigitalSource LEFT_DRIVE_ENC_B = null;
 }
