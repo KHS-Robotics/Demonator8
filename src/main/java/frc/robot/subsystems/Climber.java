@@ -7,12 +7,26 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Spark;
+
 /**
  * Add your docs here.
  */
 public class Climber extends SubsystemBase {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+  private Spark fl, fr, rl, rr, dl, dr;
+  private DigitalInput front, back;
+
+  public Climber(Spark fl, Spark fr, Spark rl, Spark rr, Spark dl, Spark dr, DigitalInput front, DigitalInput back) {
+    this.fl = fl;
+    this.fr = fr;
+    this.rl = rl;
+    this.rr = rr;
+    this.dl = dl;
+    this.dr = dr;
+    this.front = front;
+    this.back = back;
+  }
 
   @Override
   public void initDefaultCommand() {
@@ -22,6 +36,24 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void stop() {
+    set(0, 0, 0);
 
+  }
+
+  public void set(double front, double back, double drive) {
+    fl.set(front);
+    fr.set(front);
+    rl.set(back);
+    rr.set(back);
+    dl.set(drive);
+    dr.set(drive);
+  }
+
+  public boolean getfrontLS() {
+    return front.get();
+  }
+
+  public boolean getbackLS() {
+    return back.get();
   }
 }
