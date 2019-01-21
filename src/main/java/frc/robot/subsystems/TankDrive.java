@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.OI;
-import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.tankdrive.DriveWithJoysticks;
 
 public class TankDrive extends SubsystemBase {
   private AHRS navx;

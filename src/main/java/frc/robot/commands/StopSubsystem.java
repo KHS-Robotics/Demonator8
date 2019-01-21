@@ -9,9 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.subsystems.SubsystemBase;
-/**
- * Add your docs here.
- */
+
 public class StopSubsystem extends InstantCommand {
     SubsystemBase subsystem;
 
@@ -19,11 +17,8 @@ public class StopSubsystem extends InstantCommand {
     super();
     this.subsystem = subsystem;
     requires(subsystem);
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
-  // Called once when the command executes
   @Override
   protected void initialize() {
     subsystem.stop();
