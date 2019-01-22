@@ -125,7 +125,7 @@ public class Elevator extends PIDSubsystem {
   }
 
   public void set(double output) {
-    if (!override && ls.get() && output < 0)
+    if (!override && getLS() && output < 0)
       elevatormotor.set(0);
 
     elevatormotor.set(output);
@@ -152,7 +152,7 @@ public class Elevator extends PIDSubsystem {
    * @return true if the elevator is at the bottom, false otherwise
    */
   public boolean isAtBottom() {
-    return !getLS() && shouldReset;
+    return getLS() && shouldReset;
   }
 
   public boolean getLS() {

@@ -40,10 +40,14 @@ public class Climber extends SubsystemBase {
   }
 
   public void set(double front, double back, double drive) {
-    fl.set(front);
-    fr.set(front);
-    rl.set(back);
-    rr.set(back);
+    if(!(getFrontLS() && front < 0)) {
+      fl.set(front);
+      fr.set(front);
+    }
+    if(!(getBackLS() && back < 0)) {
+      rl.set(back);
+      rr.set(back);
+    }
     dl.set(drive);
     dr.set(drive);
   }

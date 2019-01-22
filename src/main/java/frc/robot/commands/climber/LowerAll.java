@@ -31,8 +31,7 @@ public class LowerAll extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    //limit switch?
-    return false;
+    return climber.getBackLS() || climber.getFrontLS();
   }
 
   // Called once after isFinished returns true
