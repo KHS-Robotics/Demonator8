@@ -10,24 +10,16 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.subsystems.CargoIntake;
 
-/**
- * Add your docs here.
- */
 public class StopIntake extends InstantCommand {
 
   private CargoIntake intake;
-  /**
-   * Add your docs here.
-   */
-  public StopIntake() {
+
+  public StopIntake(CargoIntake intake) {
     super();
+    this.intake = intake;
     this.requires(intake);
-    
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
-  // Called once when the command executes
   @Override
   protected void initialize() {
     intake.stop();

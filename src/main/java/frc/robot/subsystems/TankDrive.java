@@ -13,13 +13,23 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.OI;
 import frc.robot.commands.tankdrive.DriveWithJoysticks;
 
-public class TankDrive extends SubsystemBase {
+public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
+  private double offset;
+  private double P = 0.02, I = 0.0, D = 0.048;
+  private double direction;
+
   private AHRS navx;
   private Encoder lEnc, rEnc;
+  private PIDController yawPID;
+  private PIDSourceType pidSourceType;
 
   private DoubleSolenoid Shifter;
   private VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
@@ -39,6 +49,14 @@ public class TankDrive extends SubsystemBase {
     rEnc = RightDriveEnc;
     this.navx = navx;
     this.Shifter = Shifter;
+
+    setPIDSourceType(PIDSourceType.kDisplacement);
+    yawPID = new PIDController(P, I, D, this, this);
+    yawPID.setInputRange(-180.0, 180.0);
+    yawPID.setOutputRange(-1.0, 1.0);
+    yawPID.setContinuous();
+    yawPID.setAbsoluteTolerance(0.5);
+    disablePID();
     shiftLow();
   }
 
@@ -70,24 +88,15 @@ public class TankDrive extends SubsystemBase {
 
   public void stop() {
     this.set(0, 0);
+    disablePID();
+  }
+
+  public void setDirection(double direction) {
+    this.direction = direction;
   }
 
   public void resetNavx() {
     navx.reset();
-  }
-
-  public double getHeading() {
-    return normalizeYaw(navx.getYaw());
-  }
-
-  private double normalizeYaw(double yaw) {
-    while (yaw >= 180) {
-      yaw -= 360;
-    }
-    while (yaw <= 180) {
-      yaw += 360;
-    }
-    return yaw;
   }
 
   public void shiftLow() {
@@ -115,53 +124,127 @@ public class TankDrive extends SubsystemBase {
   }
 
   /**
-	 * Gets the right drive encoder's distance
-	 * @return the right drive encoder's distance
-	 */
-	public double getRightDistance()
-	{
-		return rEnc.getDistance();
-	}
-	
-	/**
-	 * Gets the left drive encoder's distance
-	 * @return the left drive encoder's distance
-	 */
-	public double getLeftDistance()
-	{
-		return lEnc.getDistance();
-	}
-	
-	/**
-	 * Resets the encoders, should only be used when testing
-	 */
-	public void resetEncoders()
-	{
-		lEnc.reset();
-		rEnc.reset();
+   * Gets the right drive encoder's distance
+   * 
+   * @return the right drive encoder's distance
+   */
+  public double getRightDistance() {
+    return rEnc.getDistance();
   }
-  
+
   /**
-	 * Calculates the remaining distance the robot needs to drive before
-	 * reaching the desired distance
-	 * @param distance the desired distance (in inches)
-	 * @param initialLeft the initial left encoder distance (in inches, basically a snapshot of {@link #getLeftDistance()})
-	 * @param initialRight the initial right encoder distance (in inches, basically a snapshot of {@link #getRightDistance()})
-	 * @return the remaining distance the robot needs to drive
-	 */
-	public double remainingDistance(double distance, double initialLeft, double initialRight)
-	{
-		final double CURRENT_RIGHT_VAL = Math.abs(getRightDistance());
-		final double CURRENT_LEFT_VAL = Math.abs(getLeftDistance());
-		final double DELTA_RIGHT = Math.abs(CURRENT_RIGHT_VAL - initialRight);
-		final double DELTA_LEFT = Math.abs(CURRENT_LEFT_VAL - initialLeft);
-		
-		final double AVERAGE = (DELTA_RIGHT + DELTA_LEFT) / 2;
-		
-		final double REMAINING = distance - AVERAGE;
-		
-		return REMAINING;
-	}
+   * Gets the left drive encoder's distance
+   * 
+   * @return the left drive encoder's distance
+   */
+  public double getLeftDistance() {
+    return lEnc.getDistance();
+  }
+
+  /**
+   * Resets the encoders, should only be used when testing
+   */
+  public void resetEncoders() {
+    lEnc.reset();
+    rEnc.reset();
+  }
+
+  /**
+   * Calculates the remaining distance the robot needs to drive before reaching
+   * the desired distance
+   * 
+   * @param distance     the desired distance (in inches)
+   * @param initialLeft  the initial left encoder distance (in inches, basically a
+   *                     snapshot of {@link #getLeftDistance()})
+   * @param initialRight the initial right encoder distance (in inches, basically
+   *                     a snapshot of {@link #getRightDistance()})
+   * @return the remaining distance the robot needs to drive
+   */
+  public double remainingDistance(double distance, double initialLeft, double initialRight) {
+    final double CURRENT_RIGHT_VAL = Math.abs(getRightDistance());
+    final double CURRENT_LEFT_VAL = Math.abs(getLeftDistance());
+    final double DELTA_RIGHT = Math.abs(CURRENT_RIGHT_VAL - initialRight);
+    final double DELTA_LEFT = Math.abs(CURRENT_LEFT_VAL - initialLeft);
+
+    final double AVERAGE = (DELTA_RIGHT + DELTA_LEFT) / 2;
+
+    final double REMAINING = distance - AVERAGE;
+
+    return REMAINING;
+  }
+
+  public void enablePID() {
+    System.out.println("Enabling PID");
+    yawPID.enable();
+  }
+
+  public void disablePID() {
+    System.out.println("Trying to stop PID");
+    if (yawPID.isEnabled()) {
+      System.out.println("Stopping PID");
+      yawPID.disable();
+      direction = 0;
+    }
+  }
+
+  public void setPID(double p, double i, double d) {
+    this.yawPID.setPID(p, i, d);
+  }
+
+  public boolean onTarget() {
+    return yawPID.onTarget();
+  }
+
+  private double normalizeYaw(double yaw) {
+    while (yaw >= 180) {
+      yaw -= 360;
+    }
+    while (yaw <= 180) {
+      yaw += 360;
+    }
+    return yaw;
+  }
+
+  public void setHeading(double angle, double direction) {
+    this.setDirection(direction);
+    this.yawPID.setSetpoint(normalizeYaw(angle));
+    enablePID();
+  }
+
+  public double getHeading() {
+    return normalizeYaw(navx.getYaw());
+  }
+
+  public void setOffset(double angle) {
+    this.offset = angle;
+  }
+
+  @Override
+  public void pidWrite(double output) {
+    double left = direction + output;
+    double right = direction - output;
+
+    this.set(left, right);
+  }
+
+  @Override
+  public void setPIDSourceType(PIDSourceType pidSource) {
+    pidSourceType = pidSource;
+  }
+
+  @Override
+  public PIDSourceType getPIDSourceType() {
+    return pidSourceType;
+  }
+
+  @Override
+  public double pidGet() {
+
+    if (pidSourceType == PIDSourceType.kRate)
+      return navx.getRate();
+    else
+      return this.getHeading();
+  }
 
   @Override
   public void initDefaultCommand() {
