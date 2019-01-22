@@ -37,7 +37,6 @@ public class Climber extends SubsystemBase {
   @Override
   public void stop() {
     set(0, 0, 0);
-
   }
 
   public void set(double front, double back, double drive) {
@@ -49,11 +48,11 @@ public class Climber extends SubsystemBase {
     dr.set(drive);
   }
 
-  public boolean getfrontLS() {
+  public boolean getFrontLS() {
     return front.get();
   }
 
-  public boolean getbackLS() {
+  public boolean getBackLS() {
     return back.get();
   }
 }
