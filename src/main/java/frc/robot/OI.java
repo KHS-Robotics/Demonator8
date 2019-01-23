@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.TankDrive;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Climber;
 
 public class OI {
 
@@ -31,6 +33,8 @@ public class OI {
 
   public TankDrive drive;
   public CargoIntake cargoIntake;
+  public Elevator elevator;
+  public Climber climber;
 
   private OI() {
 
