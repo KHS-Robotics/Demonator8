@@ -43,6 +43,8 @@ public class OI {
 
     initCargoIntake();
     initDrive();
+    initClimber();
+    initElevator();
   }
 
   private static OI instance;
@@ -75,4 +77,12 @@ public class OI {
     intake = new Spark(RobotMap.INTAKE);
     cargoIntake = new CargoIntake(intake);
   }
+
+  private void initClimber() {
+  }
+
+  private void initElevator() {
+  }
+
+
 }
