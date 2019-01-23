@@ -108,7 +108,7 @@ public class OI {
     elevatorIntake = new Spark(RobotMap.ELEVATOR_INTAKE);
     elevatorLS = new DigitalInput(RobotMap.ELEVATOR_LIMIT_SWITCH);
     elevatorEncoder = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
-    elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_ENCODER_B);
+    elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_SOLENOID_B);
 
     elevator = new Elevator(elevatorMotor, arm, elevatorIntake, elevatorLS, elevatorEncoder, elevatorSolenoid);
   }

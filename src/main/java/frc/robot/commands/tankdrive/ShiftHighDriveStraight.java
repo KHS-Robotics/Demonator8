@@ -9,7 +9,6 @@ package frc.robot.commands.tankdrive;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.commands.DriveStraightJoystick;
 import frc.robot.subsystems.TankDrive;
 
 public class ShiftHighDriveStraight extends CommandGroup 
