@@ -11,11 +11,15 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 
 public class Elevator extends PIDSubsystem {
   private double p, i, d;
   private boolean override, shouldReset;
+
+  private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
+  private Value current;
 
   private Spark elevatormotor, intake, arm;
   private DigitalInput ls;
@@ -31,6 +35,26 @@ public class Elevator extends PIDSubsystem {
     this.ls = ls;
     this.encoder = encoder;
     this.solenoid = solenoid;
+  }
+
+  public void setIntake(double output) {
+    intake.set(output);
+  }
+
+  public void open() {
+    if(OPEN.equals(current))
+      return;
+
+      solenoid.set(OPEN);
+      current = OPEN;
+  }
+
+  public void close() {
+    if(CLOSE.equals(current))
+      return;
+
+      solenoid.set(CLOSE);
+      current = CLOSE;
   }
 
   @Override
