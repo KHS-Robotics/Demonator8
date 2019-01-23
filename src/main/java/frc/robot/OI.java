@@ -10,6 +10,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -30,6 +31,14 @@ public class OI {
   private VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
   private Spark intake;
   private DoubleSolenoid Shifter;
+
+  private Spark fl, fr, ml, mr, rl, rr;
+  private DigitalInput frontLS, backLS;
+
+  private Spark elevatorMotor, arm, elevatorIntake;
+  private DigitalInput elevatorLS;
+  private Encoder elevatorEncoder;
+  private DoubleSolenoid elevatorSolenoid;
 
   public TankDrive drive;
   public CargoIntake cargoIntake;
@@ -70,7 +79,8 @@ public class OI {
     RearLeft = new VictorSPX(RobotMap.REAR_LEFT);
     RearRight = new VictorSPX(RobotMap.REAR_RIGHT);
 
-    drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx, LeftDriveEnc, RightDriveEnc);
+    drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx,
+        LeftDriveEnc, RightDriveEnc);
   }
 
   private void initCargoIntake() {
@@ -79,10 +89,28 @@ public class OI {
   }
 
   private void initClimber() {
+    fl = new Spark(RobotMap.FRONT_LEFT);
+    fr = new Spark(RobotMap.FRONT_RIGHT);
+    ml = new Spark(RobotMap.MIDDLE_LEFT);
+    mr = new Spark(RobotMap.MIDDLE_RIGHT);
+    rl = new Spark(RobotMap.REAR_LEFT);
+    rr = new Spark(RobotMap.REAR_RIGHT);
+
+    frontLS = new DigitalInput(RobotMap.FRONT_LIMIT_SWITCH);
+    backLS = new DigitalInput(RobotMap.BACK_LIMIT_SWITCH);
+
+    climber = new Climber(fl, fr, ml, mr, rl, rr, frontLS, backLS);
   }
 
   private void initElevator() {
-  }
+    elevatorMotor = new Spark(RobotMap.ELEVATOR_MOTOR);
+    arm = new Spark(RobotMap.ARM);
+    elevatorIntake = new Spark(RobotMap.ELEVATOR_INTAKE);
+    elevatorLS = new DigitalInput(RobotMap.ELEVATOR_LIMIT_SWITCH);
+    elevatorEncoder = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
+    elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_ENCODER_B);
 
+    elevator = new Elevator(elevatorMotor, arm, elevatorIntake, elevatorLS, elevatorEncoder, elevatorSolenoid);
+  }
 
 }

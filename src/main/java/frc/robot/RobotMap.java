@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalSource;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SPI;
 
 public class RobotMap {
@@ -34,8 +35,22 @@ public class RobotMap {
   public static final byte NAVX_UPDATE_RATE_HZ = (byte) 50;
 
   // Encoders
-  public static final DigitalSource RIGHT_DRIVE_ENC_A = null;
-  public static final DigitalSource RIGHT_DRIVE_ENC_B = null;
-  public static final DigitalSource LEFT_DRIVE_ENC_A = null;
-  public static final DigitalSource LEFT_DRIVE_ENC_B = null;
+  public static final int RIGHT_DRIVE_ENC_A = 0;
+  public static final int RIGHT_DRIVE_ENC_B = 0;
+  public static final int LEFT_DRIVE_ENC_A = 0;
+  public static final int LEFT_DRIVE_ENC_B = 0;
+
+  // Climber
+  public static final int FRONT_LIMIT_SWITCH = 0;
+  public static final int BACK_LIMIT_SWITCH = 0;
+
+  // Elevator
+  public static final int ELEVATOR_MOTOR = 0;
+  public static final int ARM = 0;
+  public static final int ELEVATOR_INTAKE = 0;
+  public static final int ELEVATOR_ENCODER_A = 0;
+  public static final int ELEVATOR_ENCODER_B = 0;
+  public static final int ELEVATOR_SOLENOID_A = 0;
+  public static final int ELEVATOR_SOLENOID_B = 0;
+  public static final int ELEVATOR_LIMIT_SWITCH = 0;
 }
