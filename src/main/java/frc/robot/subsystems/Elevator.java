@@ -57,6 +57,14 @@ public class Elevator extends PIDSubsystem {
       current = CLOSE;
   }
 
+  public void toggle(){
+    if (CLOSE.equals(current)) {
+      open();
+    } else {
+      close();
+    }
+  }
+
   @Override
   public void disable() {
     if (this.getPIDController().isEnabled())
