@@ -18,26 +18,16 @@ public class CargoIntake extends SubsystemBase {
 		this.motor = motor;
 	}
 
-	public void start() {
-		if (enabled)
-			return;
-		enabled = true;
-
-		motor.set(-1);
-	}
-
+	@Override
 	public void stop() {
-		if (!enabled)
-			return;
-		enabled = false;
-
 		motor.set(0);
 	}
+	
+	public void intake() {
+		motor.set(1);
+	}
 
-	public void toggle() {
-		if (enabled)
-			stop();
-		else
-			start();
+	public void reverse() {
+		motor.set(-1);
 	}
 }

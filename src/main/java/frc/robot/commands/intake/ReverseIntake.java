@@ -10,11 +10,11 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.subsystems.CargoIntake;
 
-public class StartIntake extends InstantCommand {
+public class ReverseIntake extends InstantCommand {
 
   private CargoIntake intake;
   
-  public StartIntake(CargoIntake intake) {
+  public ReverseIntake(CargoIntake intake) {
     super();
     this.intake = intake;
     this.requires(intake);
@@ -22,8 +22,7 @@ public class StartIntake extends InstantCommand {
 
   @Override
   protected void initialize() {
-    intake.intake();
+    intake.reverse();
   }
-
 
 }
