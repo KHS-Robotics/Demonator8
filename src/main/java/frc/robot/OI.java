@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import frc.robot.logging.Logger;
+
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -66,51 +68,83 @@ public class OI {
   }
 
   private void initDrive() {
-    navx = new AHRS(RobotMap.NAVX_PORT, RobotMap.NAVX_UPDATE_RATE_HZ);
 
-    LeftDriveEnc = new Encoder(RobotMap.LEFT_DRIVE_ENC_A, RobotMap.LEFT_DRIVE_ENC_B);
-    RightDriveEnc = new Encoder(RobotMap.RIGHT_DRIVE_ENC_A, RobotMap.RIGHT_DRIVE_ENC_B);
+    try {
 
-    Shifter = new DoubleSolenoid(RobotMap.SHIFT_FORWARD_CHANNEL, RobotMap.SHIFT_REVERSE_CHANNEL);
-    FrontLeft = new VictorSPX(RobotMap.FRONT_LEFT);
-    FrontRight = new VictorSPX(RobotMap.FRONT_RIGHT);
-    MiddleLeft = new VictorSPX(RobotMap.MIDDLE_LEFT);
-    MiddleRight = new VictorSPX(RobotMap.MIDDLE_RIGHT);
-    RearLeft = new VictorSPX(RobotMap.REAR_LEFT);
-    RearRight = new VictorSPX(RobotMap.REAR_RIGHT);
+      Logger.info("Initializing Tank Drive...");
 
-    drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx,
+      navx = new AHRS(RobotMap.NAVX_PORT, RobotMap.NAVX_UPDATE_RATE_HZ);
+
+      LeftDriveEnc = new Encoder(RobotMap.LEFT_DRIVE_ENC_A, RobotMap.LEFT_DRIVE_ENC_B);
+      RightDriveEnc = new Encoder(RobotMap.RIGHT_DRIVE_ENC_A, RobotMap.RIGHT_DRIVE_ENC_B);
+
+      Shifter = new DoubleSolenoid(RobotMap.SHIFT_FORWARD_CHANNEL, RobotMap.SHIFT_REVERSE_CHANNEL);
+      FrontLeft = new VictorSPX(RobotMap.FRONT_LEFT);
+      FrontRight = new VictorSPX(RobotMap.FRONT_RIGHT);
+      MiddleLeft = new VictorSPX(RobotMap.MIDDLE_LEFT);
+      MiddleRight = new VictorSPX(RobotMap.MIDDLE_RIGHT);
+      RearLeft = new VictorSPX(RobotMap.REAR_LEFT);
+      RearRight = new VictorSPX(RobotMap.REAR_RIGHT);
+
+      drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx,
         LeftDriveEnc, RightDriveEnc);
+    } catch(Exception ex) {
+        Logger.error("Failed to initialize Tank Drive!", ex);
+    }
   }
 
   private void initCargoIntake() {
-    intake = new Spark(RobotMap.INTAKE);
-    cargoIntake = new CargoIntake(intake);
+
+    try {
+
+      Logger.info("Initializing Cargo Intake...");
+
+      intake = new Spark(RobotMap.INTAKE);
+      cargoIntake = new CargoIntake(intake);
+    } catch(Exception ex) {
+      Logger.error("Failed to initialize Cargo Intake!", ex);
+    }
   }
 
   private void initClimber() {
-    fl = new Spark(RobotMap.FRONT_LEFT);
-    fr = new Spark(RobotMap.FRONT_RIGHT);
-    ml = new Spark(RobotMap.MIDDLE_LEFT);
-    mr = new Spark(RobotMap.MIDDLE_RIGHT);
-    rl = new Spark(RobotMap.REAR_LEFT);
-    rr = new Spark(RobotMap.REAR_RIGHT);
 
-    frontLS = new DigitalInput(RobotMap.FRONT_LIMIT_SWITCH);
-    backLS = new DigitalInput(RobotMap.BACK_LIMIT_SWITCH);
+    try {
 
-    climber = new Climber(fl, fr, ml, mr, rl, rr, frontLS, backLS);
+      Logger.info("Initializing Climber...");
+
+      fl = new Spark(RobotMap.FRONT_LEFT);
+      fr = new Spark(RobotMap.FRONT_RIGHT);
+      ml = new Spark(RobotMap.MIDDLE_LEFT);
+      mr = new Spark(RobotMap.MIDDLE_RIGHT);
+      rl = new Spark(RobotMap.REAR_LEFT);
+      rr = new Spark(RobotMap.REAR_RIGHT);
+
+      frontLS = new DigitalInput(RobotMap.FRONT_LIMIT_SWITCH);
+      backLS = new DigitalInput(RobotMap.BACK_LIMIT_SWITCH);
+
+      climber = new Climber(fl, fr, ml, mr, rl, rr, frontLS, backLS);
+    } catch(Exception ex) {
+        Logger.error("Failed to initialize Cimber!", ex);
+    }
   }
 
   private void initElevator() {
-    elevatorMotor = new Spark(RobotMap.ELEVATOR_MOTOR);
-    arm = new Spark(RobotMap.ARM);
-    elevatorIntake = new Spark(RobotMap.ELEVATOR_INTAKE);
-    elevatorLS = new DigitalInput(RobotMap.ELEVATOR_LIMIT_SWITCH);
-    elevatorEncoder = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
-    elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_SOLENOID_B);
 
-    elevator = new Elevator(elevatorMotor, arm, elevatorIntake, elevatorLS, elevatorEncoder, elevatorSolenoid);
+    try {
+
+      Logger.info("Initializing Elevator...");
+
+      elevatorMotor = new Spark(RobotMap.ELEVATOR_MOTOR);
+      arm = new Spark(RobotMap.ARM);
+      elevatorIntake = new Spark(RobotMap.ELEVATOR_INTAKE);
+      elevatorLS = new DigitalInput(RobotMap.ELEVATOR_LIMIT_SWITCH);
+      elevatorEncoder = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
+      elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_SOLENOID_B);
+
+      elevator = new Elevator(elevatorMotor, arm, elevatorIntake, elevatorLS, elevatorEncoder, elevatorSolenoid);
+    } catch(Exception ex) {
+        Logger.error("Failed to initialize Elevator!", ex);
+    }
   }
 
 }
