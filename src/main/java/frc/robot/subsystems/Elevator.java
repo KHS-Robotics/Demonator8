@@ -10,14 +10,17 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 
 public class Elevator extends PIDSubsystem {
-  private double p, i, d;
+  private double pElevator, iElevator, dElevator, pArm, iArm, dArm;
   private boolean override, shouldReset;
-  
+  private PIDController locationPID;
+  private PIDSourceType pidSourceType;
 
   private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
   private Value current;
@@ -87,10 +90,10 @@ public class Elevator extends PIDSubsystem {
     set(0);
   }
 
-  public void setPID(double p, double i, double d) {
-    this.p = p;
-    this.i = i;
-    this.d = d;
+  public void setElevatorPID(double p, double i, double d) {
+    this.pElevator = p;
+    this.iElevator = i;
+    this.dElevator = d;
     this.getPIDController().setPID(p, i, d);
   }
 
@@ -99,9 +102,9 @@ public class Elevator extends PIDSubsystem {
    * 
    * @param p the proportional value
    */
-  public void setP(double p) {
-    this.p = p;
-    setPID(p, i, d);
+  public void setElevatorP(double p) {
+    this.pElevator = p;
+    setElevatorPID(pElevator, iElevator, dElevator);
   }
 
   /**
@@ -109,8 +112,8 @@ public class Elevator extends PIDSubsystem {
    * 
    * @return the proportional value
    */
-  public double getP() {
-    return p;
+  public double getElevatorP() {
+    return pElevator;
   }
 
   /**
@@ -118,9 +121,9 @@ public class Elevator extends PIDSubsystem {
    * 
    * @param i the integral value
    */
-  public void setI(double i) {
-    this.i = i;
-    setPID(p, i, d);
+  public void setElevatorI(double i) {
+    this.iElevator = i;
+    setElevatorPID(pElevator, iElevator, dElevator);
   }
 
   /**
@@ -128,8 +131,8 @@ public class Elevator extends PIDSubsystem {
    * 
    * @return the integral value
    */
-  public double getI() {
-    return i;
+  public double getElevatorI() {
+    return iElevator;
   }
 
   /**
@@ -137,9 +140,9 @@ public class Elevator extends PIDSubsystem {
    * 
    * @param d the derivative value
    */
-  public void setD(double d) {
-    this.d = d;
-    setPID(p, i, d);
+  public void setElevatorD(double d) {
+    this.dElevator = d;
+    setElevatorPID(pElevator, iElevator, dElevator);
   }
 
   /**
@@ -147,9 +150,74 @@ public class Elevator extends PIDSubsystem {
    * 
    * @return the derivative value
    */
-  public double getD() {
-    return d;
+  public double getElevatorD() {
+    return dElevator;
   }
+
+  public void setArmPID(double p, double i, double d) {
+    this.pArm = p;
+    this.iArm = i;
+    this.dArm = d;
+    this.getPIDController().setPID(p, i, d);
+  }
+
+  /**
+   * Sets the P value for the internal PID controller for height.
+   * 
+   * @param p the proportional value
+   */
+  public void setArmP(double p) {
+    this.pArm = p;
+    setArmPID(pArm, iArm, dArm);
+  }
+
+  /**
+   * Gets the proportional value for the internal PID controller for height.
+   * 
+   * @return the proportional value
+   */
+  public double getArmP() {
+    return pArm;
+  }
+
+  /**
+   * Sets the I value for the internal PID controller for height.
+   * 
+   * @param i the integral value
+   */
+  public void setArmI(double i) {
+    this.iArm = i;
+    setArmPID(pArm, iArm, dArm);
+  }
+
+  /**
+   * Gets the integral value for the internal PID controller for height.
+   * 
+   * @return the integral value
+   */
+  public double getArmI() {
+    return iArm;
+  }
+
+  /**
+   * Sets the D value for the intenral PID controller for height.
+   * 
+   * @param d the derivative value
+   */
+  public void setArmD(double d) {
+    this.dArm = d;
+    setArmPID(pArm, iArm, dArm);
+  }
+
+  /**
+   * Gets the derivative value for the internal PID controller for height.
+   * 
+   * @return the derivative value
+   */
+  public double getArmD() {
+    return dArm;
+  }
+
 
   @Override
   public void initDefaultCommand() {
