@@ -15,6 +15,7 @@ public class RobotMap {
   // Joysticks
   public static final int LEFT_DRIVE_STICK_PORT = 0;
   public static final int RIGHT_DRIVE_STICK_PORT = 1;
+  public static final int XBOX_CONTROLLER = 0;
 
   // Pneumatics
   public static final int SHIFT_FORWARD_CHANNEL = 0;
@@ -53,4 +54,6 @@ public class RobotMap {
   public static final int ELEVATOR_SOLENOID_A = 0;
   public static final int ELEVATOR_SOLENOID_B = 0;
   public static final int ELEVATOR_LIMIT_SWITCH = 0;
+public static final int SWITCH_BOX = 0;
+
 }

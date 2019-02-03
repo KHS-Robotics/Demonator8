@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.command.PIDSubsystem;
 public class Elevator extends PIDSubsystem {
   private double p, i, d;
   private boolean override, shouldReset;
+  
 
   private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
   private Value current;
