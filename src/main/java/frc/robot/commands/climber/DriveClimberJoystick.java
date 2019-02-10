@@ -7,34 +7,25 @@
 
 package frc.robot.commands.climber;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.subsystems.Climber;
 
-public class RaiseBack extends Command {
+public class DriveClimberJoystick extends InstantCommand {
   private Climber climber;
-  public RaiseBack(Climber climber) {
-    this.requires(climber);
+  private Joystick stick;
+  public DriveClimberJoystick(Climber climber, Joystick stick) {
+    super();
     this.climber = climber;
+    this.stick = stick;
+    this.requires(climber);
   }
-
-  // Called just before this Command runs the first time
-  @Override
-  protected void initialize() {
-    climber.set(0,-1,0);
-  }
-
-  // Called repeatedly when this Command is scheduled to run
+ 
   @Override
   protected void execute() {
+    climber.set(0, 0, stick.getY());
   }
 
-  // Make this return true when this Command no longer needs to run execute()
-  @Override
-  protected boolean isFinished() {
-    return false;
-  }
-
-  // Called once after isFinished returns true
   @Override
   protected void end() {
     climber.stop();
