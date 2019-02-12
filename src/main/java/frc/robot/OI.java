@@ -20,7 +20,9 @@ import frc.robot.commands.intake.ReverseIntake;
 import frc.robot.commands.intake.StartIntake;
 import frc.robot.logging.Logger;
 
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import java.net.SocketException;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -32,6 +34,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.TankDrive;
+import frc.robot.vision.UDPTracker;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Climber;
 
@@ -45,7 +48,7 @@ public class OI {
   private AHRS navx;
   private Encoder LeftDriveEnc, RightDriveEnc;
 
-  private VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
+  private WPI_VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
   private Spark intake;
   private DoubleSolenoid Shifter;
 
@@ -61,6 +64,7 @@ public class OI {
   public CargoIntake cargoIntake;
   public Elevator elevator;
   public Climber climber;
+  public UDPTracker udp;
 
   private OI() {
 
@@ -96,19 +100,25 @@ public class OI {
       RightDriveEnc = new Encoder(RobotMap.RIGHT_DRIVE_ENC_A, RobotMap.RIGHT_DRIVE_ENC_B);
 
       Shifter = new DoubleSolenoid(RobotMap.SHIFT_FORWARD_CHANNEL, RobotMap.SHIFT_REVERSE_CHANNEL);
-      FrontLeft = new VictorSPX(RobotMap.FRONT_LEFT);
-      FrontRight = new VictorSPX(RobotMap.FRONT_RIGHT);
-      MiddleLeft = new VictorSPX(RobotMap.MIDDLE_LEFT);
-      MiddleRight = new VictorSPX(RobotMap.MIDDLE_RIGHT);
-      RearLeft = new VictorSPX(RobotMap.REAR_LEFT);
-      RearRight = new VictorSPX(RobotMap.REAR_RIGHT);
+      FrontLeft = new WPI_VictorSPX(RobotMap.FRONT_LEFT);
+      FrontRight = new WPI_VictorSPX(RobotMap.FRONT_RIGHT);
+      MiddleLeft = new WPI_VictorSPX(RobotMap.MIDDLE_LEFT);
+      MiddleRight = new WPI_VictorSPX(RobotMap.MIDDLE_RIGHT);
+      RearLeft = new WPI_VictorSPX(RobotMap.REAR_LEFT);
+      RearRight = new WPI_VictorSPX(RobotMap.REAR_RIGHT);
 
       drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx,
         LeftDriveEnc, RightDriveEnc);
 
       
+      try {
+        udp = new UDPTracker(drive, "MoePi", 5810);
+      } catch (SocketException ex) {
+        ex.printStackTrace();
+      }
+
     } catch(Exception ex) {
-        Logger.error("Failed to initialize Tank Drive!", ex);
+      Logger.error("Failed to initialize Tank Drive!", ex);
     }
   }
 

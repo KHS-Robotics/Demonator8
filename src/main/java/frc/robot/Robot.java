@@ -7,16 +7,11 @@
 
 package frc.robot;
 
-import java.net.SocketException;
-import java.util.Vector;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.vision.UDPTracker;
-import frc.robot.vision.UDPTracker.Box;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -28,8 +23,6 @@ import frc.robot.vision.UDPTracker.Box;
 public class Robot extends TimedRobot {
   public static OI m_oi;
 
-  private UDPTracker udp;
-
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
@@ -40,12 +33,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_oi = OI.getInstance();
-
-    try {
-      udp = new UDPTracker("Pi-3-B+", 5810);
-    } catch (SocketException e) {
-      e.printStackTrace();
-  }
   
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
@@ -72,22 +59,9 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
   }
 
-  public int counter = 0;
-
   @Override
   public void disabledPeriodic() {
-    Scheduler.getInstance().run();
-
-    // Vector<Box> boxes = udp.getBoxes();
-    // if(counter % 50 == 0)
-    // {
-    //   for(Box box : boxes) {
-    //     System.out.println(box);
-    //   }
-    //   counter = 0;
-    // }
     
-    // counter++;
   }
 
   /**

@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -32,12 +33,12 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private PIDSourceType pidSourceType;
 
   private DoubleSolenoid Shifter;
-  private VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
+  private WPI_VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
 
   private static final Value HIGH_GEAR = Value.kForward, LOW_GEAR = Value.kReverse;
   private Value currentGear;
 
-  public TankDrive(VictorSPX fl, VictorSPX fr, VictorSPX ml, VictorSPX mr, VictorSPX rl, VictorSPX rr,
+  public TankDrive(WPI_VictorSPX fl, WPI_VictorSPX fr, WPI_VictorSPX ml, WPI_VictorSPX mr, WPI_VictorSPX rl, WPI_VictorSPX rr,
       DoubleSolenoid Shifter, AHRS navx, Encoder LeftDriveEnc, Encoder RightDriveEnc) {
     FrontLeft = fl;
     FrontRight = fr;
