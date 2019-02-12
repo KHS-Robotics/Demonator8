@@ -15,22 +15,26 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
 
 public class Elevator extends PIDSubsystem {
-  private double pElevator, iElevator, dElevator, pArm, iArm, dArm;
+  private double pElevator, iElevator, dElevator, pArm, iArm, dArm, direction;
   private boolean override, shouldReset;
   private PIDController locationPID;
   private PIDSourceType pidSourceType;
+  private CANPIDController armPID;
+  private CANSparkMax arm;
 
   private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
   private Value current;
 
-  private Spark elevatormotor, intake, arm;
+  private Spark elevatormotor, intake;
   private DigitalInput ls;
   private Encoder encoder;
   private DoubleSolenoid solenoid;
 
-  public Elevator(Spark elevatormotor, Spark intake, Spark arm, DigitalInput ls, Encoder encoder,
+  public Elevator(Spark elevatormotor, Spark intake, CANSparkMax arm, DigitalInput ls, Encoder encoder,
       DoubleSolenoid solenoid) {
     super(0, 0, 0);
     this.elevatormotor = elevatormotor;
@@ -259,5 +263,24 @@ public class Elevator extends PIDSubsystem {
   public boolean getLS() {
     return ls.get();
   }
+
+  public void enableArmPID() {
+    System.out.println("Enabling PID");
+    //armPID.enable();
+  }
+
+    public void setArmRotation(double angle, double direction) {
+    this.setDirection(direction);
+    this.locationPID.setSetpoint(angle);
+    enableArmPID();
+  } 
+
+  private void setDirection(double direction) {
+    this.direction = direction;
+  }
+
+   // public double getArmRotation() {
+    //return normalizeYaw(navx.getYaw());
+  //}
 
 }

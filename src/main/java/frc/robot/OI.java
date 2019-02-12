@@ -24,6 +24,8 @@ import java.net.SocketException;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -55,10 +57,11 @@ public class OI {
   private Spark fl, fr, ml, mr, rl, rr;
   private DigitalInput frontLS, backLS;
 
-  private Spark elevatorMotor, arm, elevatorIntake;
+  private Spark elevatorMotor, elevatorIntake;
   private DigitalInput elevatorLS;
   private Encoder elevatorEncoder;
   private DoubleSolenoid elevatorSolenoid;
+  private CANSparkMax arm;
 
   public TankDrive drive;
   public CargoIntake cargoIntake;
@@ -175,13 +178,13 @@ public class OI {
       Logger.info("Initializing Elevator...");
 
       elevatorMotor = new Spark(RobotMap.ELEVATOR_MOTOR);
-      arm = new Spark(RobotMap.ARM);
+      arm = new CANSparkMax(RobotMap.ARM, MotorType.kBrushless);
       elevatorIntake = new Spark(RobotMap.ELEVATOR_INTAKE);
       elevatorLS = new DigitalInput(RobotMap.ELEVATOR_LIMIT_SWITCH);
       elevatorEncoder = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
       elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_SOLENOID_B);
 
-      elevator = new Elevator(elevatorMotor, arm, elevatorIntake, elevatorLS, elevatorEncoder, elevatorSolenoid);
+      elevator = new Elevator(elevatorMotor, elevatorIntake, arm, elevatorLS, elevatorEncoder, elevatorSolenoid);
     
       // Button to set the elevator to the high cargo port
 			JoystickButton elevateCargoHigh = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_HIGH);

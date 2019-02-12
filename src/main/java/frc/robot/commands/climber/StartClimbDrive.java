@@ -12,15 +12,21 @@ import frc.robot.subsystems.Climber;
 
 public class StartClimbDrive extends InstantCommand {
   private Climber climber;
-
-  public StartClimbDrive(Climber climber) {
+  private double power;
+  public StartClimbDrive(Climber climber, double power) {
     super();
     this.climber = climber;
+    this.power = power;
+    this.requires(climber);
+  }
+ 
+  @Override
+  protected void initialize() {
+    climber.set(0, 0, power);
   }
 
   @Override
-  protected void initialize() {
-    climber.set(0, 0, 1);
+  protected void end() {
+    climber.stop();
   }
-
 }

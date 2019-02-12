@@ -175,14 +175,11 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   }
 
   public void enablePID() {
-    System.out.println("Enabling PID");
     yawPID.enable();
   }
 
   public void disablePID() {
-    System.out.println("Trying to stop PID");
     if (yawPID.isEnabled()) {
-      System.out.println("Stopping PID");
       yawPID.disable();
       direction = 0;
     }

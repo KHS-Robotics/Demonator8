@@ -7,12 +7,18 @@
 
 package frc.robot.commands.tankdrive;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.subsystems.TankDrive;
 
 public class DriveWithXbox extends Command {
-  public DriveWithXbox() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+  TankDrive drive;
+  XboxController xbox;
+  public DriveWithXbox(TankDrive drive, XboxController xbox) {
+    this.drive = drive;
+    this.xbox = xbox;
+    this.requires(drive);
   }
 
   // Called just before this Command runs the first time
@@ -23,6 +29,11 @@ public class DriveWithXbox extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    double forward = xbox.getTriggerAxis(Hand.kRight);
+    double reverse = - xbox.getTriggerAxis(Hand.kLeft);
+    double y = forward + reverse, x = xbox.getX(Hand.kLeft);
+
+    drive.set(x + y, y - x);
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -34,11 +45,7 @@ public class DriveWithXbox extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    drive.stop();
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-  }
 }

@@ -47,7 +47,7 @@ public class RobotMap {
 
   // Elevator
   public static final int ELEVATOR_MOTOR = 0;
-  public static final int ARM = 0;
+  public static final int ARM = 9;
   public static final int ELEVATOR_INTAKE = 0;
   public static final int ELEVATOR_ENCODER_A = 0;
   public static final int ELEVATOR_ENCODER_B = 0;

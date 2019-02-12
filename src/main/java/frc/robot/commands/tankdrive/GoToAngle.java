@@ -35,7 +35,6 @@ public class GoToAngle extends InstantCommand {
   @Override
   protected void initialize() {
     drive.setHeading(angle, 0);
-    SmartDashboard.putNumber("Drive-Setpoint", angle);
     onTargetCounter = 0;
   }
   @Override
