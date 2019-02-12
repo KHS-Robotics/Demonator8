@@ -10,8 +10,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
@@ -19,17 +17,15 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 
 public class Elevator extends PIDSubsystem {
-  private double pElevator, iElevator, dElevator, pArm, iArm, dArm, direction;
+  private double pElevator, iElevator, dElevator, pArm, iArm, dArm;
   private boolean override, shouldReset;
-  private PIDController locationPID;
-  private PIDSourceType pidSourceType;
   private CANPIDController armPID;
-  private CANSparkMax arm;
-
+  
   private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
   private Value current;
 
   private Spark elevatormotor, intake;
+  private CANSparkMax arm;
   private DigitalInput ls;
   private Encoder encoder;
   private DoubleSolenoid solenoid;
@@ -43,6 +39,9 @@ public class Elevator extends PIDSubsystem {
     this.ls = ls;
     this.encoder = encoder;
     this.solenoid = solenoid;
+
+    this.armPID = new CANPIDController(arm);
+    this.armPID.setOutputRange(-1, 1);
   }
 
   public void setIntake(double output) {
@@ -162,7 +161,9 @@ public class Elevator extends PIDSubsystem {
     this.pArm = p;
     this.iArm = i;
     this.dArm = d;
-    this.getPIDController().setPID(p, i, d);
+    armPID.setP(p);
+    armPID.setI(i);
+    armPID.setD(d);
   }
 
   /**
@@ -231,7 +232,7 @@ public class Elevator extends PIDSubsystem {
 
   public void set(double output) {
     if (!override && getLS() && output < 0)
-      elevatormotor.set(0);
+      output = 0;
 
     elevatormotor.set(output);
   }
@@ -265,22 +266,10 @@ public class Elevator extends PIDSubsystem {
   }
 
   public void enableArmPID() {
-    System.out.println("Enabling PID");
     //armPID.enable();
   }
 
-    public void setArmRotation(double angle, double direction) {
-    this.setDirection(direction);
-    this.locationPID.setSetpoint(angle);
+  public void setArmRotation(double angle) {
     enableArmPID();
-  } 
-
-  private void setDirection(double direction) {
-    this.direction = direction;
   }
-
-   // public double getArmRotation() {
-    //return normalizeYaw(navx.getYaw());
-  //}
-
 }
