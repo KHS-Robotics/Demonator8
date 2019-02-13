@@ -73,6 +73,7 @@ public class UDPTracker implements Runnable {
 				if(id <= lastID) {
 					continue;
 				}
+				lastID = id;
 
 				final int boxAmnt = status - 1;
 
