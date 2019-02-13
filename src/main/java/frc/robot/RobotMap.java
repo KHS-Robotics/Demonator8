@@ -29,12 +29,12 @@ public class RobotMap {
   public static final int ULTRASONIC_R = 1;
 
   public static final int RIGHT_DRIVE_ENC_A = 0;
-  public static final int RIGHT_DRIVE_ENC_B = 0;
-  public static final int LEFT_DRIVE_ENC_A = 0;
-  public static final int LEFT_DRIVE_ENC_B = 0;
+  public static final int RIGHT_DRIVE_ENC_B = 1;
+  public static final int LEFT_DRIVE_ENC_A = 2;
+  public static final int LEFT_DRIVE_ENC_B = 3;
 
   public static final int SHIFT_FORWARD_CHANNEL = 0;
-  public static final int SHIFT_REVERSE_CHANNEL = 0;
+  public static final int SHIFT_REVERSE_CHANNEL = 1;
 
   // Intake
   public static final int INTAKE = 7;
@@ -44,8 +44,8 @@ public class RobotMap {
   public static final byte NAVX_UPDATE_RATE_HZ = (byte) 50;
 
   // Climber
-  public static final int FRONT_LIMIT_SWITCH = 0;
-  public static final int BACK_LIMIT_SWITCH = 0;
+  public static final int FRONT_LIMIT_SWITCH = 8;
+  public static final int BACK_LIMIT_SWITCH = 7;
   public static final int F_CLIMB = 0;
   public static final int B_CLIMB = 1;
   public static final int CLIMB_DRIVE_L = 2;
@@ -57,11 +57,11 @@ public class RobotMap {
   public static final int ELEVATOR_ACC_L = 4;
   public static final int ELEVATOR_ACC_R = 5;
 
-  public static final int ELEVATOR_ENCODER_A = 0;
-  public static final int ELEVATOR_ENCODER_B = 0;
+  public static final int ELEVATOR_ENCODER_A = 4;
+  public static final int ELEVATOR_ENCODER_B = 5;
 
-  public static final int ELEVATOR_SOLENOID_A = 0;
-  public static final int ELEVATOR_SOLENOID_B = 0;
+  public static final int ELEVATOR_SOLENOID_A = 2;
+  public static final int ELEVATOR_SOLENOID_B = 3;
 
   public static final int ELEVATOR_LIMIT_SWITCH = 6;
 }

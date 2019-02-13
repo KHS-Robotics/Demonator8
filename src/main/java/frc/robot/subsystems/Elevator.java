@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import frc.robot.OI;
+import frc.robot.commands.elevator.elevateWithJoystickTest;
+
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 
@@ -50,6 +53,8 @@ public class Elevator extends PIDSubsystem {
     this.ls = ls;
     this.encoder = encoder;
     this.solenoid = solenoid;
+
+    this.encoder.setDistancePerPulse(eleDistPP);
 
     this.armPID = new CANPIDController(arm);
     this.armPID.setOutputRange(-1, 1);
@@ -240,13 +245,18 @@ public class Elevator extends PIDSubsystem {
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
+    setDefaultCommand(new elevateWithJoystickTest(OI.getInstance().elevator, OI.getInstance().switchBox));
   }
 
   public void set(double output) {
-    if (!override && getLS() && output < 0)
-      output = 0;
+    // if (!override && getLS() && output < 0)
+      // output = 0;
 
     elevatormotor.set(output);
+  }
+
+  public void setArm(double output) {
+    arm.set(output);
   }
 
   public void setOverride(boolean flag) {

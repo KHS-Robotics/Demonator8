@@ -8,6 +8,7 @@
 package frc.robot;
 
 import frc.robot.commands.StopSubsystem;
+import frc.robot.commands.climber.RaiseBack;
 import frc.robot.commands.elevator.ElevateCargoToHigh;
 import frc.robot.commands.elevator.ElevateCargoToLow;
 import frc.robot.commands.elevator.ElevateCargoToMedium;
@@ -166,6 +167,23 @@ public class OI {
       backLS = new DigitalInput(RobotMap.BACK_LIMIT_SWITCH);
 
       climber = new Climber(fl, fr, ml, mr, rl, rr, frontLS, backLS);
+
+      JoystickButton raiseFrontClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.F_CLIMBER_RAISE);
+      raiseFrontClimb.whenPressed(new RaiseBack(climber));
+      raiseFrontClimb.whenReleased(new StopSubsystem(climber));
+
+      JoystickButton lowerFrontClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.F_CLIMBER_LOWER);
+      lowerFrontClimb.whenPressed(new RaiseBack(climber));
+      lowerFrontClimb.whenReleased(new StopSubsystem(climber));
+
+      JoystickButton raiseBackClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.B_CLIMBER_RAISE);
+      raiseBackClimb.whenPressed(new RaiseBack(climber));
+      raiseBackClimb.whenReleased(new StopSubsystem(climber));
+
+      JoystickButton lowerBackClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.B_CLIMBER_LOWER);
+      lowerBackClimb.whenPressed(new RaiseBack(climber));
+      lowerBackClimb.whenReleased(new StopSubsystem(climber));
+
     } catch(Exception ex) {
         Logger.error("Failed to initialize Cimber!", ex);
     }
@@ -186,7 +204,7 @@ public class OI {
       elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_SOLENOID_B);
 
       elevator = new Elevator(elevatorMotor, elevatorAccL, elevatorAccR, arm, elevatorLS, elevatorEncoder, elevatorSolenoid);
-    
+    /*
       // Button to set the elevator to the high cargo port
 			JoystickButton elevateCargoHigh = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_HIGH);
 			elevateCargoHigh.whenPressed(new ElevateCargoToHigh(elevator));
@@ -221,6 +239,7 @@ public class OI {
 			JoystickButton toggleArms = new JoystickButton(switchBox, ButtonMap.SwitchBox.TOGGLE_ARMS);
 			toggleArms.whenPressed(new ToggleArm(elevator));
       toggleArms.whenReleased(new StopElevator(elevator));
+      */
 
     } catch(Exception ex) {
         Logger.error("Failed to initialize Elevator!", ex);

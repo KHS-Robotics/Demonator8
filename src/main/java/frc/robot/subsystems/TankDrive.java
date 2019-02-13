@@ -20,7 +20,9 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.OI;
+import frc.robot.commands.tankdrive.DriveWithJoystick;
 import frc.robot.commands.tankdrive.DriveWithJoysticks;
+import frc.robot.commands.tankdrive.DriveWithXbox;
 
 public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private double offset;
@@ -56,6 +58,9 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     rEnc = RightDriveEnc;
     this.navx = navx;
     this.Shifter = Shifter;
+
+    this.lEnc.setDistancePerPulse(driveDistPP);
+    this.rEnc.setDistancePerPulse(driveDistPP);
 
     setPIDSourceType(PIDSourceType.kDisplacement);
     yawPID = new PIDController(P, I, D, this, this);
@@ -253,6 +258,6 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   @Override
   public void initDefaultCommand() {
     OI oi = OI.getInstance();
-    this.setDefaultCommand(new DriveWithJoysticks(oi.drive, oi.leftJoystick, oi.rightJoystick));
+    this.setDefaultCommand(new DriveWithJoystick(oi.drive, oi.leftJoystick));
   }
 }

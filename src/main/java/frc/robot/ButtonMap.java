@@ -46,6 +46,10 @@ public class ButtonMap
         public static final int ELEVATE_HATCH_LOW = 0;
 		public static final int ELEVATOR_OVERIDE = 11;
 		public static final int TUNE_PID = 0;
+		public static final int F_CLIMBER_RAISE = 8;
+		public static final int F_CLIMBER_LOWER = 7;
+		public static final int B_CLIMBER_RAISE = 10;
+		public static final int B_CLIMBER_LOWER = 9;
 	}
 
 	/**
