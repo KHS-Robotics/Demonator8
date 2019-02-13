@@ -24,17 +24,28 @@ public class Elevator extends PIDSubsystem {
   private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
   private Value current;
 
-  private Spark elevatormotor, intake;
+  private Spark elevatormotor, accL, accR;
   private CANSparkMax arm;
   private DigitalInput ls;
   private Encoder encoder;
   private DoubleSolenoid solenoid;
 
-  public Elevator(Spark elevatormotor, Spark intake, CANSparkMax arm, DigitalInput ls, Encoder encoder,
+  private static final double eleLinDist = 18.0 * 0.25 * 2; //inches of .25in chain per output sprocket rev, doubled on the last stage
+  private static final int eleReducNum = 22; //22 tooth sprocket gearbox output
+  private static final int eleReducDen = 64 * 18; //64 planetary & 18 tooth sprocket
+  private static final int eleCPR = 12; //counts per revolution of motor
+  private static final double eleDistPP = (eleLinDist * eleReducNum) / (eleReducDen * eleCPR); //linear distance of the last stage arm per encoder pulse
+
+  private static final int armReducNum = 18; //18 tooth sprocket gearbox output
+  private static final int armReducDen = 7 * 5 * 32; //7, 5 planetary & 32 tooth sprocket
+  private static final double armDegPR = (360.0 * armReducNum) / (armReducDen); //Arm deg per Neo rev
+
+  public Elevator(Spark elevatormotor, Spark accL, Spark accR, CANSparkMax arm, DigitalInput ls, Encoder encoder,
       DoubleSolenoid solenoid) {
     super(0, 0, 0);
     this.elevatormotor = elevatormotor;
-    this.intake = intake;
+    this.accL = accL;
+    this.accR = accR;
     this.arm = arm;
     this.ls = ls;
     this.encoder = encoder;
@@ -44,8 +55,9 @@ public class Elevator extends PIDSubsystem {
     this.armPID.setOutputRange(-1, 1);
   }
 
-  public void setIntake(double output) {
-    intake.set(output);
+  public void setIntake(double l, double r) {
+    accL.set(l);
+    accR.set(r);
   }
 
   public void open() {

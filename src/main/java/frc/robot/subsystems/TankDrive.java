@@ -38,6 +38,12 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private static final Value HIGH_GEAR = Value.kForward, LOW_GEAR = Value.kReverse;
   private Value currentGear;
 
+  private static final double driveLinDist = Math.PI * 6.0; //inches of circ of 6in wheel
+  private static final int driveReducDen = 64; //64 spur 
+  private static final int driveReducNum = 3 * 20; //3 times encoder gearing 20 tooth spur gearbox output
+  private static final int driveCPR = 64; //counts per revolution of motor
+  private static final double driveDistPP = (driveLinDist * driveReducNum) / (driveReducDen * driveCPR); //linear distance of the last stage arm per encoder pulse
+
   public TankDrive(WPI_VictorSPX fl, WPI_VictorSPX fr, WPI_VictorSPX ml, WPI_VictorSPX mr, WPI_VictorSPX rl, WPI_VictorSPX rr,
       DoubleSolenoid Shifter, AHRS navx, Encoder LeftDriveEnc, Encoder RightDriveEnc) {
     FrontLeft = fl;

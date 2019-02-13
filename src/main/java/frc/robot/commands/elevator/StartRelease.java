@@ -21,7 +21,7 @@ public class StartRelease extends InstantCommand {
 
   @Override
   protected void initialize() {
-    elevator.setIntake(1);
+    elevator.setIntake(1, 1);
   }
 
 }
