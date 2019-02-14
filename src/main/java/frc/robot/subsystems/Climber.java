@@ -14,16 +14,14 @@ import edu.wpi.first.wpilibj.Spark;
  * Add your docs here.
  */
 public class Climber extends SubsystemBase {
-  private Spark fl, fr, rl, rr, dl, dr;
+  private Spark fClimb, bClimb, driveR, driveL;
   private DigitalInput front, back;
 
-  public Climber(Spark fl, Spark fr, Spark rl, Spark rr, Spark dl, Spark dr, DigitalInput front, DigitalInput back) {
-    this.fl = fl;
-    this.fr = fr;
-    this.rl = rl;
-    this.rr = rr;
-    this.dl = dl;
-    this.dr = dr;
+  public Climber(Spark fClimb, Spark bClimb, Spark driveL, Spark driveR, DigitalInput front, DigitalInput back) {
+    this.fClimb = fClimb;
+    this.bClimb = bClimb;
+    this.driveL = driveL;
+    this.driveR = driveR;
     this.front = front;
     this.back = back;
   }
@@ -40,24 +38,22 @@ public class Climber extends SubsystemBase {
   }
 
   public void set(double front, double back, double drive) {
-    if(getFrontLS() && front > 0)
+    /*if(getFrontLS() && front > 0)
     {
       front = 0;
     }
     if(getBackLS() && back > 0)
     {
       back = 0;
-    }
-    front *= 0.1;
-    back *= 0.1;
-    drive *= 0.1;
+    }*/
+    front *= 0.5;
+    back *= 0.5;
+    drive *= 0.5;
     
-    fr.set(front);
-    fl.set(front);
-    rl.set(back);
-    rr.set(back);
-    dl.set(drive);
-    dr.set(drive);
+    fClimb.set(front);
+    bClimb.set(back);
+    driveR.set(-drive);
+    driveL.set(drive);
   }
 
   public boolean getFrontLS() {

@@ -33,6 +33,7 @@ public class elevateWithJoystickTest extends Command {
 
     elevator.set(stick.getRawAxis(2));
     elevator.setArm(stick.getRawAxis(0));
+    elevator.setIntake(stick.getRawAxis(1), stick.getRawAxis(1));
   }
 
   // Make this return true when this Command no longer needs to run execute()

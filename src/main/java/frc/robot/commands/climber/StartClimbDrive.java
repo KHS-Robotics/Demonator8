@@ -27,6 +27,5 @@ public class StartClimbDrive extends InstantCommand {
 
   @Override
   protected void end() {
-    climber.stop();
   }
 }

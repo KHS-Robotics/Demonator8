@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import frc.robot.OI;
 import frc.robot.commands.elevator.elevateWithJoystickTest;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 
@@ -29,6 +30,7 @@ public class Elevator extends PIDSubsystem {
 
   private Spark elevatormotor, accL, accR;
   private CANSparkMax arm;
+  private CANEncoder armEncoder;
   private DigitalInput ls;
   private Encoder encoder;
   private DoubleSolenoid solenoid;
@@ -58,10 +60,16 @@ public class Elevator extends PIDSubsystem {
 
     this.armPID = new CANPIDController(arm);
     this.armPID.setOutputRange(-1, 1);
+
+    this.armEncoder = this.arm.getEncoder();
+  }
+
+  public double getArmDegree() {
+    return armEncoder.getPosition();
   }
 
   public void setIntake(double l, double r) {
-    accL.set(l);
+    accL.set(-l);
     accR.set(r);
   }
 
@@ -98,6 +106,10 @@ public class Elevator extends PIDSubsystem {
   @Override
   protected double returnPIDInput() {
     return encoder.getDistance();
+  }
+
+  public double getElevatorHeight() {
+    return returnPIDInput();
   }
 
   @Override

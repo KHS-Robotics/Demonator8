@@ -13,8 +13,8 @@ public class RobotMap {
   // Joysticks
   public static final int LEFT_DRIVE_STICK_PORT = 0;
   public static final int RIGHT_DRIVE_STICK_PORT = 1;
-  public static final int SWITCH_BOX = 0;
-  public static final int XBOX_CONTROLLER = 0;
+  public static final int SWITCH_BOX = 2;
+  // public static final int XBOX_CONTROLLER = 0;
 
   // Tankdrive
   public static final int FRONT_LEFT = 13;
@@ -37,7 +37,7 @@ public class RobotMap {
   public static final int SHIFT_REVERSE_CHANNEL = 1;
 
   // Intake
-  public static final int INTAKE = 7;
+  public static final int INTAKE = 8;
 
   // Navx
   public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;
@@ -52,7 +52,7 @@ public class RobotMap {
   public static final int CLIMB_DRIVE_R = 3;
 
   // Elevator
-  public static final int ELEVATOR_MOTOR = 6;
+  public static final int ELEVATOR_MOTOR = 9;
   public static final int ARM = 9;
   public static final int ELEVATOR_ACC_L = 4;
   public static final int ELEVATOR_ACC_R = 5;

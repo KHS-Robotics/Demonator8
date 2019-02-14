@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.TankDrive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -48,6 +50,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    smartDash();
+  }
+
+  public void smartDash() {
+    TankDrive drive = OI.getInstance().drive;
+    Elevator elevator = OI.getInstance().elevator;
+    SmartDashboard.putNumber("Arm Degrees: ", elevator.getArmDegree());
+    SmartDashboard.putNumber("Left Distance: ", drive.getLeftDistance());
+    SmartDashboard.putNumber("Right Distance: ", drive.getRightDistance());
+    SmartDashboard.putNumber("Elevator Height: ", elevator.getElevatorHeight());
+    SmartDashboard.putNumber("Left Ultrasonic: ", drive.getLeftUltrasonic());
+    SmartDashboard.putNumber("Right Ultrasonic: ", drive.getRightUltrasonic());
+    SmartDashboard.putNumber("DriveHeading: ", drive.getHeading());
   }
 
   /**
@@ -61,7 +76,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    
+    smartDash();
   }
 
   /**

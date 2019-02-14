@@ -8,7 +8,11 @@
 package frc.robot;
 
 import frc.robot.commands.StopSubsystem;
+import frc.robot.commands.climber.LowerBack;
+import frc.robot.commands.climber.LowerFront;
 import frc.robot.commands.climber.RaiseBack;
+import frc.robot.commands.climber.RaiseFront;
+import frc.robot.commands.climber.StartClimbDrive;
 import frc.robot.commands.elevator.ElevateCargoToHigh;
 import frc.robot.commands.elevator.ElevateCargoToLow;
 import frc.robot.commands.elevator.ElevateCargoToMedium;
@@ -28,6 +32,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -50,12 +55,13 @@ public class OI {
 
   private AHRS navx;
   private Encoder LeftDriveEnc, RightDriveEnc;
+  private AnalogInput rUltra, lUltra;
 
   private WPI_VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
   private Spark intake;
   private DoubleSolenoid Shifter;
 
-  private Spark fl, fr, ml, mr, rl, rr;
+  private Spark fClimb, bClimb, climbDriveL, climbDriveR;
   private DigitalInput frontLS, backLS;
 
   private Spark elevatorMotor, elevatorAccL, elevatorAccR;
@@ -74,7 +80,7 @@ public class OI {
 
     leftJoystick = new Joystick(RobotMap.LEFT_DRIVE_STICK_PORT);
     rightJoystick = new Joystick(RobotMap.RIGHT_DRIVE_STICK_PORT);
-    DriveController = new XboxController(RobotMap.XBOX_CONTROLLER);
+    // DriveController = new XboxController(RobotMap.XBOX_CONTROLLER);
     switchBox = new Joystick(RobotMap.SWITCH_BOX);
 
     initCargoIntake();
@@ -103,6 +109,9 @@ public class OI {
       LeftDriveEnc = new Encoder(RobotMap.LEFT_DRIVE_ENC_A, RobotMap.LEFT_DRIVE_ENC_B);
       RightDriveEnc = new Encoder(RobotMap.RIGHT_DRIVE_ENC_A, RobotMap.RIGHT_DRIVE_ENC_B);
 
+      lUltra = new AnalogInput(RobotMap.ULTRASONIC_L);
+      rUltra = new AnalogInput(RobotMap.ULTRASONIC_R);
+
       Shifter = new DoubleSolenoid(RobotMap.SHIFT_FORWARD_CHANNEL, RobotMap.SHIFT_REVERSE_CHANNEL);
       FrontLeft = new WPI_VictorSPX(RobotMap.FRONT_LEFT);
       FrontRight = new WPI_VictorSPX(RobotMap.FRONT_RIGHT);
@@ -112,7 +121,7 @@ public class OI {
       RearRight = new WPI_VictorSPX(RobotMap.REAR_RIGHT);
 
       drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx,
-        LeftDriveEnc, RightDriveEnc);
+        LeftDriveEnc, RightDriveEnc, lUltra, rUltra);
 
       
       try {
@@ -156,24 +165,22 @@ public class OI {
 
       Logger.info("Initializing Climber...");
 
-      fl = new Spark(RobotMap.FRONT_LEFT);
-      fr = new Spark(RobotMap.FRONT_RIGHT);
-      ml = new Spark(RobotMap.MIDDLE_LEFT);
-      mr = new Spark(RobotMap.MIDDLE_RIGHT);
-      rl = new Spark(RobotMap.REAR_LEFT);
-      rr = new Spark(RobotMap.REAR_RIGHT);
+      fClimb = new Spark(RobotMap.F_CLIMB);
+      bClimb = new Spark(RobotMap.B_CLIMB);
+      climbDriveL = new Spark(RobotMap.CLIMB_DRIVE_L);
+      climbDriveR = new Spark(RobotMap.CLIMB_DRIVE_R);
 
       frontLS = new DigitalInput(RobotMap.FRONT_LIMIT_SWITCH);
       backLS = new DigitalInput(RobotMap.BACK_LIMIT_SWITCH);
 
-      climber = new Climber(fl, fr, ml, mr, rl, rr, frontLS, backLS);
+      climber = new Climber(fClimb, bClimb, climbDriveL, climbDriveR, frontLS, backLS);
 
       JoystickButton raiseFrontClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.F_CLIMBER_RAISE);
-      raiseFrontClimb.whenPressed(new RaiseBack(climber));
+      raiseFrontClimb.whenPressed(new RaiseFront(climber));
       raiseFrontClimb.whenReleased(new StopSubsystem(climber));
 
       JoystickButton lowerFrontClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.F_CLIMBER_LOWER);
-      lowerFrontClimb.whenPressed(new RaiseBack(climber));
+      lowerFrontClimb.whenPressed(new LowerFront(climber));
       lowerFrontClimb.whenReleased(new StopSubsystem(climber));
 
       JoystickButton raiseBackClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.B_CLIMBER_RAISE);
@@ -181,8 +188,12 @@ public class OI {
       raiseBackClimb.whenReleased(new StopSubsystem(climber));
 
       JoystickButton lowerBackClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.B_CLIMBER_LOWER);
-      lowerBackClimb.whenPressed(new RaiseBack(climber));
+      lowerBackClimb.whenPressed(new LowerBack(climber));
       lowerBackClimb.whenReleased(new StopSubsystem(climber));
+
+      JoystickButton climbDrive = new JoystickButton(switchBox, 1);
+      climbDrive.whenPressed(new StartClimbDrive(climber, 1.0));
+      climbDrive.whenReleased(new StopSubsystem(climber));
 
     } catch(Exception ex) {
         Logger.error("Failed to initialize Cimber!", ex);

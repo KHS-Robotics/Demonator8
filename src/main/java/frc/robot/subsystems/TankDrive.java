@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
@@ -23,6 +24,7 @@ import frc.robot.OI;
 import frc.robot.commands.tankdrive.DriveWithJoystick;
 import frc.robot.commands.tankdrive.DriveWithJoysticks;
 import frc.robot.commands.tankdrive.DriveWithXbox;
+import frc.robot.commands.tankdrive.TuneDrivePID;
 
 public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private double offset;
@@ -31,6 +33,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
 
   private AHRS navx;
   private Encoder lEnc, rEnc;
+  private AnalogInput lUltra, rUltra;
   private PIDController yawPID;
   private PIDSourceType pidSourceType;
 
@@ -47,7 +50,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private static final double driveDistPP = (driveLinDist * driveReducNum) / (driveReducDen * driveCPR); //linear distance of the last stage arm per encoder pulse
 
   public TankDrive(WPI_VictorSPX fl, WPI_VictorSPX fr, WPI_VictorSPX ml, WPI_VictorSPX mr, WPI_VictorSPX rl, WPI_VictorSPX rr,
-      DoubleSolenoid Shifter, AHRS navx, Encoder LeftDriveEnc, Encoder RightDriveEnc) {
+      DoubleSolenoid Shifter, AHRS navx, Encoder LeftDriveEnc, Encoder RightDriveEnc, AnalogInput lUltra, AnalogInput rUltra) {
     FrontLeft = fl;
     FrontRight = fr;
     MiddleLeft = ml;
@@ -58,6 +61,8 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     rEnc = RightDriveEnc;
     this.navx = navx;
     this.Shifter = Shifter;
+    this.lUltra = lUltra;
+    this.rUltra = rUltra;
 
     this.lEnc.setDistancePerPulse(driveDistPP);
     this.rEnc.setDistancePerPulse(driveDistPP);
@@ -72,9 +77,21 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     shiftLow();
   }
 
+  public double getLeftUltrasonic() {
+    double mm = ((lUltra.getVoltage() / 0.00488)*5.0);
+    double inch  = mm /25.4;
+    return inch;
+  }
+
+  public double getRightUltrasonic() {
+    double mm = ((rUltra.getVoltage() / 0.00488)*5.0);
+    double inch  = mm /25.4;
+    return inch;
+  }
+
   public void set(double left, double right) {
     left = (normalizeOutput(left));
-    right = (normalizeOutput(right));
+    right = -(normalizeOutput(right));
 
     FrontLeft.set(ControlMode.PercentOutput, left);
     FrontRight.set(ControlMode.PercentOutput, right);
@@ -259,5 +276,6 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   public void initDefaultCommand() {
     OI oi = OI.getInstance();
     this.setDefaultCommand(new DriveWithJoystick(oi.drive, oi.leftJoystick));
+    // this.setDefaultCommand(new TuneDrivePID(oi.drive));
   }
 }
