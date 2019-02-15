@@ -22,9 +22,9 @@ public class TuneDrivePID extends Command {
 
     @Override
     protected void execute() {
-        double p = SmartDashboard.getNumber("Drive-P", 0.0);
-        double i = SmartDashboard.getNumber("Drive-I", 0.0);
-        double d = SmartDashboard.getNumber("Drive-D", 0.0);
+        double p = SmartDashboard.getNumber("Drive-P", drive.P);
+        double i = SmartDashboard.getNumber("Drive-I", drive.I);
+        double d = SmartDashboard.getNumber("Drive-D", drive.D);
         drive.setPID(p, i, d);
 
         double setpoint = SmartDashboard.getNumber("Drive-Setpoint", drive.getHeading());

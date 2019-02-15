@@ -120,6 +120,7 @@ public class Elevator extends PIDSubsystem {
   public void stop() {
     disable();
     set(0);
+    setArm(0);
   }
 
   public void setElevatorPID(double p, double i, double d) {

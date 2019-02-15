@@ -28,7 +28,7 @@ import frc.robot.commands.tankdrive.TuneDrivePID;
 
 public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private double offset;
-  private double P = 0.02, I = 0.0, D = 0.048;
+  public double P = 0.04, I = 0.0, D = 0.03;
   private double direction;
 
   private AHRS navx;
@@ -275,7 +275,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   @Override
   public void initDefaultCommand() {
     OI oi = OI.getInstance();
-    this.setDefaultCommand(new DriveWithJoystick(oi.drive, oi.leftJoystick));
+    this.setDefaultCommand(new DriveWithJoysticks(oi.drive, oi.leftJoystick, oi.rightJoystick));
     // this.setDefaultCommand(new TuneDrivePID(oi.drive));
   }
 }
