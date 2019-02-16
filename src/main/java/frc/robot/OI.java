@@ -19,6 +19,8 @@ import frc.robot.commands.elevator.ElevateCargoToMedium;
 import frc.robot.commands.elevator.ElevateToHatchHigh;
 import frc.robot.commands.elevator.ElevateToHatchLow;
 import frc.robot.commands.elevator.ElevateToHatchMiddle;
+import frc.robot.commands.elevator.ElevateWithJoystick;
+import frc.robot.commands.elevator.OverrideElevator;
 import frc.robot.commands.elevator.StopElevator;
 import frc.robot.commands.elevator.ToggleArm;
 import frc.robot.commands.intake.ReverseIntake;
@@ -250,6 +252,10 @@ public class OI {
 			JoystickButton toggleArms = new JoystickButton(switchBox, ButtonMap.SwitchBox.TOGGLE_ARMS);
 			toggleArms.whenPressed(new ToggleArm(elevator));
       toggleArms.whenReleased(new StopElevator(elevator));
+
+      JoystickButton overrideButton = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATOR_OVERIDE);
+      overrideButton.whenPressed(new StopElevator(elevator));
+      overrideButton.whenReleased(new OverrideElevator(switchBox, elevator));
       
 
     } catch(Exception ex) {

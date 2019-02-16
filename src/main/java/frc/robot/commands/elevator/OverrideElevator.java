@@ -11,15 +11,14 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Elevator;
 
-public class elevateWithJoystickTest extends Command {
+public class OverrideElevator extends Command {
   private Joystick stick;
   private Elevator elevator;
 
-  public elevateWithJoystickTest(Elevator elevator, Joystick stick) {
+  public OverrideElevator(Joystick stick, Elevator elevator) {
     this.stick = stick;
     this.elevator = elevator;
     requires(elevator);
-  
   }
 
   // Called just before this Command runs the first time
@@ -30,7 +29,6 @@ public class elevateWithJoystickTest extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-
     elevator.set(stick.getRawAxis(2));
     elevator.setArm(stick.getRawAxis(0));
     elevator.setIntake(stick.getRawAxis(1), stick.getRawAxis(1));
@@ -45,11 +43,13 @@ public class elevateWithJoystickTest extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    elevator.stop();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    elevator.stop();
   }
 }

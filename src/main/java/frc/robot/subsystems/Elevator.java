@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import frc.robot.OI;
-import frc.robot.commands.elevator.elevateWithJoystickTest;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -258,7 +257,8 @@ public class Elevator extends PIDSubsystem {
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
-    setDefaultCommand(new elevateWithJoystickTest(OI.getInstance().elevator, OI.getInstance().switchBox));
+    // setDefaultCommand(new elevateWithJoystickTest(OI.getInstance().elevator, OI.getInstance().switchBox));
+    // setDefaultCommand(new ElevateWithJoystick(OI.getInstance().elevator, OI.getInstance().switchBox));
   }
 
   public void set(double output) {
