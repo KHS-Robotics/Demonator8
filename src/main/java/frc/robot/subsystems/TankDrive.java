@@ -8,7 +8,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -21,10 +20,7 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.OI;
-import frc.robot.commands.tankdrive.DriveWithJoystick;
 import frc.robot.commands.tankdrive.DriveWithJoysticks;
-import frc.robot.commands.tankdrive.DriveWithXbox;
-import frc.robot.commands.tankdrive.TuneDrivePID;
 
 public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private double offset;

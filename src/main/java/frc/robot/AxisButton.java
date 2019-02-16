@@ -11,15 +11,14 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 
 public class AxisButton extends Button {
-    private double uLim;
-    private double lLim;
+    private double value, range;
     private Joystick stick;
     private int axis;
 
-    public AxisButton(double uLim, double lLim, Joystick stick, int axis) {
+    public AxisButton(double value, double range, Joystick stick, int axis) {
         super();
-        this.uLim = uLim;
-        this.lLim = lLim;
+        this.value = value;
+        this.range = range;
         this.stick = stick;
         this.axis = axis;
     }
@@ -27,6 +26,6 @@ public class AxisButton extends Button {
     @Override
     public boolean get() {
         double val = stick.getRawAxis(axis);
-        return val >= lLim && val < uLim;
+        return (value - range) < val && (value + range) > val;
     }
 }

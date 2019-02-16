@@ -63,6 +63,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Left Ultrasonic: ", drive.getLeftUltrasonic());
     SmartDashboard.putNumber("Right Ultrasonic: ", drive.getRightUltrasonic());
     SmartDashboard.putNumber("DriveHeading: ", drive.getHeading());
+
+    SmartDashboard.putNumber("Analog Button: ", OI.getInstance().switchBox.getRawAxis(3));
   }
 
   /**

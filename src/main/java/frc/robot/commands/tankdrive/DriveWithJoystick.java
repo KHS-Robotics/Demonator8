@@ -26,7 +26,7 @@ public class DriveWithJoystick extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double x = joystick.getX();
+    double x = -joystick.getX();
     double y = -joystick.getY();
     if(Math.abs(x) < DEADBAND) {
       x = 0;

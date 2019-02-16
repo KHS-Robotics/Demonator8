@@ -245,12 +245,12 @@ public class OI {
 			JoystickButton elevateHatchLow = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_LOW);
 			elevateHatchLow.whenPressed(new ElevateToHatchLow(elevator));
       elevateHatchLow.whenReleased(new StopElevator(elevator));
-      
+      */
       // Button to toggle arms
 			JoystickButton toggleArms = new JoystickButton(switchBox, ButtonMap.SwitchBox.TOGGLE_ARMS);
 			toggleArms.whenPressed(new ToggleArm(elevator));
       toggleArms.whenReleased(new StopElevator(elevator));
-      */
+      
 
     } catch(Exception ex) {
         Logger.error("Failed to initialize Elevator!", ex);
