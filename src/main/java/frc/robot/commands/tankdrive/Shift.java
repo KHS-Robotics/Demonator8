@@ -7,15 +7,11 @@
 
 package frc.robot.commands.tankdrive;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.subsystems.TankDrive;
 
 public class Shift extends InstantCommand
 {
-	private static final int DEBOUNCE_TIME_MS = 500;
-	private static long lastTimeUsed;
-	
 	private TankDrive drive;
 	
 	public Shift(TankDrive drive)
@@ -28,9 +24,6 @@ public class Shift extends InstantCommand
 	@Override
 	protected void initialize()
 	{
-		if(System.currentTimeMillis() - lastTimeUsed >= DEBOUNCE_TIME_MS)
-			drive.shift();
-		
-		lastTimeUsed = System.currentTimeMillis();
+		drive.shift();
 	}
 }

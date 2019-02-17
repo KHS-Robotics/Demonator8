@@ -44,13 +44,15 @@ public class ElevateWithJoystick extends Command {
 
 	@Override
 	protected void execute() {
-		double INPUT = joystick.getRawAxis(2);
+		final double INPUT = joystick.getRawAxis(2);
+		double output = INPUT;
 
-		if(elevator.isAtBottom()) {
-			INPUT = 0;
+		if(elevator.isAtBottom() && INPUT < 0) {
+			output = 0;
 		}
+		// if(elevator.getElevatorHeight() >= MAX_ELEVATOR_HEIGHT)
 
-		elevator.set(INPUT);
+		elevator.set(output);
 	}
 
 	@Override

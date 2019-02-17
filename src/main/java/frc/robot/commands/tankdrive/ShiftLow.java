@@ -12,9 +12,6 @@ import frc.robot.subsystems.TankDrive;
 
 public class ShiftLow extends InstantCommand
 {
-	private static final int DEBOUNCE_TIME_MS = 500;
-	private static long lastTimeUsed;
-	
 	private TankDrive drive;
 	
 	public ShiftLow(TankDrive drive)
@@ -27,9 +24,6 @@ public class ShiftLow extends InstantCommand
 	@Override
 	protected void initialize()
 	{
-		if(System.currentTimeMillis() - lastTimeUsed >= DEBOUNCE_TIME_MS)
-			drive.shiftLow();
-		
-		lastTimeUsed = System.currentTimeMillis();
+		drive.shiftLow();
 	}
 }

@@ -82,7 +82,6 @@ public class OI {
 
     leftJoystick = new Joystick(RobotMap.LEFT_DRIVE_STICK_PORT);
     rightJoystick = new Joystick(RobotMap.RIGHT_DRIVE_STICK_PORT);
-    // DriveController = new XboxController(RobotMap.XBOX_CONTROLLER);
     switchBox = new Joystick(RobotMap.SWITCH_BOX);
 
     initCargoIntake();
@@ -125,7 +124,6 @@ public class OI {
       drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx,
         LeftDriveEnc, RightDriveEnc, lUltra, rUltra);
 
-      
       try {
         udp = new UDPTracker(drive, "MoePi", 5810);
       } catch (SocketException ex) {
@@ -251,7 +249,6 @@ public class OI {
       // Button to toggle arms
 			JoystickButton toggleArms = new JoystickButton(switchBox, ButtonMap.SwitchBox.TOGGLE_ARMS);
 			toggleArms.whenPressed(new ToggleArm(elevator));
-      toggleArms.whenReleased(new StopElevator(elevator));
 
       JoystickButton overrideButton = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATOR_OVERIDE);
       overrideButton.whenPressed(new StopElevator(elevator));

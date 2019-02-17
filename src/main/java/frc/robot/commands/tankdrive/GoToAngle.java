@@ -8,27 +8,19 @@
 package frc.robot.commands.tankdrive;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.TankDrive;
 
-/**
- * Add your docs here.
- */
 public class GoToAngle extends InstantCommand {
     private static final int MAX_ON_TARGET_COUNT = 10;
     private int onTargetCounter;
     protected TankDrive drive;
     protected double angle;
-  /**
-   * Add your docs here.
-   */
+
   public GoToAngle(TankDrive drive, double angle) {
     super();
     this.drive = drive;
     this.angle = angle;
     this.requires(drive);
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
   // Called once when the command executes
@@ -37,6 +29,7 @@ public class GoToAngle extends InstantCommand {
     drive.setHeading(angle, 0);
     onTargetCounter = 0;
   }
+  
   @Override
   protected boolean isFinished(){
     if(drive.onTarget()) {
