@@ -7,10 +7,10 @@
 
 package frc.robot.commands.elevator;
 
-import frc.robot.commands.CommandBase;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Elevator;
 
-public class Elevate extends CommandBase {
+public class Elevate extends Command {
 
   protected final Elevator elevator;
 	private double height;
@@ -21,7 +21,7 @@ public class Elevate extends CommandBase {
 	 * @param height the desired height of the elevator
 	 */
 	public Elevate(Elevator elevator, double height) {
-		super(5);
+		super(2.5);
 		
 		this.elevator = elevator;
 		this.height = height;

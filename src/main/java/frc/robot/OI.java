@@ -8,6 +8,7 @@
 package frc.robot;
 
 import frc.robot.commands.StopSubsystem;
+import frc.robot.commands.climber.LowerAll;
 import frc.robot.commands.climber.LowerBack;
 import frc.robot.commands.climber.LowerFront;
 import frc.robot.commands.climber.RaiseBack;
@@ -19,12 +20,16 @@ import frc.robot.commands.elevator.ElevateCargoToMedium;
 import frc.robot.commands.elevator.ElevateToHatchHigh;
 import frc.robot.commands.elevator.ElevateToHatchLow;
 import frc.robot.commands.elevator.ElevateToHatchMiddle;
-import frc.robot.commands.elevator.ElevateWithJoystick;
 import frc.robot.commands.elevator.OverrideElevator;
 import frc.robot.commands.elevator.StopElevator;
 import frc.robot.commands.elevator.ToggleArm;
 import frc.robot.commands.intake.ReverseIntake;
 import frc.robot.commands.intake.StartIntake;
+import frc.robot.commands.tankdrive.DriveStraightJoystick;
+import frc.robot.commands.tankdrive.Shift;
+import frc.robot.commands.tankdrive.ShiftHigh;
+import frc.robot.commands.tankdrive.ShiftLow;
+import frc.robot.commands.tuning.TuneDrivePID;
 import frc.robot.logging.Logger;
 
 import java.net.SocketException;
@@ -59,7 +64,7 @@ public class OI {
   private Encoder LeftDriveEnc, RightDriveEnc;
   private AnalogInput rUltra, lUltra;
 
-  private WPI_VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
+  private WPI_VictorSPX Left1, Left2, Right1, Right2;
   private Spark intake;
   private DoubleSolenoid Shifter;
 
@@ -114,18 +119,23 @@ public class OI {
       rUltra = new AnalogInput(RobotMap.ULTRASONIC_R);
 
       Shifter = new DoubleSolenoid(RobotMap.SHIFT_FORWARD_CHANNEL, RobotMap.SHIFT_REVERSE_CHANNEL);
-      FrontLeft = new WPI_VictorSPX(RobotMap.FRONT_LEFT);
-      FrontRight = new WPI_VictorSPX(RobotMap.FRONT_RIGHT);
-      MiddleLeft = new WPI_VictorSPX(RobotMap.MIDDLE_LEFT);
-      MiddleRight = new WPI_VictorSPX(RobotMap.MIDDLE_RIGHT);
-      RearLeft = new WPI_VictorSPX(RobotMap.REAR_LEFT);
-      RearRight = new WPI_VictorSPX(RobotMap.REAR_RIGHT);
+      Left1 = new WPI_VictorSPX(RobotMap.DRIVE_LEFT1);
+      Left2 = new WPI_VictorSPX(RobotMap.DRIVE_LEFT2);
+      Right1 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT1);
+      Right2 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT2);
 
-      drive = new TankDrive(FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight, Shifter, navx,
-        LeftDriveEnc, RightDriveEnc, lUltra, rUltra);
+      drive = new TankDrive(Left1, Left2, Right1, Right2, Shifter, navx, LeftDriveEnc, RightDriveEnc, lUltra, rUltra);
+
+      JoystickButton shift = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.SHIFT);
+      shift.whenPressed(new ShiftHigh(drive));
+      shift.whenReleased(new ShiftLow(drive));
+
+      JoystickButton goStraight = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.GO_STRAIGHT);
+      goStraight.whenPressed(new DriveStraightJoystick(drive, leftJoystick));
+      goStraight.whenReleased(new StopSubsystem(drive));
 
       try {
-        udp = new UDPTracker(drive, "MoePi", 5810);
+        udp = new UDPTracker(drive);
       } catch (SocketException ex) {
         ex.printStackTrace();
       }
@@ -191,6 +201,10 @@ public class OI {
       lowerBackClimb.whenPressed(new LowerBack(climber));
       lowerBackClimb.whenReleased(new StopSubsystem(climber));
 
+      JoystickButton climbAll = new JoystickButton(switchBox, 4);
+      climbAll.whenPressed(new LowerAll(climber));
+      climbAll.whenReleased(new StopSubsystem(climber));
+
       JoystickButton climbDrive = new JoystickButton(switchBox, 1);
       climbDrive.whenPressed(new StartClimbDrive(climber, 1.0));
       climbDrive.whenReleased(new StopSubsystem(climber));
@@ -215,34 +229,34 @@ public class OI {
       elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_SOLENOID_B);
 
       elevator = new Elevator(elevatorMotor, elevatorAccL, elevatorAccR, arm, elevatorLS, elevatorEncoder, elevatorSolenoid);
-    /*
+      /*
       // Button to set the elevator to the high cargo port
-			JoystickButton elevateCargoHigh = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_HIGH);
+			AxisButton elevateCargoHigh = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_HIGH, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateCargoHigh.whenPressed(new ElevateCargoToHigh(elevator));
 			elevateCargoHigh.whenReleased(new StopElevator(elevator));
 
 			// Button to set the elevator to the medium cargo port
-			JoystickButton elevateCargoMedium = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_MEDIUM);
+			AxisButton elevateCargoMedium = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_MEDIUM, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateCargoMedium.whenPressed(new ElevateCargoToMedium(elevator));
 			elevateCargoMedium.whenReleased(new StopElevator(elevator));
 			
 			// Button to set the elevator to the low cargo part
-			JoystickButton elevateCargoLow = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_LOW);
+			AxisButton elevateCargoLow = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_LOW, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateCargoLow.whenPressed(new ElevateCargoToLow(elevator));
 			elevateCargoLow.whenReleased(new StopElevator(elevator));
       
       // Button to set the elevator to the high hatch port
-			JoystickButton elevateHatchHigh = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_HIGH);
+			AxisButton elevateHatchHigh = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_HIGH, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateHatchHigh.whenPressed(new ElevateToHatchHigh(elevator));
 			elevateHatchHigh.whenReleased(new StopElevator(elevator));
 
 			// Button to set the elevator to the medium hatch port
-			JoystickButton elevateHatchMedium = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_MEDIUM);
+			AxisButton elevateHatchMedium = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_MEDIUM, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateHatchMedium.whenPressed(new ElevateToHatchMiddle(elevator));
 			elevateHatchMedium.whenReleased(new StopElevator(elevator));
 			
 			// Button to set the elevator to the low hatch part
-			JoystickButton elevateHatchLow = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_LOW);
+			AxisButton elevateHatchLow = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_LOW, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateHatchLow.whenPressed(new ElevateToHatchLow(elevator));
       elevateHatchLow.whenReleased(new StopElevator(elevator));
       */
@@ -250,8 +264,9 @@ public class OI {
 			JoystickButton toggleArms = new JoystickButton(switchBox, ButtonMap.SwitchBox.TOGGLE_ARMS);
 			toggleArms.whenPressed(new ToggleArm(elevator));
 
+      // Button to use overrided elevator controls
       JoystickButton overrideButton = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATOR_OVERIDE);
-      overrideButton.whenPressed(new StopElevator(elevator));
+      overrideButton.whenPressed(new StopElevator(elevator)); // Button is inverted
       overrideButton.whenReleased(new OverrideElevator(switchBox, elevator));
       
 

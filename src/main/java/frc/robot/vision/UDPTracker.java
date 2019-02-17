@@ -14,6 +14,7 @@ import frc.robot.subsystems.TankDrive;
  * https://github.com/KHS-Robotics/MoePi
  */
 public class UDPTracker implements Runnable {
+	public static final int MOEPI_UDP_PORT = 5810;
 	// virtual screen dimensions
     public static final double PIXEL_WIDTH = 640, PIXEL_HEIGHT = 480;
     // Field of View
@@ -49,6 +50,10 @@ public class UDPTracker implements Runnable {
 		socket = new DatagramSocket(port);
 		boxVector = new ArrayList<Box>();
 		new Thread(this).start();
+	}
+
+	public UDPTracker(TankDrive drive) throws SocketException {
+		this(drive, "MoePi", MOEPI_UDP_PORT);
 	}
 
 	@Override

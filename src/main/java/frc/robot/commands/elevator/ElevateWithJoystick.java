@@ -36,7 +36,7 @@ public class ElevateWithJoystick extends Command {
 
 	@Override
 	protected void initialize() {
-		if(!elevator.isAtBottom()) {
+		if(!elevator.getLS()) {
 			elevator.setSetpoint(elevator.getPosition());
 			elevator.enable();
 		}
@@ -47,7 +47,7 @@ public class ElevateWithJoystick extends Command {
 		final double INPUT = joystick.getRawAxis(2);
 		double output = INPUT;
 
-		if(elevator.isAtBottom() && INPUT < 0) {
+		if(elevator.getLS() && INPUT < 0) {
 			output = 0;
 		}
 		// if(elevator.getElevatorHeight() >= MAX_ELEVATOR_HEIGHT)

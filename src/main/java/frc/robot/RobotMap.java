@@ -17,13 +17,10 @@ public class RobotMap {
   // public static final int XBOX_CONTROLLER = 0;
 
   // Tankdrive
-  public static final int FRONT_LEFT = 13;
-  public static final int MIDDLE_LEFT = 14;
-  public static final int REAR_LEFT = 15;
-
-  public static final int FRONT_RIGHT = 0;
-  public static final int MIDDLE_RIGHT = 1;
-  public static final int REAR_RIGHT = 2;
+  public static final int DRIVE_LEFT1 = 14;
+  public static final int DRIVE_LEFT2 = 15;
+  public static final int DRIVE_RIGHT1 = 0;
+  public static final int DRIVE_RIGHT2 = 1;
 
   public static final int ULTRASONIC_L = 0;
   public static final int ULTRASONIC_R = 1;

@@ -7,17 +7,17 @@
 
 package frc.robot.commands.tankdrive;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.TankDrive;
 
-public class GoToAngle extends InstantCommand {
-    private static final int MAX_ON_TARGET_COUNT = 10;
+public class GoToAngle extends Command {
+    private static final int MAX_ON_TARGET_COUNT = 4;
     private int onTargetCounter;
     protected TankDrive drive;
     protected double angle;
 
   public GoToAngle(TankDrive drive, double angle) {
-    super();
+    super(1.5);
     this.drive = drive;
     this.angle = angle;
     this.requires(drive);

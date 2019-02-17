@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Left Ultrasonic: ", drive.getLeftUltrasonic());
     SmartDashboard.putNumber("Right Ultrasonic: ", drive.getRightUltrasonic());
     SmartDashboard.putNumber("DriveHeading: ", drive.getHeading());
+    SmartDashboard.putBoolean("Elevator Limit: ", elevator.getLS());
 
     SmartDashboard.putNumber("Analog Button: ", OI.getInstance().switchBox.getRawAxis(3));
   }
@@ -78,7 +79,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    smartDash();
+    if(OI.getInstance().leftJoystick.getRawButton(2)) {
+      OI.getInstance().drive.resetNavx();
+    } 
   }
 
   /**

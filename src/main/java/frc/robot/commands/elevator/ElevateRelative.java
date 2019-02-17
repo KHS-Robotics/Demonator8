@@ -34,6 +34,6 @@ public class ElevateRelative extends Elevate {
 
 	@Override
 	protected boolean isFinished() {
-		return super.isFinished() || elevator.isAtBottom();
+		return super.isFinished() || elevator.getLS();
 	}
 }

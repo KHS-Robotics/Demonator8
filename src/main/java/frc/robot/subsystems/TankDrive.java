@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -20,11 +19,12 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.OI;
+import frc.robot.commands.tankdrive.DriveWithJoystick;
 import frc.robot.commands.tankdrive.DriveWithJoysticks;
 
 public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private double offset;
-  public double P = 0.04, I = 0.0, D = 0.03;
+  public static final double lowGearP = 0.04, lowGearI = 0.0, lowGearD = 0.02, highGearP = 0.055, highGearI = 0.0, highGearD = 0.1;
   private double direction;
 
   private AHRS navx;
@@ -34,9 +34,9 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private PIDSourceType pidSourceType;
 
   private DoubleSolenoid Shifter;
-  private WPI_VictorSPX FrontLeft, FrontRight, MiddleLeft, MiddleRight, RearLeft, RearRight;
+  private WPI_VictorSPX left1, left2, right1, right2;
 
-  private static final Value HIGH_GEAR = Value.kForward, LOW_GEAR = Value.kReverse;
+  private static final Value HIGH_GEAR = Value.kReverse, LOW_GEAR = Value.kForward;
   private Value currentGear;
 
   private static final double driveLinDist = Math.PI * 6.0; //inches of circ of 6in wheel
@@ -45,14 +45,11 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private static final int driveCPR = 64; //counts per revolution of motor
   private static final double driveDistPP = (driveLinDist * driveReducNum) / (driveReducDen * driveCPR); //linear distance of the last stage arm per encoder pulse
 
-  public TankDrive(WPI_VictorSPX fl, WPI_VictorSPX fr, WPI_VictorSPX ml, WPI_VictorSPX mr, WPI_VictorSPX rl, WPI_VictorSPX rr,
-      DoubleSolenoid Shifter, AHRS navx, Encoder LeftDriveEnc, Encoder RightDriveEnc, AnalogInput lUltra, AnalogInput rUltra) {
-    FrontLeft = fl;
-    FrontRight = fr;
-    MiddleLeft = ml;
-    MiddleRight = mr;
-    RearLeft = rl;
-    RearRight = rr;
+  public TankDrive(WPI_VictorSPX left1, WPI_VictorSPX left2, WPI_VictorSPX right1, WPI_VictorSPX right2, DoubleSolenoid Shifter, AHRS navx, Encoder LeftDriveEnc, Encoder RightDriveEnc, AnalogInput lUltra, AnalogInput rUltra) {
+    this.left1 = left1;
+    this.left2 = left2;
+    this.right1 = right1;
+    this.right2 = right2;
     lEnc = LeftDriveEnc;
     rEnc = RightDriveEnc;
     this.navx = navx;
@@ -64,9 +61,9 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     this.rEnc.setDistancePerPulse(driveDistPP);
 
     setPIDSourceType(PIDSourceType.kDisplacement);
-    yawPID = new PIDController(P, I, D, this, this);
+    yawPID = new PIDController(lowGearP, lowGearI, lowGearD, this, this);
     yawPID.setInputRange(-180.0, 180.0);
-    yawPID.setOutputRange(-1.0, 1.0);
+    yawPID.setOutputRange(-.8, .8);
     yawPID.setContinuous();
     yawPID.setAbsoluteTolerance(0.5);
     disablePID();
@@ -86,15 +83,13 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   }
 
   public void set(double left, double right) {
-    left = (normalizeOutput(left));
-    right = -(normalizeOutput(right));
+    left = -(normalizeOutput(left));
+    right = (normalizeOutput(right));
 
-    FrontLeft.set(ControlMode.PercentOutput, left);
-    FrontRight.set(ControlMode.PercentOutput, right);
-    MiddleLeft.set(ControlMode.PercentOutput, left);
-    MiddleRight.set(ControlMode.PercentOutput, right);
-    RearLeft.set(ControlMode.PercentOutput, left);
-    RearRight.set(ControlMode.PercentOutput, right);
+    left1.set(left);
+    left2.set(left);
+    right1.set(right);
+    right2.set(right);
   }
 
   /**
@@ -130,6 +125,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     }
     Shifter.set(LOW_GEAR);
     currentGear = LOW_GEAR;
+    setPID(lowGearP, lowGearI, lowGearD);
   }
 
   public void shiftHigh() {
@@ -138,6 +134,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     }
     Shifter.set(HIGH_GEAR);
     currentGear = HIGH_GEAR;
+    setPID(highGearP, highGearI, highGearD);
   }
 
   public void shift() {
@@ -221,7 +218,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     while (yaw >= 180) {
       yaw -= 360;
     }
-    while (yaw <= 180) {
+    while (yaw <= -180) {
       yaw += 360;
     }
     return yaw;
@@ -271,7 +268,6 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   @Override
   public void initDefaultCommand() {
     OI oi = OI.getInstance();
-    this.setDefaultCommand(new DriveWithJoysticks(oi.drive, oi.leftJoystick, oi.rightJoystick));
-    // this.setDefaultCommand(new TuneDrivePID(oi.drive));
+    this.setDefaultCommand(new DriveWithJoystick(oi.drive, oi.leftJoystick));
   }
 }

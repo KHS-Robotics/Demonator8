@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.TankDrive;
 
 public class DriveWithJoystick extends Command {
-  private static final double DEADBAND = 0.05;
+  private static final double DEADBAND = 0.08;
 
   private Joystick joystick;
   private TankDrive drive;
@@ -26,7 +26,7 @@ public class DriveWithJoystick extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double x = -joystick.getX();
+    double x = joystick.getX();
     double y = -joystick.getY();
     if(Math.abs(x) < DEADBAND) {
       x = 0;

@@ -38,18 +38,25 @@ public class ButtonMap
         public static final int ROTATE_ARM_BACK = 0;
 		public static final int RELEASE = 0;
 		public static final int RESET = 0;
-		public static final int ELEVATE_CARGO_HIGH = 0;
-		public static final int ELEVATE_CARGO_MEDIUM = 0;
-		public static final int ELEVATE_CARGO_LOW = 0;
-        public static final int ELEVATE_HATCH_HIGH = 0;
-        public static final int ELEVATE_HATCH_MEDIUM = 0;
-        public static final int ELEVATE_HATCH_LOW = 0;
+		public static final double ELEVATE_CARGO_HIGH = -0.65;
+		public static final double ELEVATE_CARGO_MEDIUM = 0;
+		public static final double ELEVATE_CARGO_LOW = 0.35;
+        public static final double ELEVATE_HATCH_HIGH = -0.21;
+        public static final double ELEVATE_HATCH_MEDIUM = -0.375;
+        public static final double ELEVATE_HATCH_LOW = 0.67;
 		public static final int ELEVATOR_OVERIDE = 11;
 		public static final int TUNE_PID = 0;
 		public static final int F_CLIMBER_RAISE = 8;
 		public static final int F_CLIMBER_LOWER = 7;
 		public static final int B_CLIMBER_RAISE = 10;
 		public static final int B_CLIMBER_LOWER = 9;
+
+		public static final int BUTTON_AXIS = 3;
+	}
+	public static class LeftJoystick
+	{
+		public static final int SHIFT = 1;
+		public static final int GO_STRAIGHT = 2;
 	}
 
 	/**

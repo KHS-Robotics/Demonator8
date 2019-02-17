@@ -29,7 +29,7 @@ public class OverrideElevator extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    elevator.set(stick.getRawAxis(2));
+    elevator.set(-stick.getRawAxis(2));
     elevator.setArm(stick.getRawAxis(0));
     elevator.setIntake(stick.getRawAxis(1), stick.getRawAxis(1));
   }

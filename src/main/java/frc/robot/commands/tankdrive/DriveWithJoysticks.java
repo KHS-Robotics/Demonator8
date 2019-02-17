@@ -12,8 +12,9 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.TankDrive;
 
 public class DriveWithJoysticks extends Command {
-  TankDrive drive;
-  Joystick left, right;
+  private static final double SENSITIVITY = 0.25; // [0, 1]; 0 for linear, 1 for cubic
+  private TankDrive drive;
+  private Joystick left, right;
   
   public DriveWithJoysticks(TankDrive drive, Joystick left, Joystick right) {
     this.drive = drive;
@@ -24,7 +25,7 @@ public class DriveWithJoysticks extends Command {
   
   @Override
   protected void execute() {
-    drive.set(-left.getY(), -right.getY());
+    drive.set(sensitivity(-left.getY()), sensitivity(-right.getY()));
   }
 
   @Override
@@ -36,8 +37,11 @@ public class DriveWithJoysticks extends Command {
   protected void initialize() {}
 
   @Override
-  protected void end() {}
+  protected void end() {
+    drive.stop();
+  }
 
-  @Override
-  protected void interrupted() {}
+  private static double sensitivity(double input) {
+    return SENSITIVITY * Math.pow(input, 3) + (1 - SENSITIVITY) * input;
+  }
 }

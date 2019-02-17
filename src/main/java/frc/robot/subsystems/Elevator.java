@@ -21,7 +21,7 @@ import com.revrobotics.CANSparkMax;
 
 public class Elevator extends PIDSubsystem {
   private double pElevator, iElevator, dElevator, pArm, iArm, dArm;
-  private boolean override, shouldReset;
+  private boolean shouldReset;
   private CANPIDController armPID;
   
   private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
@@ -272,10 +272,6 @@ public class Elevator extends PIDSubsystem {
     arm.set(output);
   }
 
-  public void setOverride(boolean flag) {
-    override = flag;
-  }
-
   /**
    * Resets the elevator's encoder
    */
@@ -285,15 +281,6 @@ public class Elevator extends PIDSubsystem {
 
   public void setResetFlag(boolean flag) {
     shouldReset = flag;
-  }
-
-  /**
-   * Gets if the elevator is at the bottom
-   * 
-   * @return true if the elevator is at the bottom, false otherwise
-   */
-  public boolean isAtBottom() {
-    return getLS() && shouldReset;
   }
 
   public boolean getLS() {
