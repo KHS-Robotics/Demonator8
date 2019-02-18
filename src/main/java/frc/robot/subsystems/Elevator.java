@@ -19,6 +19,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class Elevator extends PIDSubsystem {
@@ -301,11 +302,7 @@ public class Elevator extends PIDSubsystem {
     return ls.get();
   }
 
-  public void enableArmPID() {
-    //armPID.enable();
-  }
-
   public void setArmRotation(double angle) {
-    enableArmPID();
+    armPID.setReference(angle, ControlType.kPosition);
   }
 }
