@@ -26,10 +26,11 @@ import frc.robot.commands.elevator.ToggleArm;
 import frc.robot.commands.intake.ReverseIntake;
 import frc.robot.commands.intake.StartIntake;
 import frc.robot.commands.tankdrive.DriveStraightJoystick;
+import frc.robot.commands.tankdrive.HighGearGoStraight;
 import frc.robot.commands.tankdrive.Shift;
 import frc.robot.commands.tankdrive.ShiftHigh;
 import frc.robot.commands.tankdrive.ShiftLow;
-import frc.robot.commands.tuning.TuneDrivePID;
+import frc.robot.commands.tuning.TuneArmPID;
 import frc.robot.logging.Logger;
 
 import java.net.SocketException;
@@ -64,14 +65,14 @@ public class OI {
   private Encoder LeftDriveEnc, RightDriveEnc;
   private AnalogInput rUltra, lUltra;
 
-  private WPI_VictorSPX Left1, Left2, Right1, Right2;
+  private WPI_VictorSPX Left1, Left2, Right1, Right2, elevator1, elevator2;
   private Spark intake;
   private DoubleSolenoid Shifter;
 
   private Spark fClimb, bClimb, climbDriveL, climbDriveR;
   private DigitalInput frontLS, backLS;
 
-  private Spark elevatorMotor, elevatorAccL, elevatorAccR;
+  private Spark elevatorAccL, elevatorAccR;
   private DigitalInput elevatorLS;
   private Encoder elevatorEncoder;
   private DoubleSolenoid elevatorSolenoid;
@@ -126,14 +127,18 @@ public class OI {
 
       drive = new TankDrive(Left1, Left2, Right1, Right2, Shifter, navx, LeftDriveEnc, RightDriveEnc, lUltra, rUltra);
 
-      JoystickButton shift = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.SHIFT);
+      JoystickButton shift = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.TOGGLE_GEAR);
       shift.whenPressed(new ShiftHigh(drive));
       shift.whenReleased(new ShiftLow(drive));
 
-      JoystickButton goStraight = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.GO_STRAIGHT);
-      goStraight.whenPressed(new DriveStraightJoystick(drive, leftJoystick));
+      JoystickButton goStraight = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.GO_STRAIGHT);
+      goStraight.whenPressed(new DriveStraightJoystick(drive, rightJoystick));
       goStraight.whenReleased(new StopSubsystem(drive));
 
+      JoystickButton highGearGoStraightButton = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.HIGHGEAR_GO_STRAIGHT);
+      highGearGoStraightButton.whenPressed(new HighGearGoStraight(drive, rightJoystick));
+      highGearGoStraightButton.whenReleased(new StopSubsystem(drive));
+      
       try {
         udp = new UDPTracker(drive);
       } catch (SocketException ex) {
@@ -220,7 +225,9 @@ public class OI {
 
       Logger.info("Initializing Elevator...");
 
-      elevatorMotor = new Spark(RobotMap.ELEVATOR_MOTOR);
+      elevator1 = new WPI_VictorSPX(RobotMap.ELEVATOR_MOTOR1);
+      elevator2 = new WPI_VictorSPX(RobotMap.ELEVATOR_MOTOR2);
+
       arm = new CANSparkMax(RobotMap.ARM, MotorType.kBrushless);
       elevatorAccL = new Spark(RobotMap.ELEVATOR_ACC_L);
       elevatorAccR = new Spark(RobotMap.ELEVATOR_ACC_R);
@@ -228,7 +235,7 @@ public class OI {
       elevatorEncoder = new Encoder(RobotMap.ELEVATOR_ENCODER_A, RobotMap.ELEVATOR_ENCODER_B);
       elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_SOLENOID_B);
 
-      elevator = new Elevator(elevatorMotor, elevatorAccL, elevatorAccR, arm, elevatorLS, elevatorEncoder, elevatorSolenoid);
+      elevator = new Elevator(elevator1, elevator2, elevatorAccL, elevatorAccR, arm, elevatorLS, elevatorEncoder, elevatorSolenoid);
       /*
       // Button to set the elevator to the high cargo port
 			AxisButton elevateCargoHigh = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_HIGH, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
@@ -269,6 +276,9 @@ public class OI {
       overrideButton.whenPressed(new StopElevator(elevator)); // Button is inverted
       overrideButton.whenReleased(new OverrideElevator(switchBox, elevator));
       
+      JoystickButton tuneArm = new JoystickButton(switchBox, 2);
+      tuneArm.whenPressed(new TuneArmPID(elevator));
+      tuneArm.whenReleased(new StopElevator(elevator));
 
     } catch(Exception ex) {
         Logger.error("Failed to initialize Elevator!", ex);

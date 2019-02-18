@@ -35,6 +35,9 @@ public class GoToAngle extends Command {
     if(drive.onTarget()) {
       onTargetCounter++;
     }
+    else {
+      onTargetCounter = 0;
+    }
     return onTargetCounter > MAX_ON_TARGET_COUNT || this.isTimedOut();
   }
   @Override

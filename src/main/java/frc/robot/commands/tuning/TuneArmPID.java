@@ -24,7 +24,8 @@ public class TuneArmPID extends Command {
         SmartDashboard.putNumber("Arm-P", 0);
         SmartDashboard.putNumber("Arm-I", 0);
         SmartDashboard.putNumber("Arm-D", 0);
-        SmartDashboard.putNumber("Arm-Setpoint", 0);
+        SmartDashboard.putNumber("Arm-IZone", 0);
+        SmartDashboard.putNumber("Arm-Setpoint", -34);
     }
 
     @Override
@@ -32,7 +33,8 @@ public class TuneArmPID extends Command {
         double p = SmartDashboard.getNumber("Arm-P", 0.0);
         double i = SmartDashboard.getNumber("Arm-I", 0.0);
         double d = SmartDashboard.getNumber("Arm-D", 0.0);
-        elevator.setArmPID(p, i, d);
+        double iZone = SmartDashboard.getNumber("Arm-IZone", 0.0);
+        elevator.setArmPID(p, i, d, iZone);
 
         //double setpoint = SmartDashboard.getNumber("Arm-Setpoint", elevator.getArmRotation());
         //elevator.setArmRotation(setpoint, 0);

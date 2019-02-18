@@ -46,12 +46,9 @@ public class Climber extends SubsystemBase {
     {
       back = 0;
     }*/
-    front *= 0.5;
-    back *= 0.5;
-    drive *= 0.5;
     
-    fClimb.set(front);
-    bClimb.set(back);
+    fClimb.set(-front);
+    bClimb.set(-back);
     driveR.set(-drive);
     driveL.set(drive);
   }

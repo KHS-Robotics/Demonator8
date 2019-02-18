@@ -5,23 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.elevator;
+package frc.robot.commands.tankdrive;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.subsystems.Elevator;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.subsystems.TankDrive;
 
-public class StopRelease extends InstantCommand {
-  private Elevator elevator;
-
-  public StopRelease(Elevator elevator) {
-    super();
-    this.elevator = elevator;
-    this.requires(elevator);
+public class HighGearGoStraight extends CommandGroup {
+  public HighGearGoStraight(TankDrive drive, Joystick stick) {
+    addSequential(new ShiftHigh(drive));
+    addSequential(new DriveStraightJoystick(drive, stick));
   }
-
-  @Override
-  protected void initialize() {
-    elevator.setIntake(0, 0);
-  }
-
 }

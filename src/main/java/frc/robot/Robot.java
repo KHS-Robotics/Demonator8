@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.logging.DemonDashboard;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.TankDrive;
 
@@ -36,8 +37,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_oi = OI.getInstance();
   
-    // chooser.addOption("My Auto", new MyAutoCommand());
-    SmartDashboard.putData("Auto mode", m_chooser);
+    DemonDashboard.start();
   }
 
   /**
@@ -50,22 +50,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    smartDash();
-  }
-
-  public void smartDash() {
-    TankDrive drive = OI.getInstance().drive;
-    Elevator elevator = OI.getInstance().elevator;
-    SmartDashboard.putNumber("Arm Degrees: ", elevator.getArmDegree());
-    SmartDashboard.putNumber("Left Distance: ", drive.getLeftDistance());
-    SmartDashboard.putNumber("Right Distance: ", drive.getRightDistance());
-    SmartDashboard.putNumber("Elevator Height: ", elevator.getElevatorHeight());
-    SmartDashboard.putNumber("Left Ultrasonic: ", drive.getLeftUltrasonic());
-    SmartDashboard.putNumber("Right Ultrasonic: ", drive.getRightUltrasonic());
-    SmartDashboard.putNumber("DriveHeading: ", drive.getHeading());
-    SmartDashboard.putBoolean("Elevator Limit: ", elevator.getLS());
-
-    SmartDashboard.putNumber("Analog Button: ", OI.getInstance().switchBox.getRawAxis(3));
   }
 
   /**

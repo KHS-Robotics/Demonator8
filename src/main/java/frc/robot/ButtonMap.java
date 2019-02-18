@@ -12,22 +12,11 @@ package frc.robot;
  */
 public class ButtonMap 
 {
-	/**
-	 * Xbox Controller to control the Swerve Drive
-	 */
-	public static class DriveController
-	{
-		public static final int GO_STRAIGHT = XboxButton.kBumperRight.value;
-		public static final int GO_TO_ZERO = XboxButton.kY.value;
-		public static final int GO_TO_LEFT = XboxButton.kX.value;
-		public static final int GO_TO_RIGHT = XboxButton.kB.value;
-		public static final int GO_TO_180 = XboxButton.kA.value;
-	}
-	
+
 	/**
 	 * Switch Box to control the Accumualtor. Note that
-	 * switches 3, 7, 8, 9, and 12 are reversed. Meaning,
-	 * they read true when flipped down and false when flipped up.
+	 * switch 11 is reversed. Meaning,
+	 * it reads true when flipped down and false when flipped up.
 	 */
 	public static class SwitchBox
 	{
@@ -53,10 +42,17 @@ public class ButtonMap
 
 		public static final int BUTTON_AXIS = 3;
 	}
+
+	public static class RightJoystick
+	{
+		public static final int HIGHGEAR_GO_STRAIGHT = 1;
+		public static final int TOGGLE_GEAR = 5;
+		public static final int GO_STRAIGHT = 4;
+	}
+
 	public static class LeftJoystick
 	{
-		public static final int SHIFT = 1;
-		public static final int GO_STRAIGHT = 2;
+		public static final int LIFT_ALL = 1;
 	}
 
 	/**
