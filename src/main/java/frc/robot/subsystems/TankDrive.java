@@ -24,7 +24,7 @@ import frc.robot.commands.tankdrive.DriveWithJoysticks;
 
 public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private double offset;
-  public static final double lowGearP = 0.04, lowGearI = 0.0, lowGearD = 0.02, highGearP = 0.055, highGearI = 0.0, highGearD = 0.1;
+  public static final double lowGearP = 0.04, lowGearI = 0.0, lowGearD = 0.025, highGearP = 0.06, highGearI = 0.0, highGearD = 0.14;
   private double direction;
 
   private AHRS navx;
@@ -63,7 +63,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     setPIDSourceType(PIDSourceType.kDisplacement);
     yawPID = new PIDController(lowGearP, lowGearI, lowGearD, this, this);
     yawPID.setInputRange(-180.0, 180.0);
-    yawPID.setOutputRange(-.8, .8);
+    yawPID.setOutputRange(-1, 1);
     yawPID.setContinuous();
     yawPID.setAbsoluteTolerance(0.5);
     disablePID();

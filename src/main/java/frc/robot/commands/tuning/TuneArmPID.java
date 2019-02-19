@@ -25,7 +25,7 @@ public class TuneArmPID extends Command {
         SmartDashboard.putNumber("Arm-I", 0);
         SmartDashboard.putNumber("Arm-D", 0);
         SmartDashboard.putNumber("Arm-IZone", 0);
-        SmartDashboard.putNumber("Arm-Setpoint", -34);
+        SmartDashboard.putNumber("Arm-Setpoint", 0);
     }
 
     @Override

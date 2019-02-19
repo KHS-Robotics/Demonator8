@@ -72,7 +72,6 @@ public class DemonDashboard {
                         SmartDashboard.putNumber("Elev-Height", oi.elevator.getElevatorHeight());
                         SmartDashboard.putBoolean("Elev-LS", oi.elevator.getLS());
 
-                        SmartDashboard.putNumber("Arm Degrees", oi.elevator.getArmDegree());
                         SmartDashboard.putNumber("Arm Rotation", oi.elevator.getArmRotation());
                     }
 

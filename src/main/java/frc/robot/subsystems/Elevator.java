@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
-import frc.robot.OI;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANEncoder;
@@ -65,17 +64,14 @@ public class Elevator extends PIDSubsystem {
     this.encoder.setDistancePerPulse(eleDistPP);
 
     this.armPID = new CANPIDController(arm);
-    this.armPID.setOutputRange(-1, 1);
+    this.armPID.setOutputRange(-0.67, 0.67);
 
     this.armEncoder = this.arm.getEncoder();
+    this.armEncoder.setPositionConversionFactor(armDegPR);
   }
 
   public double getArmRotation() {
     return armEncoder.getPosition() ;
-  }
-
-  public double getArmDegree() {
-    return getArmRotation() * armDegPR;
   }
 
   public void setIntake(double l, double r) {
@@ -130,7 +126,6 @@ public class Elevator extends PIDSubsystem {
   public void stop() {
     disable();
     set(0);
-    setArm(0);
     arm.stopMotor();
   }
 
@@ -279,7 +274,7 @@ public class Elevator extends PIDSubsystem {
     // if (!override && getLS() && output < 0)
       // output = 0;
 
-    elevator1.set(output);
+    elevator1.set(-output);
     elevator2.set(output);
   }
 

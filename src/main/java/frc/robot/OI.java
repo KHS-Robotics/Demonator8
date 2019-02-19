@@ -26,11 +26,12 @@ import frc.robot.commands.elevator.ToggleArm;
 import frc.robot.commands.intake.ReverseIntake;
 import frc.robot.commands.intake.StartIntake;
 import frc.robot.commands.tankdrive.DriveStraightJoystick;
-import frc.robot.commands.tankdrive.HighGearGoStraight;
 import frc.robot.commands.tankdrive.Shift;
 import frc.robot.commands.tankdrive.ShiftHigh;
+import frc.robot.commands.tankdrive.ShiftHighDriveStraight;
 import frc.robot.commands.tankdrive.ShiftLow;
 import frc.robot.commands.tuning.TuneArmPID;
+import frc.robot.commands.tuning.TuneDrivePID;
 import frc.robot.logging.Logger;
 
 import java.net.SocketException;
@@ -136,8 +137,12 @@ public class OI {
       goStraight.whenReleased(new StopSubsystem(drive));
 
       JoystickButton highGearGoStraightButton = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.HIGHGEAR_GO_STRAIGHT);
-      highGearGoStraightButton.whenPressed(new HighGearGoStraight(drive, rightJoystick));
+      highGearGoStraightButton.whenPressed(new ShiftHighDriveStraight(rightJoystick, drive));
       highGearGoStraightButton.whenReleased(new StopSubsystem(drive));
+
+      JoystickButton tunedrivePIDButton = new JoystickButton(switchBox, 2);
+      tunedrivePIDButton.whenPressed(new TuneDrivePID(drive));
+      tunedrivePIDButton.whenReleased(new StopSubsystem(drive));
       
       try {
         udp = new UDPTracker(drive);
@@ -276,9 +281,9 @@ public class OI {
       overrideButton.whenPressed(new StopElevator(elevator)); // Button is inverted
       overrideButton.whenReleased(new OverrideElevator(switchBox, elevator));
       
-      JoystickButton tuneArm = new JoystickButton(switchBox, 2);
-      tuneArm.whenPressed(new TuneArmPID(elevator));
-      tuneArm.whenReleased(new StopElevator(elevator));
+      // JoystickButton tuneArm = new JoystickButton(switchBox, 2);
+      // tuneArm.whenPressed(new TuneArmPID(elevator));
+      // tuneArm.whenReleased(new StopElevator(elevator));
 
     } catch(Exception ex) {
         Logger.error("Failed to initialize Elevator!", ex);
