@@ -5,23 +5,17 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.elevator;
+package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.commands.elevator.StartGrab;
+import frc.robot.commands.intake.StartIntake;
+import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
 
-public class ToggleArm extends InstantCommand {
-  private Elevator elevator;
-  public ToggleArm(Elevator elevator) {
-    super();
-    this.elevator = elevator;
-    // this.requires(elevator);
+public class BothIntake extends CommandGroup {
+  public BothIntake(Elevator elevator, CargoIntake intake) {
+    addParallel(new StartGrab(elevator));
+    addSequential(new StartIntake(intake));
   }
-
-  // Called once when the command executes
-  @Override
-  protected void initialize() {
-    elevator.toggle();
-  }
-
 }

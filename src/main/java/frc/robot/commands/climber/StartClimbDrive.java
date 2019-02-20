@@ -7,25 +7,33 @@
 
 package frc.robot.commands.climber;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.subsystems.Climber;
 
-public class StartClimbDrive extends InstantCommand {
+public class StartClimbDrive extends Command {
   private Climber climber;
-  private double power;
-  public StartClimbDrive(Climber climber, double power) {
+  private double drivePower, holdingPower;
+  public StartClimbDrive(Climber climber, double drivePower, double holdingPower) {
     super();
     this.climber = climber;
-    this.power = power;
+    this.drivePower = drivePower;
+    this.holdingPower = holdingPower;
     this.requires(climber);
   }
  
   @Override
   protected void initialize() {
-    climber.set(0, 0, power);
+    climber.set(holdingPower, 0, drivePower);
   }
 
   @Override
   protected void end() {
+    climber.stop();
+  }
+
+  @Override
+  protected boolean isFinished() {
+    return false;
   }
 }

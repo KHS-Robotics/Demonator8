@@ -10,17 +10,19 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Climber;
 
-public class LowerAll extends Command {
+public class HoldFrontClimb extends Command {
   private Climber climber;
-  public LowerAll(Climber climber) {
-    this.requires(climber);
+  private double hold;
+  public HoldFrontClimb(Climber climber, double hold) {
     this.climber = climber;
+    this.hold = hold;
+    requires(climber);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.set(1,1,0);
+    climber.set(hold, 0 , 0);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -32,7 +34,6 @@ public class LowerAll extends Command {
   @Override
   protected boolean isFinished() {
     return false;
-    // return climber.getBackLS() && climber.getFrontLS();
   }
 
   // Called once after isFinished returns true
@@ -40,5 +41,4 @@ public class LowerAll extends Command {
   protected void end() {
     climber.stop();
   }
-
 }

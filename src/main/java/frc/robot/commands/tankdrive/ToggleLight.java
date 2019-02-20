@@ -5,23 +5,22 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.elevator;
+package frc.robot.commands.tankdrive;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.TankDrive;
 
-public class ToggleArm extends InstantCommand {
-  private Elevator elevator;
-  public ToggleArm(Elevator elevator) {
+public class ToggleLight extends InstantCommand {
+  private TankDrive drive;
+  public ToggleLight(TankDrive drive) {
     super();
-    this.elevator = elevator;
-    // this.requires(elevator);
+    this.drive = drive;
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    elevator.toggle();
+    drive.toggleLight();
   }
 
 }

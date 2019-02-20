@@ -7,10 +7,14 @@
 
 package frc.robot;
 
+import frc.robot.commands.BothIntake;
 import frc.robot.commands.StopSubsystem;
+import frc.robot.commands.climber.ClimbWithThrottle;
+import frc.robot.commands.climber.HoldFrontClimb;
 import frc.robot.commands.climber.LowerAll;
 import frc.robot.commands.climber.LowerBack;
 import frc.robot.commands.climber.LowerFront;
+import frc.robot.commands.climber.RaiseAll;
 import frc.robot.commands.climber.RaiseBack;
 import frc.robot.commands.climber.RaiseFront;
 import frc.robot.commands.climber.StartClimbDrive;
@@ -21,7 +25,10 @@ import frc.robot.commands.elevator.ElevateToHatchHigh;
 import frc.robot.commands.elevator.ElevateToHatchLow;
 import frc.robot.commands.elevator.ElevateToHatchMiddle;
 import frc.robot.commands.elevator.OverrideElevator;
+import frc.robot.commands.elevator.RotateArm;
+import frc.robot.commands.elevator.StartGrab;
 import frc.robot.commands.elevator.StopElevator;
+import frc.robot.commands.elevator.StopRelease;
 import frc.robot.commands.elevator.ToggleArm;
 import frc.robot.commands.intake.ReverseIntake;
 import frc.robot.commands.intake.StartIntake;
@@ -30,6 +37,7 @@ import frc.robot.commands.tankdrive.Shift;
 import frc.robot.commands.tankdrive.ShiftHigh;
 import frc.robot.commands.tankdrive.ShiftHighDriveStraight;
 import frc.robot.commands.tankdrive.ShiftLow;
+import frc.robot.commands.tankdrive.ToggleLight;
 import frc.robot.commands.tuning.TuneArmPID;
 import frc.robot.commands.tuning.TuneDrivePID;
 import frc.robot.logging.Logger;
@@ -43,6 +51,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -79,6 +88,8 @@ public class OI {
   private DoubleSolenoid elevatorSolenoid;
   private CANSparkMax arm;
 
+  private DigitalOutput VisionLight;
+
   public TankDrive drive;
   public CargoIntake cargoIntake;
   public Elevator elevator;
@@ -91,10 +102,10 @@ public class OI {
     rightJoystick = new Joystick(RobotMap.RIGHT_DRIVE_STICK_PORT);
     switchBox = new Joystick(RobotMap.SWITCH_BOX);
 
+    initElevator();
     initCargoIntake();
     initDrive();
     initClimber();
-    initElevator();
   }
 
   private static OI instance;
@@ -126,7 +137,9 @@ public class OI {
       Right1 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT1);
       Right2 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT2);
 
-      drive = new TankDrive(Left1, Left2, Right1, Right2, Shifter, navx, LeftDriveEnc, RightDriveEnc, lUltra, rUltra);
+      VisionLight = new DigitalOutput(RobotMap.VISION_LIGHT);
+
+      drive = new TankDrive(Left1, Left2, Right1, Right2, Shifter, navx, LeftDriveEnc, RightDriveEnc, lUltra, rUltra, VisionLight);
 
       JoystickButton shift = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.TOGGLE_GEAR);
       shift.whenPressed(new ShiftHigh(drive));
@@ -140,9 +153,12 @@ public class OI {
       highGearGoStraightButton.whenPressed(new ShiftHighDriveStraight(rightJoystick, drive));
       highGearGoStraightButton.whenReleased(new StopSubsystem(drive));
 
-      JoystickButton tunedrivePIDButton = new JoystickButton(switchBox, 2);
-      tunedrivePIDButton.whenPressed(new TuneDrivePID(drive));
-      tunedrivePIDButton.whenReleased(new StopSubsystem(drive));
+      JoystickButton visionLight = new JoystickButton(leftJoystick, 1);
+      visionLight.whenPressed(new ToggleLight(drive));
+
+      // JoystickButton tunedrivePIDButton = new JoystickButton(switchBox, 2);
+      // tunedrivePIDButton.whenPressed(new TuneDrivePID(drive));
+      // tunedrivePIDButton.whenReleased(new StopSubsystem(drive));
       
       try {
         udp = new UDPTracker(drive);
@@ -166,8 +182,8 @@ public class OI {
 
       // Button to start intake
 			JoystickButton intakeForward = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_FORWARD);
-			intakeForward.whenPressed(new StartIntake(cargoIntake));
-      intakeForward.whenReleased(new StopSubsystem(cargoIntake));
+      intakeForward.whenPressed(new BothIntake(elevator, cargoIntake));
+      intakeForward.whenReleased(new StopSubsystem(elevator, cargoIntake));
       
       // Button to reverse intake
 			JoystickButton intakeReverse = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_REVERSE);
@@ -190,34 +206,39 @@ public class OI {
       climbDriveL = new Spark(RobotMap.CLIMB_DRIVE_L);
       climbDriveR = new Spark(RobotMap.CLIMB_DRIVE_R);
 
-      frontLS = new DigitalInput(RobotMap.FRONT_LIMIT_SWITCH);
-      backLS = new DigitalInput(RobotMap.BACK_LIMIT_SWITCH);
+      climber = new Climber(fClimb, bClimb, climbDriveL, climbDriveR);
 
-      climber = new Climber(fClimb, bClimb, climbDriveL, climbDriveR, frontLS, backLS);
-
-      JoystickButton raiseFrontClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.F_CLIMBER_RAISE);
+      JoystickButton raiseFrontClimb = new JoystickButton(leftJoystick, 7);
       raiseFrontClimb.whenPressed(new RaiseFront(climber));
       raiseFrontClimb.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton lowerFrontClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.F_CLIMBER_LOWER);
+      JoystickButton lowerFrontClimb = new JoystickButton(leftJoystick, 10);
       lowerFrontClimb.whenPressed(new LowerFront(climber));
-      lowerFrontClimb.whenReleased(new StopSubsystem(climber));
+      lowerFrontClimb.whenReleased(new HoldFrontClimb(climber, 0.21));
 
-      JoystickButton raiseBackClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.B_CLIMBER_RAISE);
+      JoystickButton raiseBackClimb = new JoystickButton(leftJoystick, 6);
       raiseBackClimb.whenPressed(new RaiseBack(climber));
       raiseBackClimb.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton lowerBackClimb = new JoystickButton(switchBox, ButtonMap.SwitchBox.B_CLIMBER_LOWER);
+      JoystickButton lowerBackClimb = new JoystickButton(leftJoystick, 11);
       lowerBackClimb.whenPressed(new LowerBack(climber));
       lowerBackClimb.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton climbAll = new JoystickButton(switchBox, 4);
+      JoystickButton climbAll = new JoystickButton(leftJoystick, 9);
       climbAll.whenPressed(new LowerAll(climber));
       climbAll.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton climbDrive = new JoystickButton(switchBox, 1);
-      climbDrive.whenPressed(new StartClimbDrive(climber, 1.0));
-      climbDrive.whenReleased(new StopSubsystem(climber));
+      JoystickButton raiseAll = new JoystickButton(leftJoystick, 8);
+      raiseAll.whenPressed(new RaiseAll(climber));
+      raiseAll.whenReleased(new StopSubsystem(climber));
+
+      JoystickButton climbDrive = new JoystickButton(rightJoystick, 7);
+      climbDrive.whenPressed(new StartClimbDrive(climber, 1.0, 0.21));
+      climbDrive.whenReleased(new HoldFrontClimb(climber, 0.21));
+
+      // JoystickButton climbThrottle = new JoystickButton(switchBox, 2);
+      // climbThrottle.whenPressed(new ClimbWithThrottle(leftJoystick, rightJoystick, climber));
+      // climbThrottle.whenReleased(new StopSubsystem(climber));
 
     } catch(Exception ex) {
         Logger.error("Failed to initialize Cimber!", ex);
@@ -284,6 +305,15 @@ public class OI {
       // JoystickButton tuneArm = new JoystickButton(switchBox, 2);
       // tuneArm.whenPressed(new TuneArmPID(elevator));
       // tuneArm.whenReleased(new StopElevator(elevator));
+
+      JoystickButton pointForward = new JoystickButton(switchBox, 2);
+      pointForward.whenPressed(new RotateArm(elevator, -90));
+
+      JoystickButton pointBackward = new JoystickButton(switchBox, 1);
+      pointBackward.whenPressed(new RotateArm(elevator, -315));
+
+      AxisButton grabAngle = new AxisButton(switchBox, 1, 3);
+      grabAngle.whenPressed(new RotateArm(elevator, -170));
 
     } catch(Exception ex) {
         Logger.error("Failed to initialize Elevator!", ex);

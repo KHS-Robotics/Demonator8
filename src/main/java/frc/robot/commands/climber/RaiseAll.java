@@ -10,9 +10,9 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Climber;
 
-public class LowerAll extends Command {
+public class RaiseAll extends Command {
   private Climber climber;
-  public LowerAll(Climber climber) {
+  public RaiseAll(Climber climber) {
     this.requires(climber);
     this.climber = climber;
   }
@@ -20,7 +20,7 @@ public class LowerAll extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.set(1,1,0);
+    climber.set(-0.5,-0.5,0);
   }
 
   // Called repeatedly when this Command is scheduled to run

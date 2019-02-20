@@ -22,7 +22,8 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class Elevator extends PIDSubsystem {
-  private double pElevator, iElevator, dElevator, pArm, iArm, dArm, iZone;
+  private double pElevator, iElevator, dElevator, pArm = 0.1, iArm = 0.01, dArm = 0.6, iZone = 5;
+  private final double armTolerance = 1.0;
   private boolean shouldReset;
   private CANPIDController armPID;
   
@@ -38,8 +39,8 @@ public class Elevator extends PIDSubsystem {
   private DoubleSolenoid solenoid;
 
   private static final double eleLinDist = 18.0 * 0.25 * 2; //inches of .25in chain per output sprocket rev, doubled on the last stage
-  private static final int eleReducNum = 1; //22 tooth sprocket gearbox output
-  private static final int eleReducDen = 64; //64 planetary & 18 tooth sprocket
+  private static final int eleReducNum = 4; //22 tooth sprocket gearbox output
+  private static final int eleReducDen = 13; //64 planetary & 18 tooth sprocket
   private static final int eleCPR = 12; //counts per revolution of motor
   private static final double eleDistPP = (eleLinDist * eleReducNum) / (eleReducDen * eleCPR); //linear distance of the last stage arm per encoder pulse
 
@@ -65,9 +66,14 @@ public class Elevator extends PIDSubsystem {
 
     this.armPID = new CANPIDController(arm);
     this.armPID.setOutputRange(-0.67, 0.67);
+    setArmPID(pArm, iArm, dArm, iZone);
 
     this.armEncoder = this.arm.getEncoder();
     this.armEncoder.setPositionConversionFactor(armDegPR);
+  }
+
+  public boolean armOnTarget(double target) {
+    return Math.abs(target - getArmRotation()) < armTolerance;
   }
 
   public double getArmRotation() {
@@ -75,8 +81,8 @@ public class Elevator extends PIDSubsystem {
   }
 
   public void setIntake(double l, double r) {
-    accL.set(-l);
-    accR.set(r);
+    accL.set(l);
+    accR.set(-r);
   }
 
   public void open() {

@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -59,6 +61,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    m_oi.drive.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override

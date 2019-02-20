@@ -17,7 +17,7 @@ public class Climber extends SubsystemBase {
   private Spark fClimb, bClimb, driveR, driveL;
   private DigitalInput front, back;
 
-  public Climber(Spark fClimb, Spark bClimb, Spark driveL, Spark driveR, DigitalInput front, DigitalInput back) {
+  public Climber(Spark fClimb, Spark bClimb, Spark driveL, Spark driveR) {
     this.fClimb = fClimb;
     this.bClimb = bClimb;
     this.driveL = driveL;

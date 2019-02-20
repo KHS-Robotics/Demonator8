@@ -7,10 +7,12 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
@@ -36,6 +38,9 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private DoubleSolenoid Shifter;
   private WPI_VictorSPX left1, left2, right1, right2;
 
+  private DigitalOutput VisionLight;
+  private boolean lightOn = false;
+
   private static final Value HIGH_GEAR = Value.kReverse, LOW_GEAR = Value.kForward;
   private Value currentGear;
 
@@ -45,7 +50,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   private static final int driveCPR = 64; //counts per revolution of motor
   private static final double driveDistPP = (driveLinDist * driveReducNum) / (driveReducDen * driveCPR); //linear distance of the last stage arm per encoder pulse
 
-  public TankDrive(WPI_VictorSPX left1, WPI_VictorSPX left2, WPI_VictorSPX right1, WPI_VictorSPX right2, DoubleSolenoid Shifter, AHRS navx, Encoder LeftDriveEnc, Encoder RightDriveEnc, AnalogInput lUltra, AnalogInput rUltra) {
+  public TankDrive(WPI_VictorSPX left1, WPI_VictorSPX left2, WPI_VictorSPX right1, WPI_VictorSPX right2, DoubleSolenoid Shifter, AHRS navx, Encoder LeftDriveEnc, Encoder RightDriveEnc, AnalogInput lUltra, AnalogInput rUltra, DigitalOutput VisionLight) {
     this.left1 = left1;
     this.left2 = left2;
     this.right1 = right1;
@@ -56,6 +61,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     this.Shifter = Shifter;
     this.lUltra = lUltra;
     this.rUltra = rUltra;
+    this.VisionLight = VisionLight;
 
     this.lEnc.setDistancePerPulse(driveDistPP);
     this.rEnc.setDistancePerPulse(driveDistPP);
@@ -68,6 +74,31 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     yawPID.setAbsoluteTolerance(0.5);
     disablePID();
     shiftLow();
+    lightOff();
+    this.setNeutralMode(NeutralMode.Coast);
+  }
+
+  public void toggleLight() {
+    if(lightOn) {
+      lightOff();
+    }
+    else {
+      lightOn();
+    }
+  }
+
+  public void lightOn() {
+    if(!lightOn) {
+      VisionLight.set(true);
+      lightOn = true;
+    }
+  }
+
+  public void lightOff() {
+    if(lightOn) {
+      VisionLight.set(false);
+      lightOn = false;
+    }
   }
 
   public double getLeftUltrasonic() {
@@ -197,13 +228,22 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
 
   public void enablePID() {
     yawPID.enable();
+    this.setNeutralMode(NeutralMode.Brake);
   }
 
   public void disablePID() {
     if (yawPID.isEnabled()) {
       yawPID.disable();
       direction = 0;
+      this.setNeutralMode(NeutralMode.Coast);
     }
+  }
+  
+  public void setNeutralMode(NeutralMode mode) {
+    left1.setNeutralMode(mode);
+    left2.setNeutralMode(mode);
+    right1.setNeutralMode(mode);
+    right2.setNeutralMode(mode);
   }
 
   public void setPID(double p, double i, double d) {
@@ -232,6 +272,14 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
 
   public double getHeading() {
     return normalizeYaw(navx.getYaw());
+  }
+
+  public double getRoll() {
+    return navx.getRoll(); 
+  }
+
+  public double getPitch() {
+    return navx.getPitch();
   }
 
   public void setOffset(double angle) {
@@ -268,6 +316,6 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
   @Override
   public void initDefaultCommand() {
     OI oi = OI.getInstance();
-    this.setDefaultCommand(new DriveWithJoystick(oi.drive, oi.leftJoystick));
+    this.setDefaultCommand(new DriveWithJoysticks(oi.drive, oi.leftJoystick, oi.rightJoystick));
   }
 }

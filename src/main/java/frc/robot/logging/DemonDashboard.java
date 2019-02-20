@@ -59,6 +59,8 @@ public class DemonDashboard {
                 try {
                     if (oi.drive != null) {
                         SmartDashboard.putNumber("Drive-Heading", oi.drive.getHeading());
+                        SmartDashboard.putNumber("Roll", oi.drive.getRoll());
+                        SmartDashboard.putNumber("Pitch", oi.drive.getPitch());
 
                         SmartDashboard.putNumber("Left Ultrasonic", oi.drive.getLeftUltrasonic());
                         SmartDashboard.putNumber("Right Ultrasonic", oi.drive.getRightUltrasonic());

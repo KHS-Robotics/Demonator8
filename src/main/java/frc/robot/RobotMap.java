@@ -33,6 +33,8 @@ public class RobotMap {
   public static final int SHIFT_FORWARD_CHANNEL = 0;
   public static final int SHIFT_REVERSE_CHANNEL = 1;
 
+  public static final int VISION_LIGHT = 7;
+
   // Intake
   public static final int INTAKE = 8;
 
@@ -41,8 +43,6 @@ public class RobotMap {
   public static final byte NAVX_UPDATE_RATE_HZ = (byte) 50;
 
   // Climber
-  public static final int FRONT_LIMIT_SWITCH = 8;
-  public static final int BACK_LIMIT_SWITCH = 7;
   public static final int F_CLIMB = 0;
   public static final int B_CLIMB = 1;
   public static final int CLIMB_DRIVE_L = 2;

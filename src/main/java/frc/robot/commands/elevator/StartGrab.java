@@ -10,18 +10,18 @@ package frc.robot.commands.elevator;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.subsystems.Elevator;
 
-public class ToggleArm extends InstantCommand {
+public class StartGrab extends InstantCommand {
   private Elevator elevator;
-  public ToggleArm(Elevator elevator) {
+
+  public StartGrab(Elevator elevator) {
     super();
     this.elevator = elevator;
-    // this.requires(elevator);
+    this.requires(elevator);
   }
 
-  // Called once when the command executes
   @Override
   protected void initialize() {
-    elevator.toggle();
+    elevator.setIntake(-0.5, -0.5);
   }
 
 }

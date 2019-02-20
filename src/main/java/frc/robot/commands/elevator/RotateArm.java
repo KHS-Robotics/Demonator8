@@ -7,72 +7,37 @@
 
 package frc.robot.commands.elevator;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Elevator;
 
-public class OverrideElevator extends Command {
-  public static final double DEADBAND = 0.075;
-	private boolean initializedIdle, isIdle;
-
-  private Joystick stick;
+public class RotateArm extends Command {
   private Elevator elevator;
-
-  public OverrideElevator(Joystick stick, Elevator elevator) {
-    this.stick = stick;
+  private double setPoint;
+  public RotateArm(Elevator elevator, double setPoint) {
     this.elevator = elevator;
+    this.setPoint=setPoint;
     requires(elevator);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    elevator.setArmRotation(setPoint);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double input = stick.getRawAxis(0);
-    isIdle = Math.abs(input) <= DEADBAND;
-
-    if(isIdle && !initializedIdle) {
-      elevator.setArmRotation(elevator.getArmRotation());
-      initializedIdle = true;
-    }
-
-    if(Math.abs(input) > DEADBAND) {
-      initializedIdle = false;
-    }
-
-    elevator.set(deadband(-stick.getRawAxis(2)));
-
-    if(!isIdle) {
-      elevator.setArm(deadband(stick.getRawAxis(0)));
-    }
-
-    elevator.setIntake(deadband(stick.getRawAxis(1)), deadband(stick.getRawAxis(1)));
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return elevator.armOnTarget(setPoint);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    elevator.stop();
-  }
-
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-    elevator.stop();
-  }
-
-  public double deadband(double input) {
-    return Math.abs(input) > DEADBAND ? input : 0;
   }
 }
