@@ -238,7 +238,6 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
       this.setNeutralMode(NeutralMode.Coast);
     }
   }
-  
   public void setNeutralMode(NeutralMode mode) {
     left1.setNeutralMode(mode);
     left2.setNeutralMode(mode);
