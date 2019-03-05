@@ -33,10 +33,10 @@ public class TuneClimberPID extends Command {
         double p = SmartDashboard.getNumber("Climber-P", climber.getClimberP());
         double i = SmartDashboard.getNumber("Climber-I", climber.getClimberI());
         double d = SmartDashboard.getNumber("Climber-D", climber.getClimberD());
-        climber.setClimberPID(p, i, d);
+        climber.setPID(p, i, d);
 
-        double setpoint = SmartDashboard.getNumber("Climber-Setpoint", climber.getClimberHeight());
-        climber.setSetpoint(setpoint);
+        double setpoint = SmartDashboard.getNumber("Climber-Setpoint", climber.getPitch());
+        climber.setPitch(setpoint);
     }
 
     @Override

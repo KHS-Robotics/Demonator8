@@ -206,7 +206,7 @@ public class OI {
       climbDriveL = new Spark(RobotMap.CLIMB_DRIVE_L);
       climbDriveR = new Spark(RobotMap.CLIMB_DRIVE_R);
 
-      climber = new Climber(fClimb, bClimb, climbDriveL, climbDriveR);
+      climber = new Climber(fClimb, bClimb, climbDriveL, climbDriveR, navx);
 
       JoystickButton raiseFrontClimb = new JoystickButton(leftJoystick, 7);
       raiseFrontClimb.whenPressed(new RaiseFront(climber));
