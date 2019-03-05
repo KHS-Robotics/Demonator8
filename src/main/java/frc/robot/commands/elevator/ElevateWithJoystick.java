@@ -15,11 +15,10 @@ import frc.robot.subsystems.Elevator;
  * Command to control the elevator with a joystick
  */
 public class ElevateWithJoystick extends Command {
-	private static final double DEADBAND = 0.03;
-	
-	private boolean idle, initializedIdle;
-	
-	private Joystick joystick;
+	public static final double DEADBAND = 0.075;
+	private boolean initializedIdle, isIdle;
+
+	private Joystick stick;
 	private Elevator elevator;
 	
 	/**
@@ -27,8 +26,8 @@ public class ElevateWithJoystick extends Command {
 	 * @param joystick the joystick
 	 * @param elevator the elevator
 	 */
-	public ElevateWithJoystick(Elevator elevator, Joystick joystick) {
-		this.joystick = joystick;
+	public ElevateWithJoystick(Elevator elevator, Joystick stick) {
+		this.stick = stick;
 		this.elevator = elevator;
 		
 		this.requires(elevator);
@@ -36,23 +35,31 @@ public class ElevateWithJoystick extends Command {
 
 	@Override
 	protected void initialize() {
-		if(!elevator.getLS()) {
-			elevator.setSetpoint(elevator.getPosition());
-			elevator.enable();
-		}
+		initializedIdle = false;
 	}
 
 	@Override
 	protected void execute() {
-		final double INPUT = joystick.getRawAxis(2);
-		double output = INPUT;
+		
+	double input = stick.getRawAxis(0);
+    isIdle = Math.abs(input) <= DEADBAND;
 
-		if(elevator.getLS() && INPUT < 0) {
-			output = 0;
-		}
-		// if(elevator.getElevatorHeight() >= MAX_ELEVATOR_HEIGHT)
+    if(isIdle && !initializedIdle) {
+      elevator.setArmRotation(elevator.getArmRotation());
+      initializedIdle = true;
+    }
 
-		elevator.set(output);
+    if(Math.abs(input) > DEADBAND) {
+      initializedIdle = false;
+    }
+
+    elevator.set(deadband(-stick.getRawAxis(2)));
+
+    if(!isIdle) {
+      elevator.setArm(deadband(stick.getRawAxis(0)));
+    }
+
+    elevator.setIntake(deadband(stick.getRawAxis(1)), deadband(stick.getRawAxis(1)));
 	}
 
 	@Override
@@ -60,9 +67,9 @@ public class ElevateWithJoystick extends Command {
 		elevator.stop();
 	}
 	
-	private static boolean checkJoystickDeadband(double a) {
-		return Math.abs(a) < DEADBAND;
-	}
+	public double deadband(double input) {
+		return Math.abs(input) > DEADBAND ? input : 0;
+	  }
 
 	@Override
 	protected boolean isFinished() {

@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import frc.robot.OI;
+import frc.robot.commands.elevator.ElevateWithJoystick;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANEncoder;
@@ -24,7 +26,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 public class Elevator extends PIDSubsystem {
   private double pElevator, iElevator, dElevator, pArm = 0.1, iArm = 0.01, dArm = 0.6, iZone = 5;
   private final double armTolerance = 1.0;
-  private boolean shouldReset;
+  private boolean shouldReset, override;
   private CANPIDController armPID;
   
   private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
@@ -39,8 +41,8 @@ public class Elevator extends PIDSubsystem {
   private DoubleSolenoid solenoid;
 
   private static final double eleLinDist = 18.0 * 0.25 * 2; //inches of .25in chain per output sprocket rev, doubled on the last stage
-  private static final int eleReducNum = 4; //22 tooth sprocket gearbox output
-  private static final int eleReducDen = 13; //64 planetary & 18 tooth sprocket
+  private static final int eleReducNum = 22 * 16; //22 tooth sprocket gearbox output, two motor gearbox 16 tooth sprocket
+  private static final int eleReducDen = 20 * 18 * 52; //64 planetary & 18 tooth sprocket
   private static final int eleCPR = 12; //counts per revolution of motor
   private static final double eleDistPP = (eleLinDist * eleReducNum) / (eleReducDen * eleCPR); //linear distance of the last stage arm per encoder pulse
 
@@ -132,6 +134,7 @@ public class Elevator extends PIDSubsystem {
   public void stop() {
     disable();
     set(0);
+    setIntake(0, 0);
     arm.stopMotor();
   }
 
@@ -267,18 +270,26 @@ public class Elevator extends PIDSubsystem {
     return dArm;
   }
 
+  public void setOverride(boolean set) {
+    this.override = set;
+  }
+  
+  /**
+   * @return the override
+   */
+  public boolean isOverride() {
+    return override;
+  }
+
 
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
-    // setDefaultCommand(new elevateWithJoystickTest(OI.getInstance().elevator, OI.getInstance().switchBox));
-    // setDefaultCommand(new ElevateWithJoystick(OI.getInstance().elevator, OI.getInstance().switchBox));
+    setDefaultCommand(new ElevateWithJoystick(OI.getInstance().elevator, OI.getInstance().switchBox));
   }
 
   public void set(double output) {
-    // if (!override && getLS() && output < 0)
-      // output = 0;
+    if (!override && getLS() && output < 0)
+      output = 0;
 
     elevator1.set(-output);
     elevator2.set(output);

@@ -41,6 +41,9 @@ public class ButtonMap
 		public static final int B_CLIMBER_LOWER = 9;
 
 		public static final int BUTTON_AXIS = 3;
+		public static final int ELEVATOR_AXIS = 2;
+		public static final int ELEVATOR_INTAKE_AXIS = 1;
+		public static final int ARM_AXIS = 0;
 	}
 
 	public static class RightJoystick

@@ -8,6 +8,7 @@
 package frc.robot;
 
 import frc.robot.commands.BothIntake;
+import frc.robot.commands.SetDefault;
 import frc.robot.commands.StopSubsystem;
 import frc.robot.commands.climber.ClimbWithThrottle;
 import frc.robot.commands.climber.HoldFrontClimb;
@@ -24,6 +25,7 @@ import frc.robot.commands.elevator.ElevateCargoToMedium;
 import frc.robot.commands.elevator.ElevateToHatchHigh;
 import frc.robot.commands.elevator.ElevateToHatchLow;
 import frc.robot.commands.elevator.ElevateToHatchMiddle;
+import frc.robot.commands.elevator.ElevateWithJoystick;
 import frc.robot.commands.elevator.OverrideElevator;
 import frc.robot.commands.elevator.RotateArm;
 import frc.robot.commands.elevator.StartGrab;
@@ -40,6 +42,7 @@ import frc.robot.commands.tankdrive.ShiftLow;
 import frc.robot.commands.tankdrive.ToggleLight;
 import frc.robot.commands.tuning.TuneArmPID;
 import frc.robot.commands.tuning.TuneDrivePID;
+import frc.robot.commands.tuning.TuneElevatorPID;
 import frc.robot.logging.Logger;
 
 import java.net.SocketException;
@@ -181,14 +184,14 @@ public class OI {
       cargoIntake = new CargoIntake(intake);
 
       // Button to start intake
-			JoystickButton intakeForward = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_FORWARD);
-      intakeForward.whenPressed(new BothIntake(elevator, cargoIntake));
-      intakeForward.whenReleased(new StopSubsystem(elevator, cargoIntake));
+			// JoystickButton intakeForward = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_FORWARD);
+      // intakeForward.whenPressed(new BothIntake(elevator, cargoIntake));
+      // intakeForward.whenReleased(new StopSubsystem(elevator, cargoIntake));
       
-      // Button to reverse intake
-			JoystickButton intakeReverse = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_REVERSE);
-			intakeReverse.whenPressed(new ReverseIntake(cargoIntake));
-			intakeReverse.whenReleased(new StopSubsystem(cargoIntake));
+      // // Button to reverse intake
+			// JoystickButton intakeReverse = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_REVERSE);
+			// intakeReverse.whenPressed(new ReverseIntake(cargoIntake));
+			// intakeReverse.whenReleased(new StopSubsystem(cargoIntake));
 
     } catch(Exception ex) {
       Logger.error("Failed to initialize Cargo Intake!", ex);
@@ -299,12 +302,16 @@ public class OI {
 
       // Button to use overrided elevator controls
       JoystickButton overrideButton = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATOR_OVERIDE);
-      overrideButton.whenPressed(new StopElevator(elevator)); // Button is inverted
-      overrideButton.whenReleased(new OverrideElevator(switchBox, elevator));
+      overrideButton.whenPressed(new SetDefault(elevator, new ElevateWithJoystick(elevator, switchBox))); // Button is inverted
+      overrideButton.whenReleased(new SetDefault(elevator, new OverrideElevator(switchBox, elevator)));
       
       // JoystickButton tuneArm = new JoystickButton(switchBox, 2);
       // tuneArm.whenPressed(new TuneArmPID(elevator));
       // tuneArm.whenReleased(new StopElevator(elevator));
+
+      JoystickButton tuneElev = new JoystickButton(switchBox, 5);
+      tuneElev.whenPressed(new TuneElevatorPID(elevator));
+      tuneElev.whenPressed(new StopElevator(elevator));
 
       JoystickButton pointForward = new JoystickButton(switchBox, 2);
       pointForward.whenPressed(new RotateArm(elevator, -90));
