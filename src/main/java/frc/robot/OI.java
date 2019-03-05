@@ -41,6 +41,7 @@ import frc.robot.commands.tankdrive.ShiftHighDriveStraight;
 import frc.robot.commands.tankdrive.ShiftLow;
 import frc.robot.commands.tankdrive.ToggleLight;
 import frc.robot.commands.tuning.TuneArmPID;
+import frc.robot.commands.tuning.TuneClimberPID;
 import frc.robot.commands.tuning.TuneDrivePID;
 import frc.robot.commands.tuning.TuneElevatorPID;
 import frc.robot.logging.Logger;
@@ -238,6 +239,10 @@ public class OI {
       JoystickButton climbDrive = new JoystickButton(rightJoystick, 7);
       climbDrive.whenPressed(new StartClimbDrive(climber, 1.0, 0.21));
       climbDrive.whenReleased(new HoldFrontClimb(climber));
+
+      JoystickButton tuneClimbPID = new JoystickButton(switchBox, 8);
+      tuneClimbPID.whenPressed(new TuneClimberPID(climber, switchBox));
+      tuneClimbPID.whenReleased(new StopSubsystem(climber));
 
       // JoystickButton climbThrottle = new JoystickButton(switchBox, 2);
       // climbThrottle.whenPressed(new ClimbWithThrottle(leftJoystick, rightJoystick, climber));

@@ -8,7 +8,9 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Robot;
 import frc.robot.subsystems.Elevator;
 
 /**
@@ -16,7 +18,7 @@ import frc.robot.subsystems.Elevator;
  */
 public class ElevateWithJoystick extends Command {
 	public static final double DEADBAND = 0.075;
-	private boolean initializedIdle, isIdle;
+	private boolean initializedIdle, isIdle, initDisabled;
 
 	private Joystick stick;
 	private Elevator elevator;
@@ -40,26 +42,35 @@ public class ElevateWithJoystick extends Command {
 
 	@Override
 	protected void execute() {
-		
-	double input = stick.getRawAxis(0);
-    isIdle = Math.abs(input) <= DEADBAND;
+		if(Robot.enabled()) {
+			double input = stick.getRawAxis(0);
+			isIdle = Math.abs(input) <= DEADBAND;
 
-    if(isIdle && !initializedIdle) {
-      elevator.setArmRotation(elevator.getArmRotation());
-      initializedIdle = true;
-    }
+			if(isIdle && !initializedIdle) {
+			elevator.setArmRotation(elevator.getArmRotation());
+			initializedIdle = true;
+			}
 
-    if(Math.abs(input) > DEADBAND) {
-      initializedIdle = false;
-    }
+			if(Math.abs(input) > DEADBAND) {
+				initializedIdle = false;
+			}
 
-    elevator.set(deadband(-stick.getRawAxis(2)));
+			elevator.set(deadband(-stick.getRawAxis(2)));
 
-    if(!isIdle) {
-      elevator.setArm(deadband(stick.getRawAxis(0)));
-    }
+			if(!isIdle) {
+			elevator.setArm(deadband(stick.getRawAxis(0)));
+			}
 
-    elevator.setIntake(deadband(stick.getRawAxis(1)), deadband(stick.getRawAxis(1)));
+			elevator.setIntake(deadband(stick.getRawAxis(1)), deadband(stick.getRawAxis(1)));
+
+			initDisabled = false;
+		}
+
+		if(!Robot.enabled() && !initDisabled) {
+			elevator.stop();
+			initializedIdle = false;
+			initDisabled = true;
+		}
 	}
 
 	@Override

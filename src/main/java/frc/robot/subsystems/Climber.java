@@ -82,8 +82,8 @@ public double pidGet() {
 
 @Override
 public void pidWrite(double output) {
-  fClimb.set(normalizeOutput(-1.0 - output));
-  bClimb.set(normalizeOutput(-1.0 + output));
+  fClimb.set(normalizeOutput(-1.0 + output));
+  bClimb.set(normalizeOutput(-1.0 - output));
 }
 
 
@@ -113,9 +113,7 @@ public void resetNavx() {
 }
 
 public void enablePID() {
-    if(!pitchPID.isEnabled()) {
-      pitchPID.enable();
-    }
+  pitchPID.enable();
   }
 
   public void disablePID() {

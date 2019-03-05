@@ -7,6 +7,7 @@
 
 package frc.robot.commands.tuning;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,9 +17,11 @@ import frc.robot.subsystems.Climber;
 public class TuneClimberPID extends Command {
   private Climber climber;
   private boolean go = false, end = false;
+  private Joystick stick;
 
-  public TuneClimberPID(Climber climber) {
+  public TuneClimberPID(Climber climber, Joystick stick) {
       this.climber = climber;
+      this.stick = stick;
       
       this.requires(climber);
   }
@@ -40,18 +43,19 @@ public class TuneClimberPID extends Command {
         double d = SmartDashboard.getNumber("Climber-D", climber.getClimberD());
         climber.setPID(p, i, d);
 
-        go = SmartDashboard.getBoolean("GO", go);
-        end = SmartDashboard.getBoolean("END", end);
-
         if(go) {
           climber.autoClimb();
         }
+
+        go = stick.getRawButton(10);
+        end = stick.getRawButton(9);
         // double setpoint = SmartDashboard.getNumber("Climber-Setpoint", climber.getPitch());
     }
 
     @Override
     protected void end() {
-      Scheduler.getInstance().add(new HoldFrontClimb(climber));
+      climber.stop();
+      //Scheduler.getInstance().add(new HoldFrontClimb(climber));
     }
 
   @Override

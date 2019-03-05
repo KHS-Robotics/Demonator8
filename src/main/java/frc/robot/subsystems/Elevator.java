@@ -74,6 +74,12 @@ public class Elevator extends PIDSubsystem {
     this.armEncoder.setPositionConversionFactor(armDegPR);
   }
 
+  @Override
+  public void setSetpoint(double setpoint) {
+    super.setSetpoint(setpoint);
+    this.enable();
+  }
+
   public boolean armOnTarget(double target) {
     return Math.abs(target - getArmRotation()) < armTolerance;
   }
