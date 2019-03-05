@@ -217,7 +217,7 @@ public class OI {
 
       JoystickButton lowerFrontClimb = new JoystickButton(leftJoystick, 10);
       lowerFrontClimb.whenPressed(new LowerFront(climber));
-      lowerFrontClimb.whenReleased(new HoldFrontClimb(climber, 0.21));
+      lowerFrontClimb.whenReleased(new HoldFrontClimb(climber));
 
       JoystickButton raiseBackClimb = new JoystickButton(leftJoystick, 6);
       raiseBackClimb.whenPressed(new RaiseBack(climber));
@@ -237,7 +237,7 @@ public class OI {
 
       JoystickButton climbDrive = new JoystickButton(rightJoystick, 7);
       climbDrive.whenPressed(new StartClimbDrive(climber, 1.0, 0.21));
-      climbDrive.whenReleased(new HoldFrontClimb(climber, 0.21));
+      climbDrive.whenReleased(new HoldFrontClimb(climber));
 
       // JoystickButton climbThrottle = new JoystickButton(switchBox, 2);
       // climbThrottle.whenPressed(new ClimbWithThrottle(leftJoystick, rightJoystick, climber));

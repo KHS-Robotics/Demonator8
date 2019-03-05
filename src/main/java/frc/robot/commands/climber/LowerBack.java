@@ -20,7 +20,7 @@ public class LowerBack extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.set(0,1,0);
+    climber.setPinions(0,1);
   }
 
   // Called repeatedly when this Command is scheduled to run

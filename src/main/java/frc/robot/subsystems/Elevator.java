@@ -136,6 +136,7 @@ public class Elevator extends PIDSubsystem {
     set(0);
     setIntake(0, 0);
     arm.stopMotor();
+    setArm(0);
   }
 
   public void setElevatorPID(double p, double i, double d) {

@@ -24,7 +24,8 @@ public class StartClimbDrive extends Command {
  
   @Override
   protected void initialize() {
-    climber.set(holdingPower, 0, drivePower);
+    climber.setPinions(holdingPower, 0);
+    climber.setDrive(drivePower);
   }
 
   @Override

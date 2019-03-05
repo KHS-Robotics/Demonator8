@@ -23,7 +23,7 @@ public class DriveClimberJoystick extends InstantCommand {
  
   @Override
   protected void execute() {
-    climber.set(0, 0, stick.getY());
+    climber.setDrive(stick.getY());
   }
 
   @Override

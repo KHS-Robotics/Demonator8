@@ -12,17 +12,16 @@ import frc.robot.subsystems.Climber;
 
 public class HoldFrontClimb extends Command {
   private Climber climber;
-  private double hold;
-  public HoldFrontClimb(Climber climber, double hold) {
+  private double hold = 0.21;
+  public HoldFrontClimb(Climber climber) {
     this.climber = climber;
-    this.hold = hold;
     requires(climber);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.set(hold, 0 , 0);
+    climber.setPinions(hold, 0);
   }
 
   // Called repeatedly when this Command is scheduled to run

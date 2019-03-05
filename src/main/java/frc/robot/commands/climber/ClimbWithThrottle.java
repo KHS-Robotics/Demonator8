@@ -31,7 +31,7 @@ public class ClimbWithThrottle extends Command {
   @Override
   protected void execute() {
     System.out.println("LEFT: " + left.getZ() + " RIGHT: " + right.getZ());
-    climber.set(left.getZ(), right.getZ(), 0);
+    climber.setPinions(left.getZ(), right.getZ());
   }
 
   // Make this return true when this Command no longer needs to run execute()

@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Spark;
 
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -53,20 +52,14 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
   }
 
 
-  public void set(double front, double back, double drive) {
-    /*if(getFrontLS() && front > 0)
-    {
-      front = 0;
-    }
-    if(getBackLS() && back > 0)
-    {
-      back = 0;
-    }*/
-    
+  public void setPinions(double front, double back) {
     fClimb.set(-front);
     bClimb.set(-back);
-    driveR.set(-drive);
-    driveL.set(drive);
+  }
+
+  public void setDrive(double output) {
+    driveL.set(output);
+    driveR.set(-output);
   }
 
 @Override
@@ -110,7 +103,8 @@ private static double normalizeOutput(double output) {
 }
 
 public void stop() {
-  this.set(0, 0, 0);
+  this.setPinions(0, 0);
+  this.setDrive(0);
   disablePID();
 }
 
@@ -119,7 +113,9 @@ public void resetNavx() {
 }
 
 public void enablePID() {
-    pitchPID.enable();
+    if(!pitchPID.isEnabled()) {
+      pitchPID.enable();
+    }
   }
 
   public void disablePID() {
@@ -149,8 +145,8 @@ public void enablePID() {
     return pitch;
   }
 
-  public void setPitch(double angle) {
-    this.pitchPID.setSetpoint(normalizePitch(angle));
+  public void autoClimb() {
+    this.pitchPID.setSetpoint(0); // Stay level
     enablePID();
   }
 
