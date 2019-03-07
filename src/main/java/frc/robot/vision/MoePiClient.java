@@ -26,6 +26,9 @@ public class MoePiClient implements Runnable {
 	/** Default UDP Port for MoePi. */
 	public static final int DEFAULT_UDP_PORT = 5810;
 
+	/** Offset angle for target since camera is on robot's side. */
+	public static final double CAMERA_ANGLE_OFFSET = 0;
+
 	/** x-resolution of the camera */
 	public static final double RESOLUTION_X = 640;
 	/** y-resolution of the camera */

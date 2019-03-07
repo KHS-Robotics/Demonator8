@@ -38,8 +38,7 @@ public class DriveStraightAtTargetJoystick extends Command {
       y = 0;
     }
 
-    // drive.setHeading(vision.getRobotHeading() + vision.getAngle(), y);
-    vision.getLastRobotHeading();
+    drive.setHeading(vision.getLastRobotHeading() + vision.getAngle(MoePiClient.CAMERA_ANGLE_OFFSET), y);
   }
 
   @Override

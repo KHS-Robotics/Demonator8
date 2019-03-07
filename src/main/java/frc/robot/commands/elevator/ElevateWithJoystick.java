@@ -18,7 +18,7 @@ import frc.robot.subsystems.Elevator;
  */
 public class ElevateWithJoystick extends Command {
 	public static final double DEADBAND = 0.075;
-	private boolean initializedIdle, isIdle, initDisabled;
+	private boolean initializedIdleElev, isIdleElev, initializedIdleArm, isIdleArm, initDisabled;
 
 	private Joystick stick;
 	private Elevator elevator;
@@ -38,7 +38,8 @@ public class ElevateWithJoystick extends Command {
 
 	@Override
 	protected void initialize() {
-		initializedIdle = false;
+		initializedIdleElev = false;
+		initializedIdleArm = false;
 	}
 
 	@Override
@@ -48,22 +49,29 @@ public class ElevateWithJoystick extends Command {
 		}
 
 		if (Robot.enabled()) {
-			double input = stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS);
-			isIdle = Math.abs(input) <= DEADBAND;
+			double inputElev = stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS);
+			double inputArm = stick.getRawAxis(ButtonMap.SwitchBox.ARM_AXIS);
+			isIdleElev = Math.abs(inputElev) < DEADBAND;
+			isIdleArm = Math.abs(inputArm) < DEADBAND;
 
-			if (isIdle && !initializedIdle) {
+			if (isIdleElev && !initializedIdleElev) {
 				elevator.setSetpoint(elevator.getElevatorHeight());
+				initializedIdleElev = true;
+			}
+
+			if (isIdleArm && !initializedIdleArm) {
 				elevator.setArmRotation(elevator.getArmRotation());
-				initializedIdle = true;
+				initializedIdleArm = false;
 			}
 
-			if (Math.abs(input) > DEADBAND) {
-				initializedIdle = false;
+			if(!isIdleElev) {
+				elevator.set(inputElev);
+				initializedIdleElev = false;
 			}
 
-			if (!isIdle) {
-				elevator.setArm(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ARM_AXIS)));
-				elevator.set(deadband(-stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS)));
+			if(!isIdleArm) {
+				elevator.setArm(inputArm);
+				initializedIdleArm = false;
 			}
 
 			elevator.setIntake(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS)), deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS)));
@@ -73,7 +81,8 @@ public class ElevateWithJoystick extends Command {
 
 		if (!Robot.enabled() && !initDisabled) {
 			elevator.stop();
-			initializedIdle = false;
+			initializedIdleElev = false;
+			initializedIdleArm = false;
 			initDisabled = true;
 		}
 	}
