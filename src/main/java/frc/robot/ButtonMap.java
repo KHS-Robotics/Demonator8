@@ -35,10 +35,6 @@ public class ButtonMap
         public static final double ELEVATE_HATCH_LOW = 0.67;
 		public static final int ELEVATOR_OVERIDE = 11;
 		public static final int TUNE_PID = 0;
-		public static final int F_CLIMBER_RAISE = 8;
-		public static final int F_CLIMBER_LOWER = 7;
-		public static final int B_CLIMBER_RAISE = 10;
-		public static final int B_CLIMBER_LOWER = 9;
 
 		public static final int BUTTON_AXIS = 3;
 	}
@@ -48,11 +44,18 @@ public class ButtonMap
 		public static final int HIGHGEAR_GO_STRAIGHT = 1;
 		public static final int TOGGLE_GEAR = 5;
 		public static final int GO_STRAIGHT = 4;
+
+		public static final int CLIMB_DRIVE = 7;
 	}
 
 	public static class LeftJoystick
 	{
-		public static final int LIFT_ALL = 1;
+		public static final int LOWER_ALL = 9;
+		public static final int RAISE_ALL = 8;
+		public static final int F_CLIMBER_RAISE = 7;
+		public static final int F_CLIMBER_LOWER = 10;
+		public static final int B_CLIMBER_RAISE = 6;
+		public static final int B_CLIMBER_LOWER = 11;
 	}
 
 	/**

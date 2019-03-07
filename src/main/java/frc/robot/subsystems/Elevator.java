@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import frc.robot.OI;
+import frc.robot.commands.elevator.ElevateWithJoystick;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANEncoder;
@@ -132,6 +134,7 @@ public class Elevator extends PIDSubsystem {
   public void stop() {
     disable();
     set(0);
+    setIntake(0, 0);
     arm.stopMotor();
   }
 
@@ -266,14 +269,11 @@ public class Elevator extends PIDSubsystem {
   public double getArmD() {
     return dArm;
   }
-
+  
 
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
-    // setDefaultCommand(new elevateWithJoystickTest(OI.getInstance().elevator, OI.getInstance().switchBox));
-    // setDefaultCommand(new ElevateWithJoystick(OI.getInstance().elevator, OI.getInstance().switchBox));
+    setDefaultCommand(new ElevateWithJoystick(OI.getInstance().elevator, OI.getInstance().switchBox));
   }
 
   public void set(double output) {

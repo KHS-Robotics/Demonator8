@@ -80,7 +80,6 @@ public class OI {
   private DoubleSolenoid Shifter;
 
   private Spark fClimb, bClimb, climbDriveL, climbDriveR;
-  private DigitalInput frontLS, backLS;
 
   private Spark elevatorAccL, elevatorAccR;
   private DigitalInput elevatorLS;
@@ -208,31 +207,31 @@ public class OI {
 
       climber = new Climber(fClimb, bClimb, climbDriveL, climbDriveR);
 
-      JoystickButton raiseFrontClimb = new JoystickButton(leftJoystick, 7);
+      JoystickButton raiseFrontClimb = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.F_CLIMBER_RAISE);
       raiseFrontClimb.whenPressed(new RaiseFront(climber));
       raiseFrontClimb.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton lowerFrontClimb = new JoystickButton(leftJoystick, 10);
+      JoystickButton lowerFrontClimb = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.F_CLIMBER_LOWER);
       lowerFrontClimb.whenPressed(new LowerFront(climber));
       lowerFrontClimb.whenReleased(new HoldFrontClimb(climber, 0.21));
 
-      JoystickButton raiseBackClimb = new JoystickButton(leftJoystick, 6);
+      JoystickButton raiseBackClimb = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.B_CLIMBER_RAISE);
       raiseBackClimb.whenPressed(new RaiseBack(climber));
       raiseBackClimb.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton lowerBackClimb = new JoystickButton(leftJoystick, 11);
+      JoystickButton lowerBackClimb = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.B_CLIMBER_LOWER);
       lowerBackClimb.whenPressed(new LowerBack(climber));
       lowerBackClimb.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton climbAll = new JoystickButton(leftJoystick, 9);
+      JoystickButton climbAll = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.LOWER_ALL);
       climbAll.whenPressed(new LowerAll(climber));
       climbAll.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton raiseAll = new JoystickButton(leftJoystick, 8);
+      JoystickButton raiseAll = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.RAISE_ALL);
       raiseAll.whenPressed(new RaiseAll(climber));
       raiseAll.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton climbDrive = new JoystickButton(rightJoystick, 7);
+      JoystickButton climbDrive = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.CLIMB_DRIVE);
       climbDrive.whenPressed(new StartClimbDrive(climber, 1.0, 0.21));
       climbDrive.whenReleased(new HoldFrontClimb(climber, 0.21));
 
