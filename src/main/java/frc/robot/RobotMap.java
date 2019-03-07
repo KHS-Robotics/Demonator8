@@ -33,7 +33,7 @@ public class RobotMap {
   public static final int SHIFT_FORWARD_CHANNEL = 0;
   public static final int SHIFT_REVERSE_CHANNEL = 1;
 
-  public static final int VISION_LIGHT = 7;
+  public static final int VISION_LIGHT = 23;
 
   // Intake
   public static final int INTAKE = 8;

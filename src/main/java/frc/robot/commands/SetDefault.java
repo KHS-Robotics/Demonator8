@@ -5,30 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.climber;
+package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.subsystems.Climber;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class DriveClimberJoystick extends InstantCommand {
-  private Climber climber;
-  private Joystick stick;
-  public DriveClimberJoystick(Climber climber, Joystick stick) {
-    super();
-    this.climber = climber;
-    this.stick = stick;
-    this.requires(climber);
-  }
- 
-  @Override
-  protected void execute() {
-    climber.setDrive(stick.getY());
-  }
+public class SetDefault extends InstantCommand {
 
-  @Override
-  protected void end() {
-    climber.stop();
+  public SetDefault(Subsystem system, Command command) {
+    system.setDefaultCommand(command);
   }
-
 }

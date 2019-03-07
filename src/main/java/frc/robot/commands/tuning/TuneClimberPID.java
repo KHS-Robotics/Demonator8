@@ -7,15 +7,21 @@
 
 package frc.robot.commands.tuning;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.climber.HoldFrontClimb;
 import frc.robot.subsystems.Climber;
 
 public class TuneClimberPID extends Command {
   private Climber climber;
+  private boolean go = false, end = false;
+  private Joystick stick;
 
-  public TuneClimberPID(Climber climber) {
+  public TuneClimberPID(Climber climber, Joystick stick) {
       this.climber = climber;
+      this.stick = stick;
       
       this.requires(climber);
   }
@@ -25,7 +31,9 @@ public class TuneClimberPID extends Command {
     SmartDashboard.putNumber("Climber-P", SmartDashboard.getNumber("Climber-P", 0.0));
       SmartDashboard.putNumber("Climber-I", SmartDashboard.getNumber("Climber-I", 0.0));
       SmartDashboard.putNumber("Climber-D", SmartDashboard.getNumber("Climber-D", 0.0));
-      SmartDashboard.putNumber("Climber-Setpoint", SmartDashboard.getNumber("Climber-Setpoint", 0.0));
+      // SmartDashboard.putNumber("Climber-Setpoint", SmartDashboard.getNumber("Climber-Setpoint", 0.0));
+      SmartDashboard.putBoolean("GO", false);
+      SmartDashboard.putBoolean("END", false);
   }
 
   @Override
@@ -33,19 +41,25 @@ public class TuneClimberPID extends Command {
         double p = SmartDashboard.getNumber("Climber-P", climber.getClimberP());
         double i = SmartDashboard.getNumber("Climber-I", climber.getClimberI());
         double d = SmartDashboard.getNumber("Climber-D", climber.getClimberD());
-        climber.setClimberPID(p, i, d);
+        climber.setPID(p, i, d);
 
-        double setpoint = SmartDashboard.getNumber("Climber-Setpoint", climber.getClimberHeight());
-        climber.setSetpoint(setpoint);
+        if(go) {
+          climber.autoClimb();
+        }
+
+        go = stick.getRawButton(10);
+        end = stick.getRawButton(9);
+        // double setpoint = SmartDashboard.getNumber("Climber-Setpoint", climber.getPitch());
     }
 
     @Override
     protected void end() {
-        climber.stop();
+      climber.stop();
+      //Scheduler.getInstance().add(new HoldFrontClimb(climber));
     }
 
   @Override
   protected boolean isFinished() {
-    return false;
+    return end;
   }
 }

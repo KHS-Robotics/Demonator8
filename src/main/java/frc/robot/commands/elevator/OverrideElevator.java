@@ -9,11 +9,10 @@ package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.ButtonMap;
 import frc.robot.subsystems.Elevator;
 
 public class OverrideElevator extends Command {
-  public static final double DEADBAND = 0.075;
-	private boolean initializedIdle, isIdle;
 
   private Joystick stick;
   private Elevator elevator;
@@ -27,30 +26,16 @@ public class OverrideElevator extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    elevator.setOverride(true);
+    elevator.stop();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double input = stick.getRawAxis(0);
-    isIdle = Math.abs(input) <= DEADBAND;
-
-    if(isIdle && !initializedIdle) {
-      elevator.setArmRotation(elevator.getArmRotation());
-      initializedIdle = true;
-    }
-
-    if(Math.abs(input) > DEADBAND) {
-      initializedIdle = false;
-    }
-
-    elevator.set(deadband(-stick.getRawAxis(2)));
-
-    if(!isIdle) {
-      elevator.setArm(deadband(stick.getRawAxis(0)));
-    }
-
-    elevator.setIntake(deadband(stick.getRawAxis(1)), deadband(stick.getRawAxis(1)));
+    elevator.set(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS));
+    elevator.setArm(stick.getRawAxis(ButtonMap.SwitchBox.ARM_AXIS));
+    elevator.setIntake(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS), stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS));
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -62,17 +47,7 @@ public class OverrideElevator extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    elevator.setOverride(false);
     elevator.stop();
-  }
-
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-    elevator.stop();
-  }
-
-  public double deadband(double input) {
-    return Math.abs(input) > DEADBAND ? input : 0;
   }
 }

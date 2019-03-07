@@ -20,7 +20,7 @@ public class LowerAll extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.set(1,1,0);
+    climber.setPinions(1,1);
   }
 
   // Called repeatedly when this Command is scheduled to run

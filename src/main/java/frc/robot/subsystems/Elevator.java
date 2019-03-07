@@ -24,9 +24,9 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class Elevator extends PIDSubsystem {
-  private double pElevator, iElevator, dElevator, pArm = 0.1, iArm = 0.01, dArm = 0.6, iZone = 5;
+  private double pArm = 0.1, iArm = 0.01, dArm = 0.6, iZone = 5;
   private final double armTolerance = 1.0;
-  private boolean shouldReset;
+  private boolean override, shouldReset;
   private CANPIDController armPID;
   
   private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
@@ -41,8 +41,8 @@ public class Elevator extends PIDSubsystem {
   private DoubleSolenoid solenoid;
 
   private static final double eleLinDist = 18.0 * 0.25 * 2; //inches of .25in chain per output sprocket rev, doubled on the last stage
-  private static final int eleReducNum = 4; //22 tooth sprocket gearbox output
-  private static final int eleReducDen = 13; //64 planetary & 18 tooth sprocket
+  private static final int eleReducNum = 22 * 16; //22 tooth sprocket gearbox output, two motor gearbox 16 tooth sprocket
+  private static final int eleReducDen = 20 * 18 * 52; //64 planetary & 18 tooth sprocket
   private static final int eleCPR = 12; //counts per revolution of motor
   private static final double eleDistPP = (eleLinDist * eleReducNum) / (eleReducDen * eleCPR); //linear distance of the last stage arm per encoder pulse
 
@@ -52,7 +52,7 @@ public class Elevator extends PIDSubsystem {
 
   public Elevator(WPI_VictorSPX elevator1, WPI_VictorSPX elevator2, Spark accL, Spark accR, CANSparkMax arm, DigitalInput ls, Encoder encoder,
       DoubleSolenoid solenoid) {
-    super(0, 0, 0);
+    super(0.85, 0.003, 0.80);
     this.elevator1 = elevator1;
     this.elevator2 = elevator2;
     this.accL = accL;
@@ -72,6 +72,12 @@ public class Elevator extends PIDSubsystem {
 
     this.armEncoder = this.arm.getEncoder();
     this.armEncoder.setPositionConversionFactor(armDegPR);
+  }
+
+  @Override
+  public void setSetpoint(double setpoint) {
+    super.setSetpoint(setpoint);
+    this.enable();
   }
 
   public boolean armOnTarget(double target) {
@@ -136,12 +142,10 @@ public class Elevator extends PIDSubsystem {
     set(0);
     setIntake(0, 0);
     arm.stopMotor();
+    setArm(0);
   }
 
   public void setElevatorPID(double p, double i, double d) {
-    this.pElevator = p;
-    this.iElevator = i;
-    this.dElevator = d;
     this.getPIDController().setPID(p, i, d);
   }
 
@@ -151,8 +155,7 @@ public class Elevator extends PIDSubsystem {
    * @param p the proportional value
    */
   public void setElevatorP(double p) {
-    this.pElevator = p;
-    setElevatorPID(pElevator, iElevator, dElevator);
+    setElevatorPID(p, this.getPIDController().getI(), this.getPIDController().getD());
   }
 
   /**
@@ -161,7 +164,7 @@ public class Elevator extends PIDSubsystem {
    * @return the proportional value
    */
   public double getElevatorP() {
-    return pElevator;
+    return this.getPIDController().getP();
   }
 
   /**
@@ -170,8 +173,7 @@ public class Elevator extends PIDSubsystem {
    * @param i the integral value
    */
   public void setElevatorI(double i) {
-    this.iElevator = i;
-    setElevatorPID(pElevator, iElevator, dElevator);
+    setElevatorPID(this.getPIDController().getP(), i, this.getPIDController().getD());
   }
 
   /**
@@ -180,7 +182,7 @@ public class Elevator extends PIDSubsystem {
    * @return the integral value
    */
   public double getElevatorI() {
-    return iElevator;
+    return this.getPIDController().getI();
   }
 
   /**
@@ -189,8 +191,7 @@ public class Elevator extends PIDSubsystem {
    * @param d the derivative value
    */
   public void setElevatorD(double d) {
-    this.dElevator = d;
-    setElevatorPID(pElevator, iElevator, dElevator);
+    setElevatorPID(this.getPIDController().getP(), this.getPIDController().getI(), d);
   }
 
   /**
@@ -199,7 +200,7 @@ public class Elevator extends PIDSubsystem {
    * @return the derivative value
    */
   public double getElevatorD() {
-    return dElevator;
+    return this.getPIDController().getD();
   }
 
   public void setArmPID(double p, double i, double d, double iZone) {
@@ -269,7 +270,18 @@ public class Elevator extends PIDSubsystem {
   public double getArmD() {
     return dArm;
   }
+
+  public void setOverride(boolean set) {
+    this.override = set;
+  }
   
+  /**
+   * @return the override
+   */
+  public boolean isOverride() {
+    return override;
+  }
+
 
   @Override
   public void initDefaultCommand() {
@@ -277,8 +289,8 @@ public class Elevator extends PIDSubsystem {
   }
 
   public void set(double output) {
-    // if (!override && getLS() && output < 0)
-      // output = 0;
+    if (!override && getLS() && output < 0)
+      output = 0;
 
     elevator1.set(-output);
     elevator2.set(output);

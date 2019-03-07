@@ -20,7 +20,7 @@ public class RaiseAll extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.set(-0.5,-0.5,0);
+    climber.setPinions(-0.5,-0.5);
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -22,7 +22,7 @@ private Climber climber;
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.set(1,0,0);
+    climber.setPinions(1,0);
   }
 
   // Called repeatedly when this Command is scheduled to run

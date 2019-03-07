@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Spark;
 
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -22,7 +21,6 @@ import com.kauailabs.navx.frc.AHRS;
  */
 public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
   private Spark fClimb, bClimb, driveR, driveL;
-  private DigitalInput front, back;
 
   private double pClimber, iClimber, dClimber;
   public static final double climbP = 0.04, climbI = 0.0, climbD = 0.025;
@@ -36,16 +34,13 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
     this.bClimb = bClimb;
     this.driveL = driveL;
     this.driveR = driveR;
-    this.front = front;
-    this.back = back;
 
     this.navx = navx;
 
     setPIDSourceType(PIDSourceType.kDisplacement);
     pitchPID = new PIDController(climbP, climbI, climbD, this, this);
     pitchPID.setInputRange(-10.0, 10.0);
-    pitchPID.setOutputRange(-1, 1);
-    // pitchPID.setContinuous();
+    pitchPID.setOutputRange(0, 1);
     pitchPID.setAbsoluteTolerance(0.5);
     disablePID();
   }
@@ -57,30 +52,15 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
   }
 
 
-  public void set(double front, double back, double drive) {
-    /*if(getFrontLS() && front > 0)
-    {
-      front = 0;
-    }
-    if(getBackLS() && back > 0)
-    {
-      back = 0;
-    }*/
-    
+  public void setPinions(double front, double back) {
     fClimb.set(-front);
     bClimb.set(-back);
-    driveR.set(-drive);
-    driveL.set(drive);
   }
 
-  public boolean getFrontLS() {
-    return front.get();
+  public void setDrive(double output) {
+    driveL.set(output);
+    driveR.set(-output);
   }
-
-  public boolean getBackLS() {
-    return back.get();
-  }
-
 
 @Override
 public void setPIDSourceType(PIDSourceType pidSource) {
@@ -102,8 +82,8 @@ public double pidGet() {
 
 @Override
 public void pidWrite(double output) {
-  fClimb.set(normalizeOutput(-1.0 - output));
-  bClimb.set(normalizeOutput(-1.0 + output));
+  fClimb.set(normalizeOutput(-1.0 + output));
+  bClimb.set(normalizeOutput(-1.0 - output));
 }
 
 
@@ -115,15 +95,16 @@ public void pidWrite(double output) {
    */
 
 private static double normalizeOutput(double output) {
-  if (output > 0.8)
-    return 0.8;
-  else if (output < -0.8)
-    return -0.8;
+  if (output > 1)
+    return 1;
+  else if (output < -1)
+    return -1;
   return output;
 }
 
 public void stop() {
-  this.set(0, 0, 0);
+  this.setPinions(0, 0);
+  this.setDrive(0);
   disablePID();
 }
 
@@ -132,7 +113,7 @@ public void resetNavx() {
 }
 
 public void enablePID() {
-    pitchPID.enable();
+  pitchPID.enable();
   }
 
   public void disablePID() {
@@ -142,6 +123,9 @@ public void enablePID() {
   }
 
   public void setPID(double p, double i, double d) {
+    this.pClimber = p;
+    this.iClimber = i;
+    this.dClimber = d;
     this.pitchPID.setPID(p, i, d);
   }
 
@@ -159,8 +143,8 @@ public void enablePID() {
     return pitch;
   }
 
-  public void setHeading(double angle, double direction) {
-    this.pitchPID.setSetpoint(normalizePitch(angle));
+  public void autoClimb() {
+    this.pitchPID.setSetpoint(0); // Stay level
     enablePID();
   }
 
@@ -172,13 +156,6 @@ public void enablePID() {
     
   }
 
-  public void setClimberPID(double p, double i, double d) {
-    this.pClimber = p;
-    this.iClimber = i;
-    this.dClimber = d;
-    this.getPIDController().setPID(p, i, d);
-  }
-
   /**
    * Sets the P value for the internal PID controller for height.
    * 
@@ -186,7 +163,7 @@ public void enablePID() {
    */
   public void setClimberP(double p) {
     this.pClimber = p;
-    setClimberPID(pClimber, iClimber, dClimber);
+    setPID(pClimber, iClimber, dClimber);
   }
 
   /**
@@ -205,7 +182,7 @@ public void enablePID() {
    */
   public void setClimberI(double i) {
     this.iClimber = i;
-    setClimberPID(pClimber, iClimber, dClimber);
+    setPID(pClimber, iClimber, dClimber);
   }
 
   /**
@@ -224,7 +201,7 @@ public void enablePID() {
    */
   public void setClimberD(double d) {
     this.dClimber = d;
-    setClimberPID(pClimber, iClimber, dClimber);
+    setPID(pClimber, iClimber, dClimber);
   }
 
   /**
