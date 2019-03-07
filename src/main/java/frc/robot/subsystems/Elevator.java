@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import frc.robot.OI;
 import frc.robot.commands.elevator.ElevateWithJoystick;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -62,6 +63,7 @@ public class Elevator extends PIDSubsystem {
     this.encoder = encoder;
     this.solenoid = solenoid;
 
+    setNeutralMode(NeutralMode.Brake);
     this.arm.setIdleMode(IdleMode.kBrake);
 
     this.encoder.setDistancePerPulse(eleDistPP);
@@ -72,6 +74,17 @@ public class Elevator extends PIDSubsystem {
 
     this.armEncoder = this.arm.getEncoder();
     this.armEncoder.setPositionConversionFactor(armDegPR);
+
+    this.setAbsoluteTolerance(0.5);
+    this.setOutputRange(-1, 1);
+    // this.setInputRange(0, maxHeight);
+
+    // this.open(); // Uncomment for competitions
+  }
+
+  public void setNeutralMode(NeutralMode mode) {
+    elevator1.setNeutralMode(mode);
+    elevator2.setNeutralMode(mode);
   }
 
   @Override

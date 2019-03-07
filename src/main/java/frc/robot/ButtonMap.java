@@ -59,6 +59,7 @@ public class ButtonMap
 		public static final int F_CLIMBER_LOWER = 10;
 		public static final int B_CLIMBER_RAISE = 6;
 		public static final int B_CLIMBER_LOWER = 11;
+		public static final int DRIVE_AT_TARGET = 1;
 	}
 
 	/**

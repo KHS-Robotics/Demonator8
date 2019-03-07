@@ -11,9 +11,19 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class SetDefault extends InstantCommand {
+public class SetDefaultCommand extends InstantCommand {
+  private Subsystem subsystem;
+  private Command command;
 
-  public SetDefault(Subsystem system, Command command) {
-    system.setDefaultCommand(command);
+  public SetDefaultCommand(Subsystem subsystem, Command command) {
+      this.subsystem = subsystem;
+      this.command = command;
+      
+      this.requires(subsystem);
+  }
+
+  @Override
+  protected void execute() {
+      subsystem.setDefaultCommand(command);
   }
 }

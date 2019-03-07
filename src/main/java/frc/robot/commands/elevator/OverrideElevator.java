@@ -13,7 +13,7 @@ import frc.robot.ButtonMap;
 import frc.robot.subsystems.Elevator;
 
 public class OverrideElevator extends Command {
-
+	public static final double DEADBAND = 0.075;
   private Joystick stick;
   private Elevator elevator;
 
@@ -33,10 +33,14 @@ public class OverrideElevator extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    elevator.set(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS));
-    elevator.setArm(stick.getRawAxis(ButtonMap.SwitchBox.ARM_AXIS));
-    elevator.setIntake(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS), stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS));
+    elevator.set(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS)));
+    elevator.setArm(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ARM_AXIS)));
+    elevator.setIntake(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS)), deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS)));
   }
+
+  public double deadband(double input) {
+		return Math.abs(input) > DEADBAND ? input : 0;
+	}
 
   // Make this return true when this Command no longer needs to run execute()
   @Override

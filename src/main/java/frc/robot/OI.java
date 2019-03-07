@@ -8,7 +8,7 @@
 package frc.robot;
 
 import frc.robot.commands.BothIntake;
-import frc.robot.commands.SetDefault;
+import frc.robot.commands.SetDefaultCommand;
 import frc.robot.commands.StopSubsystem;
 import frc.robot.commands.climber.ClimbWithThrottle;
 import frc.robot.commands.climber.HoldFrontClimb;
@@ -34,6 +34,7 @@ import frc.robot.commands.elevator.StopRelease;
 import frc.robot.commands.elevator.ToggleArm;
 import frc.robot.commands.intake.ReverseIntake;
 import frc.robot.commands.intake.StartIntake;
+import frc.robot.commands.tankdrive.DriveStraightAtTargetJoystick;
 import frc.robot.commands.tankdrive.DriveStraightJoystick;
 import frc.robot.commands.tankdrive.Shift;
 import frc.robot.commands.tankdrive.ShiftHigh;
@@ -64,7 +65,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.TankDrive;
-import frc.robot.vision.UDPTracker;
+import frc.robot.vision.MoePiClient;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Climber;
 
@@ -97,7 +98,7 @@ public class OI {
   public CargoIntake cargoIntake;
   public Elevator elevator;
   public Climber climber;
-  public UDPTracker udp;
+  public MoePiClient udp;
 
   private OI() {
 
@@ -154,17 +155,18 @@ public class OI {
 
       JoystickButton highGearGoStraightButton = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.HIGHGEAR_GO_STRAIGHT);
       highGearGoStraightButton.whenPressed(new ShiftHighDriveStraight(rightJoystick, drive));
-      highGearGoStraightButton.whenReleased(new StopSubsystem(drive));
+      highGearGoStraightButton.whenReleased(new ShiftLow(drive));
 
-      JoystickButton visionLight = new JoystickButton(leftJoystick, 1);
-      visionLight.whenPressed(new ToggleLight(drive));
+      JoystickButton driveStraightTarget = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.DRIVE_AT_TARGET);
+      driveStraightTarget.whenPressed(new DriveStraightAtTargetJoystick(drive, udp, leftJoystick));
+      driveStraightTarget.whenReleased(new StopSubsystem(drive));
 
       // JoystickButton tunedrivePIDButton = new JoystickButton(switchBox, 2);
       // tunedrivePIDButton.whenPressed(new TuneDrivePID(drive));
       // tunedrivePIDButton.whenReleased(new StopSubsystem(drive));
       
       try {
-        udp = new UDPTracker(drive);
+        udp = new MoePiClient(drive);
       } catch (SocketException ex) {
         ex.printStackTrace();
       }
@@ -184,14 +186,14 @@ public class OI {
       cargoIntake = new CargoIntake(intake);
 
       // Button to start intake
-			// JoystickButton intakeForward = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_FORWARD);
-      // intakeForward.whenPressed(new BothIntake(elevator, cargoIntake));
-      // intakeForward.whenReleased(new StopSubsystem(elevator, cargoIntake));
+			JoystickButton intakeForward = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_FORWARD);
+      intakeForward.whenPressed(new BothIntake(elevator, cargoIntake));
+      intakeForward.whenReleased(new StopSubsystem(elevator, cargoIntake));
       
-      // // Button to reverse intake
-			// JoystickButton intakeReverse = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_REVERSE);
-			// intakeReverse.whenPressed(new ReverseIntake(cargoIntake));
-			// intakeReverse.whenReleased(new StopSubsystem(cargoIntake));
+      // Button to reverse intake
+			JoystickButton intakeReverse = new JoystickButton(switchBox, ButtonMap.SwitchBox.INTAKE_REVERSE);
+			intakeReverse.whenPressed(new ReverseIntake(cargoIntake));
+			intakeReverse.whenReleased(new StopSubsystem(cargoIntake));
 
     } catch(Exception ex) {
       Logger.error("Failed to initialize Cargo Intake!", ex);
@@ -306,16 +308,8 @@ public class OI {
 
       // Button to use overrided elevator controls
       JoystickButton overrideButton = new JoystickButton(switchBox, ButtonMap.SwitchBox.ELEVATOR_OVERIDE);
-      overrideButton.whenPressed(new SetDefault(elevator, new ElevateWithJoystick(elevator, switchBox))); // Button is inverted
-      overrideButton.whenReleased(new SetDefault(elevator, new OverrideElevator(switchBox, elevator)));
-      
-      // JoystickButton tuneArm = new JoystickButton(switchBox, 2);
-      // tuneArm.whenPressed(new TuneArmPID(elevator));
-      // tuneArm.whenReleased(new StopElevator(elevator));
-
-      JoystickButton tuneElev = new JoystickButton(switchBox, 5);
-      tuneElev.whenPressed(new TuneElevatorPID(elevator));
-      tuneElev.whenPressed(new StopElevator(elevator));
+      overrideButton.whenPressed(new SetDefaultCommand(elevator, new ElevateWithJoystick(elevator, switchBox))); // Button is inverted
+      overrideButton.whenReleased(new SetDefaultCommand(elevator, new OverrideElevator(switchBox, elevator)));
 
       JoystickButton pointForward = new JoystickButton(switchBox, 2);
       pointForward.whenPressed(new RotateArm(elevator, -90));
@@ -325,6 +319,15 @@ public class OI {
 
       AxisButton grabAngle = new AxisButton(switchBox, 1, 3);
       grabAngle.whenPressed(new RotateArm(elevator, -170));
+
+
+      // JoystickButton tuneArm = new JoystickButton(switchBox, 2);
+      // tuneArm.whenPressed(new TuneArmPID(elevator));
+      // tuneArm.whenReleased(new StopElevator(elevator));
+
+      // JoystickButton tuneElev = new JoystickButton(switchBox, 5);
+      // tuneElev.whenPressed(new TuneElevatorPID(elevator));
+      // tuneElev.whenPressed(new StopElevator(elevator));
 
     } catch(Exception ex) {
         Logger.error("Failed to initialize Elevator!", ex);

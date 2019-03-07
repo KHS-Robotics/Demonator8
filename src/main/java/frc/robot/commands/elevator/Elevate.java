@@ -32,7 +32,6 @@ public class Elevate extends Command {
 	@Override
 	protected void initialize() {
 		elevator.setSetpoint(height);
-		elevator.enable();
 	}
 
 	@Override

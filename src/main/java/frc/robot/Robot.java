@@ -64,6 +64,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     isEnabled = false;
     m_oi.drive.setNeutralMode(NeutralMode.Brake);
+    Scheduler.getInstance().run();
   }
 
   @Override
