@@ -47,6 +47,7 @@ public class RobotMap {
   public static final int B_CLIMB = 1;
   public static final int CLIMB_DRIVE_L = 2;
   public static final int CLIMB_DRIVE_R = 3;
+  public static final int CLIMB_LS = 7;
 
   // Elevator
   public static final int ELEVATOR_MOTOR1 = 2;

@@ -14,7 +14,7 @@ import frc.robot.subsystems.Elevator;
  * Sets the height of the elevator to place cargo medium
  */
 public class ElevateCargoToMedium extends Elevate {
-	private static final double CARGO_PORT_MEDIUM = 0;
+	private static final double CARGO_PORT_MEDIUM = 14.4;
 
 	/**
 	 * Sets the height of the elevator to place cargo medium

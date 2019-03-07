@@ -13,7 +13,7 @@ import frc.robot.subsystems.Elevator;
  * Add your docs here.
  */
 public class ElevateToHatchMiddle extends Elevate {
-    private static final double HATCH_MIDDLE_HEIGHT = 0;
+    private static final double HATCH_MIDDLE_HEIGHT = 12;
 
     public ElevateToHatchMiddle(Elevator elevator) {
         super(elevator, HATCH_MIDDLE_HEIGHT);

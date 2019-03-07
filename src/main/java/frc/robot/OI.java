@@ -85,6 +85,7 @@ public class OI {
   private DoubleSolenoid Shifter;
 
   private Spark fClimb, bClimb, climbDriveL, climbDriveR;
+  private DigitalInput climberLS;
 
   private Spark elevatorAccL, elevatorAccR;
   private DigitalInput elevatorLS;
@@ -142,6 +143,7 @@ public class OI {
       Right2 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT2);
 
       VisionLight = new DigitalOutput(RobotMap.VISION_LIGHT);
+      VisionLight.set(false);
 
       drive = new TankDrive(Left1, Left2, Right1, Right2, Shifter, navx, LeftDriveEnc, RightDriveEnc, lUltra, rUltra, VisionLight);
 
@@ -157,9 +159,9 @@ public class OI {
       highGearGoStraightButton.whenPressed(new ShiftHighDriveStraight(rightJoystick, drive));
       highGearGoStraightButton.whenReleased(new ShiftLow(drive));
 
-      JoystickButton driveStraightTarget = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.DRIVE_AT_TARGET);
-      driveStraightTarget.whenPressed(new DriveStraightAtTargetJoystick(drive, udp, leftJoystick));
-      driveStraightTarget.whenReleased(new StopSubsystem(drive));
+      // JoystickButton driveStraightTarget = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.DRIVE_AT_TARGET);
+      // driveStraightTarget.whenPressed(new DriveStraightAtTargetJoystick(drive, udp, leftJoystick));
+      // driveStraightTarget.whenReleased(new StopSubsystem(drive));
 
       // JoystickButton tunedrivePIDButton = new JoystickButton(switchBox, 2);
       // tunedrivePIDButton.whenPressed(new TuneDrivePID(drive));
@@ -210,8 +212,9 @@ public class OI {
       bClimb = new Spark(RobotMap.B_CLIMB);
       climbDriveL = new Spark(RobotMap.CLIMB_DRIVE_L);
       climbDriveR = new Spark(RobotMap.CLIMB_DRIVE_R);
+      climberLS = new DigitalInput(RobotMap.CLIMB_LS);
 
-      climber = new Climber(fClimb, bClimb, climbDriveL, climbDriveR, navx);
+      climber = new Climber(fClimb, bClimb, climbDriveL, climbDriveR, navx, climberLS);
 
       JoystickButton raiseFrontClimb = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.F_CLIMBER_RAISE);
       raiseFrontClimb.whenPressed(new RaiseFront(climber));
@@ -271,37 +274,37 @@ public class OI {
       elevatorSolenoid = new DoubleSolenoid(RobotMap.ELEVATOR_SOLENOID_A, RobotMap.ELEVATOR_SOLENOID_B);
 
       elevator = new Elevator(elevator1, elevator2, elevatorAccL, elevatorAccR, arm, elevatorLS, elevatorEncoder, elevatorSolenoid);
-      /*
+      
       // Button to set the elevator to the high cargo port
-			AxisButton elevateCargoHigh = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_HIGH, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
+			AxisButton elevateCargoHigh = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_HIGH, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateCargoHigh.whenPressed(new ElevateCargoToHigh(elevator));
 			elevateCargoHigh.whenReleased(new StopElevator(elevator));
 
 			// Button to set the elevator to the medium cargo port
-			AxisButton elevateCargoMedium = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_MEDIUM, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
+			AxisButton elevateCargoMedium = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_MEDIUM, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateCargoMedium.whenPressed(new ElevateCargoToMedium(elevator));
 			elevateCargoMedium.whenReleased(new StopElevator(elevator));
 			
 			// Button to set the elevator to the low cargo part
-			AxisButton elevateCargoLow = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_LOW, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
+			AxisButton elevateCargoLow = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_CARGO_LOW, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateCargoLow.whenPressed(new ElevateCargoToLow(elevator));
 			elevateCargoLow.whenReleased(new StopElevator(elevator));
       
       // Button to set the elevator to the high hatch port
-			AxisButton elevateHatchHigh = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_HIGH, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
+			AxisButton elevateHatchHigh = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_HIGH, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateHatchHigh.whenPressed(new ElevateToHatchHigh(elevator));
 			elevateHatchHigh.whenReleased(new StopElevator(elevator));
 
 			// Button to set the elevator to the medium hatch port
-			AxisButton elevateHatchMedium = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_MEDIUM, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
+			AxisButton elevateHatchMedium = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_MEDIUM, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateHatchMedium.whenPressed(new ElevateToHatchMiddle(elevator));
 			elevateHatchMedium.whenReleased(new StopElevator(elevator));
 			
 			// Button to set the elevator to the low hatch part
-			AxisButton elevateHatchLow = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_LOW, ButtonMap.SwitchBox.BUTTON_RANGE, ButtonMap.SwitchBox.BUTTON_AXIS);
+			AxisButton elevateHatchLow = new AxisButton(switchBox, ButtonMap.SwitchBox.ELEVATE_HATCH_LOW, ButtonMap.SwitchBox.BUTTON_AXIS);
 			elevateHatchLow.whenPressed(new ElevateToHatchLow(elevator));
       elevateHatchLow.whenReleased(new StopElevator(elevator));
-      */
+      
       // Button to toggle arms
 			JoystickButton toggleArms = new JoystickButton(switchBox, ButtonMap.SwitchBox.TOGGLE_ARMS);
 			toggleArms.whenPressed(new ToggleArm(elevator));

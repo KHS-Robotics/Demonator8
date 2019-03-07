@@ -33,7 +33,7 @@ public class OverrideElevator extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    elevator.set(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS)));
+    elevator.set(-deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS)));
     elevator.setArm(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ARM_AXIS)));
     elevator.setIntake(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS)), deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS)));
   }

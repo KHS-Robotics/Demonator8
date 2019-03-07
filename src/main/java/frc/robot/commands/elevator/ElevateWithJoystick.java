@@ -49,7 +49,7 @@ public class ElevateWithJoystick extends Command {
 		}
 
 		if (Robot.enabled()) {
-			double inputElev = stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS);
+			double inputElev = -stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS);
 			double inputArm = stick.getRawAxis(ButtonMap.SwitchBox.ARM_AXIS);
 			isIdleElev = Math.abs(inputElev) < DEADBAND;
 			isIdleArm = Math.abs(inputArm) < DEADBAND;
@@ -61,10 +61,11 @@ public class ElevateWithJoystick extends Command {
 
 			if (isIdleArm && !initializedIdleArm) {
 				elevator.setArmRotation(elevator.getArmRotation());
-				initializedIdleArm = false;
+				initializedIdleArm = true;
 			}
 
 			if(!isIdleElev) {
+				elevator.disable();
 				elevator.set(inputElev);
 				initializedIdleElev = false;
 			}

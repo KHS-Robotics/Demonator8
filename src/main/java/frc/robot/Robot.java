@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,8 +30,8 @@ public class Robot extends TimedRobot {
   private static boolean isEnabled;
   public static OI m_oi;
 
-  Command m_autonomousCommand;
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  CommandGroup m_autonomousCommand;
+  SendableChooser<CommandGroup> m_chooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -41,6 +42,8 @@ public class Robot extends TimedRobot {
     m_oi = OI.getInstance();
   
     DemonDashboard.start();
+
+    m_chooser.setDefaultOption("Nothing", null);
   }
 
   /**
@@ -109,19 +112,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    // check for auton cancel
+    if(OI.getInstance().rightJoystick.getRawButton(ButtonMap.RightJoystick.CANCEL_AUTO) && m_autonomousCommand != null && m_autonomousCommand.isRunning()) {
+      m_autonomousCommand.cancel();
+    }
+
     Scheduler.getInstance().run();
   }
 
   @Override
   public void teleopInit() {
     isEnabled = true;
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
   }
 
   /**
@@ -129,6 +130,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    // check for auton cancel
+    if(OI.getInstance().rightJoystick.getRawButton(ButtonMap.RightJoystick.CANCEL_AUTO) && m_autonomousCommand != null && m_autonomousCommand.isRunning()) {
+      m_autonomousCommand.cancel();
+    }
+
     Scheduler.getInstance().run();
   }
 

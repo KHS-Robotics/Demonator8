@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PIDController;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -23,17 +24,19 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
   private Spark fClimb, bClimb, driveR, driveL;
 
   private double pClimber, iClimber, dClimber;
-  public static final double climbP = 0.04, climbI = 0.0, climbD = 0.025;
+  public static final double climbP = -0.2, climbI = 0.0, climbD = 0.0;
   private PIDController pitchPID;
   private PIDSourceType pidSourceType;
+  private DigitalInput limit;
 
   private AHRS navx;
 
-  public Climber(Spark fClimb, Spark bClimb, Spark driveL, Spark driveR, AHRS navx) {
+  public Climber(Spark fClimb, Spark bClimb, Spark driveL, Spark driveR, AHRS navx, DigitalInput limit) {
     this.fClimb = fClimb;
     this.bClimb = bClimb;
     this.driveL = driveL;
     this.driveR = driveR;
+    this.limit = limit;
 
     this.navx = navx;
 
@@ -53,13 +56,22 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
 
 
   public void setPinions(double front, double back) {
-    fClimb.set(-front);
+    if(getLS() && front > 0) {
+      fClimb.set(0);
+    } else {
+      fClimb.set(-front);
+    }
+
     bClimb.set(-back);
   }
 
   public void setDrive(double output) {
     driveL.set(output);
     driveR.set(-output);
+  }
+
+  public boolean getLS() {
+    return limit.get();
   }
 
 @Override
