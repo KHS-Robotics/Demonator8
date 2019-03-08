@@ -7,12 +7,12 @@
 
 package frc.robot.commands.elevator;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.subsystems.Elevator;
 
-public class GrabBall extends CommandGroup {
-  public GrabBall(Elevator elevator) {
-    addSequential(new ElevateGrab(elevator));
-    addSequential(new RotateArm(elevator, -170));
+public class ElevateGrab extends Elevate {
+  private static double GRAB_HEIGHT = 7.35;
+
+  public ElevateGrab(Elevator elevator) {
+    super(elevator, GRAB_HEIGHT);
   }
 }

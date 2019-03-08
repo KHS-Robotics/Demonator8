@@ -21,7 +21,7 @@ public class Elevate extends Command {
 	 * @param height the desired height of the elevator
 	 */
 	public Elevate(Elevator elevator, double height) {
-		super(2.5);
+		super(2.75);
 		
 		this.elevator = elevator;
 		this.height = height;

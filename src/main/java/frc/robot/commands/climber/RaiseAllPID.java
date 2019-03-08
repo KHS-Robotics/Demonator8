@@ -8,36 +8,33 @@
 package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.subsystems.Climber;
 
-public class HoldFrontClimb extends Command {
+public class RaiseAllPID extends Command {
   private Climber climber;
-  public static final double HOLD = 0.21;
-  public HoldFrontClimb(Climber climber) {
+
+  public RaiseAllPID(Climber climber) {
     this.climber = climber;
     requires(climber);
   }
 
-  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.setPinions(HOLD, 0);
+    climber.autoClimb();
   }
 
-  // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
-  }
+  protected void execute() {}
 
-  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return climber.getLS();
   }
 
-  // Called once after isFinished returns true
   @Override
   protected void end() {
     climber.stop();
+    Scheduler.getInstance().add(new HoldFrontClimb(climber));
   }
 }

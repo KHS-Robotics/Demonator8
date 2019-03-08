@@ -16,6 +16,7 @@ import frc.robot.commands.climber.LowerAll;
 import frc.robot.commands.climber.LowerBack;
 import frc.robot.commands.climber.LowerFront;
 import frc.robot.commands.climber.RaiseAll;
+import frc.robot.commands.climber.RaiseAllPID;
 import frc.robot.commands.climber.RaiseBack;
 import frc.robot.commands.climber.RaiseFront;
 import frc.robot.commands.climber.StartClimbDrive;
@@ -237,8 +238,8 @@ public class OI {
       climbAll.whenReleased(new StopSubsystem(climber));
 
       JoystickButton raiseAll = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.RAISE_ALL);
-      raiseAll.whenPressed(new RaiseAll(climber));
-      raiseAll.whenReleased(new StopSubsystem(climber));
+      raiseAll.whenPressed(new RaiseAllPID(climber));
+      raiseAll.whenReleased(new HoldFrontClimb(climber));
 
       JoystickButton climbDrive = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.CLIMB_DRIVE);
       climbDrive.whenPressed(new StartClimbDrive(climber, 1.0, 0.21));

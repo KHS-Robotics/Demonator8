@@ -21,10 +21,12 @@ import com.kauailabs.navx.frc.AHRS;
  * Add your docs here.
  */
 public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
+  public static final double HOLD = 0.21;
+
   private Spark fClimb, bClimb, driveR, driveL;
 
   private double pClimber, iClimber, dClimber;
-  public static final double climbP = -0.2, climbI = 0.0, climbD = 0.0;
+  public static final double climbP = 0.2, climbI = 0.0, climbD = 0.0;
   private PIDController pitchPID;
   private PIDSourceType pidSourceType;
   private DigitalInput limit;
@@ -49,15 +51,11 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
   }
 
   @Override
-  public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
-  }
-
+  public void initDefaultCommand() {}
 
   public void setPinions(double front, double back) {
-    if(getLS() && front > 0) {
-      fClimb.set(0);
+    if (getLS() && front > HOLD) {
+      fClimb.set(0.21);
     } else {
       fClimb.set(-front);
     }
@@ -74,30 +72,29 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
     return limit.get();
   }
 
-@Override
-public void setPIDSourceType(PIDSourceType pidSource) {
-  pidSourceType = pidSource;
-}
+  @Override
+  public void setPIDSourceType(PIDSourceType pidSource) {
+    pidSourceType = pidSource;
+  }
 
-@Override
-public PIDSourceType getPIDSourceType() {
-  return pidSourceType;
-}
+  @Override
+  public PIDSourceType getPIDSourceType() {
+    return pidSourceType;
+  }
 
-@Override
-public double pidGet() {
-  // if (pidSourceType == PIDSourceType.kRate)
-  //     return navx.getRate();
-  //   else
-      return this.getPitch();
-}
+  @Override
+  public double pidGet() {
+    // if (pidSourceType == PIDSourceType.kRate)
+    // return navx.getRate();
+    // else
+    return this.getPitch();
+  }
 
-@Override
-public void pidWrite(double output) {
-  fClimb.set(normalizeOutput(-1.0 + output));
-  bClimb.set(normalizeOutput(-1.0 - output));
-}
-
+  @Override
+  public void pidWrite(double output) {
+    fClimb.set(normalizeOutput(-1.0 - output));
+    bClimb.set(normalizeOutput(-1.0 + output));
+  }
 
   /**
    * Internal function to normalize a motor output
@@ -106,26 +103,26 @@ public void pidWrite(double output) {
    * @return the normalized output ranging from -1.0 to 1.0
    */
 
-private static double normalizeOutput(double output) {
-  if (output > 1)
-    return 1;
-  else if (output < -1)
-    return -1;
-  return output;
-}
+  private static double normalizeOutput(double output) {
+    if (output > 1)
+      return 1;
+    else if (output < -1)
+      return -1;
+    return output;
+  }
 
-public void stop() {
-  this.setPinions(0, 0);
-  this.setDrive(0);
-  disablePID();
-}
+  public void stop() {
+    this.setPinions(0, 0);
+    this.setDrive(0);
+    disablePID();
+  }
 
-public void resetNavx() {
-  navx.reset();
-}
+  public void resetNavx() {
+    navx.reset();
+  }
 
-public void enablePID() {
-  pitchPID.enable();
+  public void enablePID() {
+    pitchPID.enable();
   }
 
   public void disablePID() {
@@ -165,7 +162,7 @@ public void enablePID() {
   }
 
   public void getPIDController() {
-    
+
   }
 
   /**
@@ -225,4 +222,3 @@ public void enablePID() {
     return dClimber;
   }
 }
-
