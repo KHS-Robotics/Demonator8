@@ -43,10 +43,11 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
 
   private static final Value HIGH_GEAR = Value.kReverse, LOW_GEAR = Value.kForward;
   private Value currentGear;
+  private NeutralMode mode;
 
   private static final double driveLinDist = Math.PI * 6.0; //inches of circ of 6in wheel
-  private static final int driveReducDen = 64; //64 spur 
-  private static final int driveReducNum = 3 * 20; //3 times encoder gearing 20 tooth spur gearbox output
+  private static final int driveReducDen = 64 * 3; //64 spur 
+  private static final int driveReducNum = 20; //3 times encoder gearing 20 tooth spur gearbox output
   private static final int driveCPR = 64; //counts per revolution of motor
   private static final double driveDistPP = (driveLinDist * driveReducNum) / (driveReducDen * driveCPR); //linear distance of the last stage arm per encoder pulse
 
@@ -117,10 +118,10 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     left = -(normalizeOutput(left));
     right = (normalizeOutput(right));
 
-    left1.set(left);
-    left2.set(left);
-    right1.set(right);
-    right2.set(right);
+    left1.set(right);
+    left2.set(right);
+    right1.set(left);
+    right2.set(left);
   }
 
   /**
@@ -228,7 +229,7 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
 
   public void enablePID() {
     yawPID.enable();
-    this.setNeutralMode(NeutralMode.Brake);
+    // this.setNeutralMode(NeutralMode.Brake);
   }
 
   public void disablePID() {
@@ -238,11 +239,15 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
       this.setNeutralMode(NeutralMode.Coast);
     }
   }
+
   public void setNeutralMode(NeutralMode mode) {
-    left1.setNeutralMode(mode);
-    left2.setNeutralMode(mode);
-    right1.setNeutralMode(mode);
-    right2.setNeutralMode(mode);
+    if(this.mode == null || !this.mode.equals(mode)) {
+      left1.setNeutralMode(mode);
+      left2.setNeutralMode(mode);
+      right1.setNeutralMode(mode);
+      right2.setNeutralMode(mode);
+      this.mode = mode;
+    }
   }
 
   public void setPID(double p, double i, double d) {

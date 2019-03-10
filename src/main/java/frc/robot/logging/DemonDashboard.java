@@ -54,8 +54,7 @@ public class DemonDashboard {
         @Override
         public void run() {
             SmartDashboard.putBoolean("DemonDashboard", true);
-            SmartDashboard.putBoolean("DemonDashboard-Crash", false);
-
+            
             while (running) {
                 try {
                     if (oi.drive != null) {
@@ -88,7 +87,6 @@ public class DemonDashboard {
                     Thread.sleep(50);
                 } catch (Exception ex) {
                     Logger.error("DemonDashboard crashed!", ex);
-                    SmartDashboard.putBoolean("DemonDashboard-Crash", true);
                     DemonDashboard.stop();
                 }
             }

@@ -30,7 +30,7 @@ public class Elevator extends PIDSubsystem {
   private boolean override, shouldReset;
   private CANPIDController armPID;
   
-  private static final Value CLOSE = Value.kReverse, OPEN = Value.kForward;
+  private static final Value CLOSE = Value.kForward, OPEN = Value.kReverse;
   private Value current;
 
   private Spark accL, accR;
@@ -77,9 +77,7 @@ public class Elevator extends PIDSubsystem {
 
     this.setAbsoluteTolerance(0.5);
     this.setOutputRange(-1, 1);
-    // this.setInputRange(0, maxHeight);
-
-    // this.open(); // Uncomment for competitions
+    this.setInputRange(0, 20);
   }
 
   public void setNeutralMode(NeutralMode mode) {
@@ -107,16 +105,16 @@ public class Elevator extends PIDSubsystem {
   }
 
   public void open() {
-    if(OPEN.equals(current))
-      return;
+    // if(OPEN.equals(current))
+    //   return;
 
       solenoid.set(OPEN);
       current = OPEN;
   }
 
   public void close() {
-    if(CLOSE.equals(current))
-      return;
+    // if(CLOSE.equals(current))
+    //   return;
 
       solenoid.set(CLOSE);
       current = CLOSE;
@@ -311,6 +309,33 @@ public class Elevator extends PIDSubsystem {
 
   public void setArm(double output) {
     arm.set(output);
+  }
+
+  public boolean armCollision(double output) {
+    final double FREE_ROTATION_MIN = 7.79;
+
+    final double FRONT_BODY_COLLISION = -300;
+    final double BACK_INTAKE_COLLISION = -90;
+
+    double currentHeight = getElevatorHeight();
+    double armDegree = getArmRotation();
+
+    boolean canMove = false;
+    
+    if(currentHeight >= FREE_ROTATION_MIN) {
+      canMove = true;
+    } else {
+
+      if(output > 0 && armDegree > BACK_INTAKE_COLLISION) {
+        canMove = false;
+      }
+
+      if(output < 0 && armDegree < FRONT_BODY_COLLISION) {
+        canMove = false;
+      }
+    }
+
+    return canMove;
   }
 
   /**

@@ -26,7 +26,7 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
   private Spark fClimb, bClimb, driveR, driveL;
 
   private double pClimber, iClimber, dClimber;
-  public static final double climbP = 0.2, climbI = 0.0, climbD = 0.0;
+  public static final double climbP = -0.2, climbI = 0.0, climbD = 0.0;
   private PIDController pitchPID;
   private PIDSourceType pidSourceType;
   private DigitalInput limit;
@@ -92,8 +92,8 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
 
   @Override
   public void pidWrite(double output) {
-    fClimb.set(normalizeOutput(-1.0 - output));
-    bClimb.set(normalizeOutput(-1.0 + output));
+    fClimb.set(normalizeOutput(-1.0 + output));
+    bClimb.set(normalizeOutput(-1.0 - output));
   }
 
   /**
@@ -153,7 +153,7 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
   }
 
   public void autoClimb() {
-    this.pitchPID.setSetpoint(0); // Stay level
+    this.pitchPID.setSetpoint(2); // favor drive wheel side
     enablePID();
   }
 

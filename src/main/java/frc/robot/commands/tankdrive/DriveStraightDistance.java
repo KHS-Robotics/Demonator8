@@ -5,22 +5,32 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.climber;
+package frc.robot.commands.tankdrive;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.TankDrive;
 
-public class RaiseBack extends Command {
-  private Climber climber;
-  public RaiseBack(Climber climber) {
-    this.requires(climber);
-    this.climber = climber;
+public class DriveStraightDistance extends Command {
+  private TankDrive drive;
+  private double distance, angle, power, initialLeftDist, initialRightDist;
+
+
+  public DriveStraightDistance(TankDrive drive, double distance, double angle, double power) {
+    super(3);
+    this.drive = drive;
+    this.distance = distance;
+    this.angle = angle;
+    this.power = power;
+    requires(drive);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.setPinions(0,-0.8);
+    initialRightDist = drive.getRightDistance();
+    initialLeftDist = drive.getLeftDistance();
+
+    drive.setHeading(angle, power);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -31,13 +41,13 @@ public class RaiseBack extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return drive.remainingDistance(distance, initialLeftDist, initialRightDist) <= 0 || this.isTimedOut();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    climber.stop();
+    drive.stop();
   }
 
 }

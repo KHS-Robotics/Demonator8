@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.auton.AutoStraightCargoShip;
 import frc.robot.logging.DemonDashboard;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.TankDrive;
@@ -44,18 +45,8 @@ public class Robot extends TimedRobot {
     DemonDashboard.start();
 
     m_chooser.setDefaultOption("Nothing", null);
-  }
-
-  /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
-   */
-  @Override
-  public void robotPeriodic() {
+    m_chooser.addOption("Straight Cargoship", new AutoStraightCargoShip(m_oi.drive, 135, 0, 1));
+    SmartDashboard.putData(m_chooser);
   }
 
   /**
@@ -72,9 +63,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    if(OI.getInstance().leftJoystick.getRawButton(2)) {
-      OI.getInstance().drive.resetNavx();
-    } 
+    // if(OI.getInstance().leftJoystick.getRawButton(2)) {
+    //   OI.getInstance().drive.resetNavx();
+    // } 
   }
 
   /**
@@ -93,6 +84,11 @@ public class Robot extends TimedRobot {
     isEnabled = true;
     m_oi.drive.setNeutralMode(NeutralMode.Coast);
     m_autonomousCommand = m_chooser.getSelected();
+    OI.getInstance().drive.resetEncoders();
+    OI.getInstance().drive.resetNavx();
+    OI.getInstance().elevator.reset();
+
+    OI.getInstance().elevator.open();
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",

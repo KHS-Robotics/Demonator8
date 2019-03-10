@@ -14,6 +14,7 @@ public class RotateArm extends Command {
   private Elevator elevator;
   private double setPoint;
   public RotateArm(Elevator elevator, double setPoint) {
+    // super(1.5);
     this.elevator = elevator;
     this.setPoint=setPoint;
     requires(elevator);
@@ -33,7 +34,7 @@ public class RotateArm extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return elevator.armOnTarget(setPoint);
+    return elevator.armOnTarget(setPoint);//|| this.isTimedOut();
   }
 
   // Called once after isFinished returns true

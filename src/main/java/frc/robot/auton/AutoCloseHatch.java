@@ -5,14 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.elevator;
+package frc.robot.auton;
 
-import frc.robot.subsystems.Elevator;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.commands.tankdrive.DriveStraightDistance;
+import frc.robot.subsystems.TankDrive;
 
-public class ElevateGrab extends Elevate {
-  private static double GRAB_HEIGHT = 7.79;
+public class AutoCloseHatch extends CommandGroup {
 
-  public ElevateGrab(Elevator elevator) {
-    super(elevator, GRAB_HEIGHT);
+  public AutoCloseHatch(TankDrive drive) {
+    addSequential(new DriveStraightDistance(drive, 0, 0, 0));
   }
 }

@@ -16,7 +16,7 @@ import frc.robot.commands.climber.LowerAll;
 import frc.robot.commands.climber.LowerBack;
 import frc.robot.commands.climber.LowerFront;
 import frc.robot.commands.climber.RaiseAll;
-import frc.robot.commands.climber.RaiseAllPID;
+import frc.robot.commands.climber.ClimbPID;
 import frc.robot.commands.climber.RaiseBack;
 import frc.robot.commands.climber.RaiseFront;
 import frc.robot.commands.climber.StartClimbDrive;
@@ -27,6 +27,7 @@ import frc.robot.commands.elevator.ElevateToHatchHigh;
 import frc.robot.commands.elevator.ElevateToHatchLow;
 import frc.robot.commands.elevator.ElevateToHatchMiddle;
 import frc.robot.commands.elevator.ElevateWithJoystick;
+import frc.robot.commands.elevator.GrabBall;
 import frc.robot.commands.elevator.OverrideElevator;
 import frc.robot.commands.elevator.RotateArm;
 import frc.robot.commands.elevator.StartGrab;
@@ -160,6 +161,9 @@ public class OI {
       highGearGoStraightButton.whenPressed(new ShiftHighDriveStraight(rightJoystick, drive));
       highGearGoStraightButton.whenReleased(new ShiftLow(drive));
 
+      JoystickButton cancelAuto = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.CANCEL_AUTO);
+      cancelAuto.whenPressed(new StopSubsystem(drive));
+
       // JoystickButton driveStraightTarget = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.DRIVE_AT_TARGET);
       // driveStraightTarget.whenPressed(new DriveStraightAtTargetJoystick(drive, udp, leftJoystick));
       // driveStraightTarget.whenReleased(new StopSubsystem(drive));
@@ -233,21 +237,17 @@ public class OI {
       lowerBackClimb.whenPressed(new LowerBack(climber));
       lowerBackClimb.whenReleased(new StopSubsystem(climber));
 
-      JoystickButton climbAll = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.LOWER_ALL);
-      climbAll.whenPressed(new LowerAll(climber));
-      climbAll.whenReleased(new StopSubsystem(climber));
-
-      JoystickButton raiseAll = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.RAISE_ALL);
-      raiseAll.whenPressed(new RaiseAllPID(climber));
-      raiseAll.whenReleased(new HoldFrontClimb(climber));
+      JoystickButton climb = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.LOWER_ALL);
+      climb.whenPressed(new ClimbPID(climber));
+      climb.whenReleased(new HoldFrontClimb(climber));
 
       JoystickButton climbDrive = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.CLIMB_DRIVE);
       climbDrive.whenPressed(new StartClimbDrive(climber, 1.0, 0.21));
       climbDrive.whenReleased(new HoldFrontClimb(climber));
 
-      JoystickButton tuneClimbPID = new JoystickButton(switchBox, 8);
-      tuneClimbPID.whenPressed(new TuneClimberPID(climber, switchBox));
-      tuneClimbPID.whenReleased(new StopSubsystem(climber));
+      // JoystickButton tuneClimbPID = new JoystickButton(switchBox, 8);
+      // tuneClimbPID.whenPressed(new TuneClimberPID(climber, switchBox));
+      // tuneClimbPID.whenReleased(new StopSubsystem(climber));
 
       // JoystickButton climbThrottle = new JoystickButton(switchBox, 2);
       // climbThrottle.whenPressed(new ClimbWithThrottle(leftJoystick, rightJoystick, climber));
@@ -315,14 +315,21 @@ public class OI {
       overrideButton.whenPressed(new SetDefaultCommand(elevator, new ElevateWithJoystick(elevator, switchBox))); // Button is inverted
       overrideButton.whenReleased(new SetDefaultCommand(elevator, new OverrideElevator(switchBox, elevator)));
 
-      JoystickButton pointForward = new JoystickButton(switchBox, 2);
+      JoystickButton pointForward = new JoystickButton(switchBox, ButtonMap.SwitchBox.ROTATE_ARM_FRONT);
       pointForward.whenPressed(new RotateArm(elevator, -90));
+      pointForward.whenReleased(new StopElevator(elevator));
 
-      JoystickButton pointBackward = new JoystickButton(switchBox, 1);
+      JoystickButton pointBackward = new JoystickButton(switchBox, ButtonMap.SwitchBox.ROTATE_ARM_BACK);
       pointBackward.whenPressed(new RotateArm(elevator, -315));
+      pointBackward.whenReleased(new StopElevator(elevator));
 
-      AxisButton grabAngle = new AxisButton(switchBox, 1, 3);
-      grabAngle.whenPressed(new RotateArm(elevator, -170));
+      AxisButton grabAngle = new AxisButton(switchBox, ButtonMap.SwitchBox.GRAB, ButtonMap.SwitchBox.BUTTON_AXIS);
+      grabAngle.whenPressed(new GrabBall(elevator));
+      grabAngle.whenReleased(new StopElevator(elevator));
+
+      AxisButton positiveNinety = new AxisButton(switchBox, ButtonMap.SwitchBox.POSITIVE_NINETY, ButtonMap.SwitchBox.BUTTON_AXIS);
+      positiveNinety.whenPressed(new RotateArm(elevator, 90));
+      positiveNinety.whenReleased(new StopElevator(elevator));
 
 
       // JoystickButton tuneArm = new JoystickButton(switchBox, 2);

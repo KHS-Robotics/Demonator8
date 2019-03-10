@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.subsystems.Climber;
 
-public class RaiseAllPID extends Command {
+public class ClimbPID extends Command {
   private Climber climber;
 
-  public RaiseAllPID(Climber climber) {
+  public ClimbPID(Climber climber) {
     this.climber = climber;
     requires(climber);
   }
@@ -35,6 +35,5 @@ public class RaiseAllPID extends Command {
   @Override
   protected void end() {
     climber.stop();
-    Scheduler.getInstance().add(new HoldFrontClimb(climber));
   }
 }

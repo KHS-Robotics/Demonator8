@@ -23,8 +23,8 @@ public class ButtonMap
         public static final int INTAKE_FORWARD = 6;
         public static final int INTAKE_REVERSE = 5;
         public static final int TOGGLE_ARMS = 12;
-        public static final int ROTATE_ARM_FRONT = 0;
-        public static final int ROTATE_ARM_BACK = 0;
+        public static final int ROTATE_ARM_FRONT = 2;
+        public static final int ROTATE_ARM_BACK = 1;
 		public static final int RELEASE = 0;
 		public static final int RESET = 0;
 		public static final double ELEVATE_CARGO_HIGH = -0.65;
@@ -40,11 +40,14 @@ public class ButtonMap
 		public static final int ELEVATOR_AXIS = 2;
 		public static final int ELEVATOR_INTAKE_AXIS = 1;
 		public static final int ARM_AXIS = 0;
+		public static final double POSITIVE_NINETY = 0.82;
+		public static final double GRAB = 1;
 	}
 
 	public static class RightJoystick
 	{
 		public static final int HIGHGEAR_GO_STRAIGHT = 1;
+		
 		public static final int TOGGLE_GEAR = 5;
 		public static final int GO_STRAIGHT = 4;
 

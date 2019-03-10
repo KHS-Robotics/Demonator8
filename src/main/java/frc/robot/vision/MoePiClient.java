@@ -1,13 +1,4 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.vision;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -15,7 +6,6 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import frc.robot.logging.Logger;
 import frc.robot.subsystems.TankDrive;
 
 /**
@@ -27,7 +17,7 @@ public class MoePiClient implements Runnable {
 	public static final int DEFAULT_UDP_PORT = 5810;
 
 	/** Offset angle for target since camera is on robot's side. */
-	public static final double CAMERA_ANGLE_OFFSET = 0;
+	public static final double CAMERA_ANGLE_OFFSET = 10;//TODO: check this on field
 
 	/** x-resolution of the camera */
 	public static final double RESOLUTION_X = 640;
@@ -56,41 +46,43 @@ public class MoePiClient implements Runnable {
 	/** The size of the buffer for MoePi, in bytes. */
 	public static final int BUFFER_SIZE = 246;
 
+	private double currentRobotHeading, lastRobotHeading;
+
+	private DeepSpaceVisionTarget centerTarget;
+
 	private int lastID;
 	private DatagramSocket socket;
 	private ArrayList<Box> boxVector;
-	private double currentRobotHeading, lastRobotHeading;
+	private ArrayList<DeepSpaceVisionTarget> targetVector;
 
-	public final TankDrive Drive;
 	public final String Name;
 	public final int Port;
+	private final TankDrive Drive;
 
 	/**
 	 * Constructs a new <code>MoePiClient</code>.
-	 * @param drive the drive train
 	 * @throws SocketException if the socket could not be opened, 
 	 * or the socket could not bind to the specified local port
 	 */
 	public MoePiClient(TankDrive drive) throws SocketException {
-		this(drive, "MoePi", DEFAULT_UDP_PORT);
+		this("MoePi", DEFAULT_UDP_PORT, drive);
 	}
 
 	/**
 	 * Constructs a new <code>MoePiClient</code>.
-	 * @param drive the drive train
 	 * @param name the name of this specific <code>MoePiClient</code>
 	 * @param port the port to retrieve UDP data from
 	 * @throws SocketException if the socket could not be opened, 
 	 * or the socket could not bind to the specified local port
 	 */
-	public MoePiClient(TankDrive drive, String name, int port) throws SocketException {
-		this.Drive = drive;
+	public MoePiClient(String name, int port, TankDrive drive) throws SocketException {
 		this.Name = name;
 		this.Port = port;
+		this.Drive = drive;
 
 		socket = new DatagramSocket(port);
 		boxVector = new ArrayList<Box>();
-
+		targetVector = new ArrayList<>();
 		new Thread(this).start();
 	}
 
@@ -102,8 +94,6 @@ public class MoePiClient implements Runnable {
 	public void run() {
 		ByteBuffer buf = ByteBuffer.allocate(BUFFER_SIZE);
 		DatagramPacket packet = new DatagramPacket(buf.array(), buf.limit());
-
-		SmartDashboard.putBoolean(this.Name, true);
 
 		while(true) {
 			try {
@@ -133,15 +123,15 @@ public class MoePiClient implements Runnable {
 					}
 
 					lastRobotHeading = currentRobotHeading;
-					currentRobotHeading = this.Drive.getHeading();
+					currentRobotHeading = Drive.getHeading();
+
+					this.updateCenterTarget();
 				}
 			} catch (Exception ex) {
-				Logger.error(this.Name + " UDP Client crashed!", ex);
+                ex.printStackTrace();
 				break;
 			}
 		}
-
-		SmartDashboard.putBoolean(this.Name, false);
 
 		socket.close();
 	}
@@ -161,95 +151,12 @@ public class MoePiClient implements Runnable {
 		return new Box((x + w / 2), (y + h / 2), w, h, type);
 	}
 
-	/**
-	 * Gets the found boxes from MoePi, ordered from left to right (smallest x-value first).
-	 * @return the found boxes from MoePi
-	 * @see Box
-	 */
-	public ArrayList<Box> getBoxes() {
-		return boxVector;
+	public double getLastRobotHeading() {
+		return lastRobotHeading;
 	}
 
-	/**
-	 * Returns all currently visible Deep Space vision targets in an <code>ArrayList</code>.
-	 * @return all currently visible Deep Space vision targets in an <code>ArrayList</code>
-	 * @see DeepSpaceVisionTarget
-	 * @see MoePiClient#getVisionTarget()
-	 */
-	public synchronized ArrayList<DeepSpaceVisionTarget> getVisionTargets() {
-		try {
-			synchronized(this) {
-				ArrayList<DeepSpaceVisionTarget> targets = new ArrayList<>();
-
-				if(boxVector.size() == 1) {
-					if(boxVector.get(0).type == Box.TargetType.RIGHT.value) {
-						targets.add(new DeepSpaceVisionTarget(null, boxVector.get(0)));
-					}
-				}
-				else if(boxVector.size() >= 2) {
-					// tbh not best way to do this/could be faster but max
-					// boxVector size is only six anyway
-					Box lastBox = boxVector.get(0);
-					for(int i = 1; i < boxVector.size(); i++) {
-						if(lastBox.type == Box.TargetType.LEFT.value && boxVector.get(i).type == Box.TargetType.RIGHT.value) {
-							targets.add(new DeepSpaceVisionTarget(lastBox, boxVector.get(i)));
-						}
-						
-						lastBox = boxVector.get(i);
-					}
-				}
-				
-				return targets;
-			}
-		} catch(Exception ex) {
-			Logger.error("Failed to getVisionTarget!", ex);
-			return new ArrayList<DeepSpaceVisionTarget>(0);
-		}
-	}
-
-	/**
-	 * Returns the most centered <code>DeepSpaceVisionTarget</code>.
-	 * @return the most centered <code>DeepSpaceVisionTarget</code>
-	 * @see DeepSpaceVisionTarget
-	 * @see MoePiClient#getVisionTargets()
-	 */
-	public synchronized DeepSpaceVisionTarget getVisionTarget() {
-		try {
-			synchronized(this) {
-				ArrayList<DeepSpaceVisionTarget> targets = this.getVisionTargets();
-				DeepSpaceVisionTarget target;
-
-				if(targets.isEmpty()) {
-					target = null;
-				}
-				else if(targets.size() == 1) {
-					target = targets.get(0);
-				}
-				else {
-					// start assuming first target is most centered
-					int centerBoxIndex = 0;
-					DeepSpaceVisionTarget centerTarget = targets.get(centerBoxIndex);
-					double closestCenterXDiff = Math.abs(centerTarget.x - 0.5);
-
-					for(int i = 1; i < targets.size(); i++) {
-						// check if this target is closer to the center
-						double boxCenterXDiff = Math.abs(targets.get(i).x - 0.5);
-						if(boxCenterXDiff < closestCenterXDiff) {
-							centerBoxIndex = i;
-							centerTarget = targets.get(i);
-							closestCenterXDiff = boxCenterXDiff;
-						}
-					}
-
-					target = centerTarget;
-				}
-
-				return target;
- 			}
-		} catch(Exception ex) {
-			Logger.error("Failed to getVisionTarget!", ex);
-			return null;
-		}
+	public double getRobotHeading() {
+		return currentRobotHeading;
 	}
 
 	/**
@@ -266,21 +173,18 @@ public class MoePiClient implements Runnable {
 	/**
 	 * Gets the angle offset of the most centered <code>DeepSpaceVisionTarget</code>.
 	 * @return the angle offset of the most centered <code>DeepSpaceVisionTarget</code>
-	 * @see MoePiClient#getVisionTarget()
+	 * @see MoePiClient#updateCenterTarget()
 	 * @see MoePiClient#getAngle(double)
 	 */
 	public synchronized double getAngle() {
 		try {
-			synchronized(this) {
-				DeepSpaceVisionTarget target = this.getVisionTarget();
-				if(target == null) {
-					return 0;
-				}
-				
-				return HORIZONTAL_FIELD_OF_VIEW*(target.x - 0.5);
+			if(centerTarget == null) {
+				return 0;
 			}
+			
+			return HORIZONTAL_FIELD_OF_VIEW*(centerTarget.x - 0.5);
 		} catch(Exception ex) {
-			Logger.error("Failed to getAngle!", ex);
+            ex.printStackTrace();
 			return 0;
 		}
 	}
@@ -288,43 +192,85 @@ public class MoePiClient implements Runnable {
 	/**
 	 * Gets the distance of the most centered <code>DeepSpaceVisionTarget</code> in inches.
 	 * @return the distance of the most centered <code>DeepSpaceVisionTarget</code> in inches
-	 * @see MoePiClient#getVisionTarget()
+	 * @see MoePiClient#updateCenterTarget()
 	 */
 	public synchronized double getDistance() {
 		try {
-			synchronized(this) {
-				DeepSpaceVisionTarget target = this.getVisionTarget();
-				if(target == null || (target != null && target.hasOnlyRight())) {
-					return 0;
-				}
-
-				double theta = HORIZONTAL_FIELD_OF_VIEW*Math.abs(target.left.x - target.right.x);
-
-				// splitting triangle in half to make a right triangle means:
-				// tan(theta/2) = width/2 / distance
-				// distance = width / 2*tan(theta/2)
-				return TARGET_WIDTH / (2 * Math.tan(Math.toRadians(theta / 2.0)));
+			if(centerTarget == null || (centerTarget != null && centerTarget.hasOnlyRight())) {
+				return 0;
 			}
+
+			double theta = HORIZONTAL_FIELD_OF_VIEW*Math.abs(centerTarget.left.x - centerTarget.right.x);
+
+			// splitting triangle in half to make a right triangle means:
+			// tan(theta/2) = width/2 / distance
+			// distance = width / 2*tan(theta/2)
+			return TARGET_WIDTH / (2 * Math.tan(Math.toRadians(theta / 2.0)));
 		} catch(Exception ex) {
-			Logger.error("Failed to getDistance!", ex);
+            ex.printStackTrace();
 			return 0;
 		}
 	}
 
 	/**
-	 * Gets the current robot heading in degrees.
-	 * @return the current robot heading in degrees
+	 * Updates the most centered <code>DeepSpaceVisionTarget</code>.
+	 * @see DeepSpaceVisionTarget
+	 * @see MoePiClient#updateDeepSpaceTargets()
 	 */
-	public double getRobotHeading() {
-		return currentRobotHeading;
+	private synchronized void updateCenterTarget() {
+		this.updateDeepSpaceTargets();
+
+		if(targetVector.isEmpty()) {
+			centerTarget = null;
+		}
+		else if(targetVector.size() == 1) {
+			centerTarget = targetVector.get(0);
+		}
+		else {
+			// start assuming first target is most centered
+			int centerBoxIndex = 0;
+			DeepSpaceVisionTarget closestCenterTarget = targetVector.get(centerBoxIndex);
+			double closestCenterXDiff = Math.abs(closestCenterTarget.x - 0.5);
+
+			for(int i = 1; i < targetVector.size(); i++) {
+				// check if this target is closer to the center
+				double boxCenterXDiff = Math.abs(targetVector.get(i).x - 0.5);
+				if(boxCenterXDiff < closestCenterXDiff) {
+					centerBoxIndex = i;
+					closestCenterTarget = targetVector.get(i);
+					closestCenterXDiff = boxCenterXDiff;
+				}
+			}
+
+			centerTarget = closestCenterTarget;
+		}
 	}
 
 	/**
-	 * Gets the last (previous iteration's) robot heading in degrees.
-	 * @return the last (previous iteration's) robot heading in degrees
+	 * Updates all currently visible Deep Space vision targets.
+	 * @see DeepSpaceVisionTarget
+	 * @see MoePiClient#updateCenterTarget()
 	 */
-	public double getLastRobotHeading() {
-		return lastRobotHeading;
+	private synchronized void updateDeepSpaceTargets() {
+		targetVector.clear();
+
+		if(boxVector.size() == 1) {
+			if(boxVector.get(0).type == Box.TargetType.RIGHT.value) {
+				targetVector.add(new DeepSpaceVisionTarget(null, boxVector.get(0)));
+			}
+		}
+		else if(boxVector.size() >= 2) {
+			// tbh not best way to do this/could be faster but max
+			// boxVector size is only six anyway
+			Box lastBox = boxVector.get(0);
+			for(int i = 1; i < boxVector.size(); i++) {
+				if(lastBox.type == Box.TargetType.LEFT.value && boxVector.get(i).type == Box.TargetType.RIGHT.value) {
+					targetVector.add(new DeepSpaceVisionTarget(lastBox, boxVector.get(i)));
+				}
+				
+				lastBox = boxVector.get(i);
+			}
+		}
 	}
 
 	/**
@@ -332,23 +278,22 @@ public class MoePiClient implements Runnable {
 	 */
 	public synchronized void printData() {
 		try {
-			synchronized(this) {
-				ArrayList<Box> boxes = this.getBoxes();
+			this.updateDeepSpaceTargets();
+			this.updateCenterTarget();
 
-				System.out.println("-------------------------------------------");
-				System.out.println("Found Boxes: " + !boxes.isEmpty());
+			System.out.println("-------------------------------------------");
+			System.out.println("Found Boxes: " + !boxVector.isEmpty());
 
-				for(int i = 0; i < boxes.size(); i++) {
-					System.out.println("Box " + (i+1) + ": " + boxes.get(i));
-				}
-				
-				System.out.println("Targets: " + this.getVisionTargets());
-				System.out.println("Center Target: " + this.getVisionTarget());
-				System.out.println("Angle: " + this.getAngle() + " degrees");
-				System.out.println("Distance: " + this.getDistance() + " inches");
+			for(int i = 0; i < boxVector.size(); i++) {
+				System.out.println("Box " + (i+1) + ": " + boxVector.get(i));
 			}
+			
+			System.out.println("Targets: " + targetVector);
+			System.out.println("Center Target: " + centerTarget);
+			System.out.println("Angle: " + this.getAngle(CAMERA_ANGLE_OFFSET) + " degrees");
+			System.out.println("Distance: " + this.getDistance() + " inches");
 		} catch(Exception ex) {
-			Logger.error("Failed to printData!", ex);
+            ex.printStackTrace();
 		}
 	}
 	
@@ -422,8 +367,8 @@ public class MoePiClient implements Runnable {
 	/**
 	 * Vision Target for Destination Deep Space 2019.
 	 * @see Box
-	 * @see MoePiClient#getVisionTargets()
-	 * @see MoePiClient#getVisionTarget()
+	 * @see MoePiClient#updateDeepSpaceTargets()
+	 * @see MoePiClient#updateCenterTarget()
 	 */
 	public class DeepSpaceVisionTarget {
 		public final double x, y;
@@ -442,7 +387,7 @@ public class MoePiClient implements Runnable {
 
 			if(left != null && right != null) {
 				this.x = (left.x + right.x) / 2.0;
-				this.y = (left.y + right.y) / 2.0;	
+				this.y = (left.y + right.y) / 2.0;
 			}
 			else if(right != null) {
 				this.x = right.x;
