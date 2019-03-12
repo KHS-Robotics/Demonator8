@@ -161,9 +161,6 @@ public class OI {
       highGearGoStraightButton.whenPressed(new ShiftHighDriveStraight(rightJoystick, drive));
       highGearGoStraightButton.whenReleased(new ShiftLow(drive));
 
-      JoystickButton cancelAuto = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.CANCEL_AUTO);
-      cancelAuto.whenPressed(new StopSubsystem(drive));
-
       // JoystickButton driveStraightTarget = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.DRIVE_AT_TARGET);
       // driveStraightTarget.whenPressed(new DriveStraightAtTargetJoystick(drive, udp, leftJoystick));
       // driveStraightTarget.whenReleased(new StopSubsystem(drive));

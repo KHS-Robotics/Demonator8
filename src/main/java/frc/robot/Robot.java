@@ -119,6 +119,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     isEnabled = true;
+    m_oi.drive.setNeutralMode(NeutralMode.Coast);
   }
 
   /**
