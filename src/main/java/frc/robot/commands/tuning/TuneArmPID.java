@@ -9,6 +9,8 @@ package frc.robot.commands.tuning;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import frc.robot.logging.Logger;
 import frc.robot.subsystems.Elevator;
 
 public class TuneArmPID extends Command {
@@ -30,11 +32,13 @@ public class TuneArmPID extends Command {
 
     @Override
     protected void execute() {
+        Logger.warning("Use the SparkMax Smart Motion Example Project to tune using Smart Motion!");
+        
         double p = SmartDashboard.getNumber("Arm-P", 0.0);
         double i = SmartDashboard.getNumber("Arm-I", 0.0);
         double d = SmartDashboard.getNumber("Arm-D", 0.0);
         double iZone = SmartDashboard.getNumber("Arm-IZone", 0.0);
-        elevator.setArmPID(p, i, d, iZone);
+        //elevator.setArmPID(p, i, d, iZone);
 
         double setpoint = SmartDashboard.getNumber("Arm-Setpoint", elevator.getArmRotation());
         elevator.setArmRotation(setpoint);

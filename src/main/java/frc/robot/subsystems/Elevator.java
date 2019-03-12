@@ -25,10 +25,11 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class Elevator extends PIDSubsystem {
-  private double pArm = 0.1, iArm = 0.01, dArm = 0.6, iZone = 5;
-  private final double armTolerance = 1.0;
   private boolean override, shouldReset;
+
   private CANPIDController armPID;
+  private static final double kP = 0.00012, kI = 0.00000125, kD = 0.000275, kFF = 0.00004065;
+  private static final double kMaxOutput = 1.0, kMinOutput = -1.0, kMaxVel = 3000, kMaxAcc = 4500, kAllowedArmErr = 2.5;
   
   private static final Value CLOSE = Value.kForward, OPEN = Value.kReverse;
   private Value current;
@@ -68,9 +69,16 @@ public class Elevator extends PIDSubsystem {
 
     this.encoder.setDistancePerPulse(eleDistPP);
 
-    this.armPID = new CANPIDController(arm);
-    this.armPID.setOutputRange(-0.67, 0.67);
-    setArmPID(pArm, iArm, dArm, iZone);
+    armPID = arm.getPIDController();
+    armPID.setOutputRange(kMinOutput, kMaxOutput);
+    armPID.setSmartMotionMaxAccel(kMaxAcc, 0);
+    armPID.setSmartMotionMaxVelocity(kMaxVel, 0);
+    armPID.setSmartMotionAllowedClosedLoopError(kAllowedArmErr, 0);
+
+    armPID.setP(kP);
+    armPID.setI(kI);
+    armPID.setD(kD);
+    armPID.setFF(kFF);
 
     this.armEncoder = this.arm.getEncoder();
     this.armEncoder.setPositionConversionFactor(armDegPR);
@@ -92,7 +100,7 @@ public class Elevator extends PIDSubsystem {
   }
 
   public boolean armOnTarget(double target) {
-    return Math.abs(target - getArmRotation()) < armTolerance;
+    return Math.abs(target - getArmRotation()) < kAllowedArmErr;
   }
 
   public double getArmRotation() {
@@ -214,74 +222,6 @@ public class Elevator extends PIDSubsystem {
     return this.getPIDController().getD();
   }
 
-  public void setArmPID(double p, double i, double d, double iZone) {
-    this.pArm = p;
-    this.iArm = i;
-    this.dArm = d;
-    this.iZone = iZone;
-    armPID.setP(p);
-    armPID.setI(i);
-    armPID.setD(d);
-    armPID.setIZone(iZone);
-  }
-
-  /**
-   * Sets the P value for the internal PID controller for height.
-   * 
-   * @param p the proportional value
-   */
-  public void setArmP(double p) {
-    this.pArm = p;
-    setArmPID(pArm, iArm, dArm, iZone);
-  }
-
-  /**
-   * Gets the proportional value for the internal PID controller for height.
-   * 
-   * @return the proportional value
-   */
-  public double getArmP() {
-    return pArm;
-  }
-
-  /**
-   * Sets the I value for the internal PID controller for height.
-   * 
-   * @param i the integral value
-   */
-  public void setArmI(double i) {
-    this.iArm = i;
-    setArmPID(pArm, iArm, dArm, iZone);
-  }
-
-  /**
-   * Gets the integral value for the internal PID controller for height.
-   * 
-   * @return the integral value
-   */
-  public double getArmI() {
-    return iArm;
-  }
-
-  /**
-   * Sets the D value for the intenral PID controller for height.
-   * 
-   * @param d the derivative value
-   */
-  public void setArmD(double d) {
-    this.dArm = d;
-    setArmPID(pArm, iArm, dArm, iZone);
-  }
-
-  /**
-   * Gets the derivative value for the internal PID controller for height.
-   * 
-   * @return the derivative value
-   */
-  public double getArmD() {
-    return dArm;
-  }
-
   public void setOverride(boolean set) {
     this.override = set;
   }
@@ -303,12 +243,12 @@ public class Elevator extends PIDSubsystem {
     if (!override && getLS() && output < 0)
       output = 0;
 
-    elevator1.set(-output);
-    elevator2.set(output);
+    elevator1.set(normalize(-output));
+    elevator2.set(normalize(output));
   }
 
   public void setArm(double output) {
-    arm.set(output);
+    armPID.setReference(normalize(output)*kMaxVel, ControlType.kVelocity);
   }
 
   public boolean armCollision(double output) {
@@ -354,6 +294,16 @@ public class Elevator extends PIDSubsystem {
   }
 
   public void setArmRotation(double angle) {
-    armPID.setReference(angle, ControlType.kPosition);
+    armPID.setReference(angle, ControlType.kSmartMotion);
+  }
+
+  private static double normalize(double value) {
+    if(value > 1)
+      return 1;
+    
+    if(value < -1)
+      return -1;
+    
+    return value;
   }
 }
