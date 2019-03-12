@@ -76,7 +76,6 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     disablePID();
     shiftLow();
     lightOff();
-    this.setNeutralMode(NeutralMode.Coast);
   }
 
   public void toggleLight() {
@@ -229,14 +228,12 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
 
   public void enablePID() {
     yawPID.enable();
-    // this.setNeutralMode(NeutralMode.Brake);
   }
 
   public void disablePID() {
     if (yawPID.isEnabled()) {
       yawPID.disable();
       direction = 0;
-      this.setNeutralMode(NeutralMode.Coast);
     }
   }
 
