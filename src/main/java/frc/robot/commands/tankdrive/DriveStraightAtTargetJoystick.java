@@ -28,7 +28,7 @@ public class DriveStraightAtTargetJoystick extends Command {
 
   @Override
   protected void initialize() {
-    drive.lightOn();
+    drive.setLight(true);
   }
 
   @Override
@@ -38,7 +38,7 @@ public class DriveStraightAtTargetJoystick extends Command {
       y = 0;
     }
 
-    drive.setHeading(vision.getLastRobotHeading() + vision.getAngle(MoePiClient.CAMERA_ANGLE_OFFSET), y);
+    drive.setHeading(vision.getLastRobotHeading() + vision.getAngle(10), y);
   }
 
   @Override
@@ -49,6 +49,6 @@ public class DriveStraightAtTargetJoystick extends Command {
   @Override
   protected void end() {
     drive.stop();
-    drive.lightOff();
+    drive.setLight(false);
   }
 }

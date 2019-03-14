@@ -10,15 +10,12 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auton.AutoStraightCargoShip;
 import frc.robot.logging.DemonDashboard;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.TankDrive;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -59,6 +56,7 @@ public class Robot extends TimedRobot {
     isEnabled = false;
     m_oi.drive.setNeutralMode(NeutralMode.Brake);
     Scheduler.getInstance().run();
+    Scheduler.getInstance().removeAll();
   }
 
   @Override

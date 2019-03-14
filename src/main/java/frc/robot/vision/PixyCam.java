@@ -39,10 +39,10 @@ public class PixyCam {
     public static final double VERT_D_PER_P = VERT_FOV / CAMERA_MAX_Y;
     public static final double HORIZ_D_PER_P = HORIZ_FOV / CAMERA_MAX_X;
 
+    private int currentNumLines;
+
     // used for printData()
     private Vector currentLongestLine;
-
-    private boolean lampOn;
 
     private final Pixy2 pixy;
 
@@ -74,13 +74,8 @@ public class PixyCam {
      * @see io.github.pseudoresonance.pixy2api.Pixy2#setLamp
      */
     public void setLamp(boolean on) {
-        if(on == lampOn)
-            return;
-        
         byte valueUpperAndLower = on ? (byte) 1 : (byte) 0;
         pixy.setLamp(valueUpperAndLower, valueUpperAndLower);
-
-        lampOn = on;
     }
     
     /**
@@ -89,7 +84,7 @@ public class PixyCam {
      * @see Tape
      * @see PixyCam#getLongestLine()
      */
-    public Tape getTape() {
+    public synchronized Tape getTape() {
         Vector line = this.getLongestLine();
         if(line == null) {
             return null;
@@ -117,26 +112,26 @@ public class PixyCam {
      * @see io.github.pseudoresonance.pixy2api.Pixy2Line#getFeatures
      * @see io.github.pseudoresonance.pixy2api.Pixy2Line.Vector
      */
-    public Vector getLongestLine() {
+    public synchronized Vector getLongestLine() {
         pixy.getLine().getFeatures(Pixy2Line.LINE_GET_MAIN_FEATURES, Pixy2Line.LINE_VECTOR, true);
         Vector[] lines = pixy.getLine().getVectors();
-        int numLines = 0;
+        currentNumLines = 0;
         if(lines != null)
-            numLines = lines.length;
+            currentNumLines = lines.length;
 
         Vector line = null;
-        if(numLines == 1) {
+        if(currentNumLines == 1) {
             line = lines[0];
         }
-        else if(numLines > 1) {
-            Logger.warning("Pixy detected multiple (" + numLines + ") lines!");
+        else if(currentNumLines > 1) {
+            Logger.warning("Pixy detected multiple (" + currentNumLines + ") lines!");
             Logger.debug("Detected Lines: " + Arrays.toString(lines));
 
             // start assuming first line is the longest
             int indexOfLongestLine = 0;
             double lengthOfLongestLine = Math.hypot(lines[0].getX0() - lines[0].getX1(), lines[0].getY0() - lines[0].getY1());
 
-            for(int i = 1; i < numLines; i++) {
+            for(int i = 1; i < currentNumLines; i++) {
                 // check if this line is longer
                 double length = Math.hypot(lines[i].getX0() - lines[i].getX1(), lines[i].getY0() - lines[i].getY1());
                 if(length > lengthOfLongestLine) {
@@ -170,10 +165,14 @@ public class PixyCam {
         System.out.println("Length: " + len);
     } 
 
+    public synchronized int getNumLines() {
+        return currentNumLines;
+    }
+
     /**
 	 * Prints all current Pixy2 tape/line data.
 	 */
-    public void printData() {
+    public synchronized void printData() {
         Tape tape = this.getTape();
 
         System.out.println("-------------------------------------------");

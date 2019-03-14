@@ -43,6 +43,7 @@ import frc.robot.commands.tankdrive.ShiftHigh;
 import frc.robot.commands.tankdrive.ShiftHighDriveStraight;
 import frc.robot.commands.tankdrive.ShiftLow;
 import frc.robot.commands.tankdrive.ToggleLight;
+import frc.robot.commands.tankdrive.VisionAlignTarget;
 import frc.robot.commands.tuning.TuneArmPID;
 import frc.robot.commands.tuning.TuneClimberPID;
 import frc.robot.commands.tuning.TuneDrivePID;
@@ -148,7 +149,6 @@ public class OI {
       Right2 = new WPI_VictorSPX(RobotMap.DRIVE_RIGHT2);
 
       VisionLight = new DigitalOutput(RobotMap.VISION_LIGHT);
-      VisionLight.set(false);
 
       try {
         pixy = new PixyCam();
@@ -171,7 +171,7 @@ public class OI {
       highGearGoStraightButton.whenReleased(new ShiftLow(drive));
 
       JoystickButton visionAlign = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.VISION_ALIGN);
-      visionAlign.whenPressed(new XOffsetVision(drive, udp, pixy));
+      visionAlign.whenPressed(new VisionAlignTarget(drive, udp, pixy));
       visionAlign.whenReleased(new StopSubsystem(drive));
 
       // JoystickButton driveStraightTarget = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.DRIVE_AT_TARGET);

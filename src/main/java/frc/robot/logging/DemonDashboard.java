@@ -9,7 +9,7 @@ package frc.robot.logging;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI;
-import frc.robot.vision.MoePiClient;
+import frc.robot.commands.tankdrive.VisionGetToTapeMoePi;
 
 /**
  * Class to put data to the SmartDashboard on a separate thread
@@ -69,8 +69,16 @@ public class DemonDashboard {
                         SmartDashboard.putNumber("Right Distance", oi.drive.getRightDistance());
 
                         if(oi.udp != null) {
-                            SmartDashboard.putNumber("MoePi-CamAngle", oi.udp.getAngle());
-                            SmartDashboard.putNumber("MoePi-BotAngle", oi.udp.getAngle(MoePiClient.CAMERA_ANGLE_OFFSET));
+                            SmartDashboard.putNumber("MoePi NumBoxes", oi.udp.getBoxes().size());
+
+                            double angle = oi.udp.getAngle();
+                            SmartDashboard.putNumber("MoePi CamAngle", angle);
+                            SmartDashboard.putNumber("MoePi BotAngle", angle + VisionGetToTapeMoePi.kAngleOffset);
+                        }
+
+                        if(oi.pixy != null) {
+                            SmartDashboard.putBoolean("Pixy Tape", oi.pixy.getLongestLine() != null);
+                            SmartDashboard.putNumber("Pixy NumLines", oi.pixy.getNumLines());
                         }
                     }
 

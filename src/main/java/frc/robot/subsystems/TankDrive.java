@@ -75,30 +75,16 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     yawPID.setAbsoluteTolerance(0.5);
     disablePID();
     shiftLow();
-    lightOff();
+    setLight(false);
   }
 
   public void toggleLight() {
-    if(lightOn) {
-      lightOff();
-    }
-    else {
-      lightOn();
-    }
+    setLight(!lightOn);
   }
 
-  public void lightOn() {
-    if(!lightOn) {
-      VisionLight.set(true);
-      lightOn = true;
-    }
-  }
-
-  public void lightOff() {
-    if(lightOn) {
-      VisionLight.set(false);
-      lightOn = false;
-    }
+  public void setLight(boolean on) {
+    VisionLight.set(on);
+    lightOn = on;
   }
 
   public double getLeftUltrasonic() {

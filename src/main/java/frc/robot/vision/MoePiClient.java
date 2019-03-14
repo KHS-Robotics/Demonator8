@@ -16,9 +16,6 @@ public class MoePiClient implements Runnable {
 	/** Default UDP Port for MoePi. */
 	public static final int DEFAULT_UDP_PORT = 5810;
 
-	/** Offset angle for target since camera is on robot's side. */
-	public static final double CAMERA_ANGLE_OFFSET = 10;//TODO: check this on field
-
 	/** x-resolution of the camera */
 	public static final double RESOLUTION_X = 640;
 	/** y-resolution of the camera */
@@ -151,11 +148,15 @@ public class MoePiClient implements Runnable {
 		return new Box((x + w / 2), (y + h / 2), w, h, type);
 	}
 
-	public double getLastRobotHeading() {
+	public synchronized ArrayList<Box> getBoxes() {
+		return boxVector;
+	}
+
+	public synchronized double getLastRobotHeading() {
 		return lastRobotHeading;
 	}
 
-	public double getRobotHeading() {
+	public synchronized double getRobotHeading() {
 		return currentRobotHeading;
 	}
 
@@ -290,7 +291,7 @@ public class MoePiClient implements Runnable {
 			
 			System.out.println("Targets: " + targetVector);
 			System.out.println("Center Target: " + centerTarget);
-			System.out.println("Angle: " + this.getAngle(CAMERA_ANGLE_OFFSET) + " degrees");
+			System.out.println("Angle: " + this.getAngle() + " degrees");
 			System.out.println("Distance: " + this.getDistance() + " inches");
 		} catch(Exception ex) {
             ex.printStackTrace();
