@@ -117,7 +117,7 @@ public class PixyCam {
      * @see io.github.pseudoresonance.pixy2api.Pixy2Line#getFeatures
      * @see io.github.pseudoresonance.pixy2api.Pixy2Line.Vector
      */
-    private Vector getLongestLine() {
+    public Vector getLongestLine() {
         pixy.getLine().getFeatures(Pixy2Line.LINE_GET_MAIN_FEATURES, Pixy2Line.LINE_VECTOR, true);
         Vector[] lines = pixy.getLine().getVectors();
         int numLines = 0;

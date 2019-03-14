@@ -52,7 +52,7 @@ public class ButtonMap
 		public static final int GO_STRAIGHT = 4;
 
 		public static final int CLIMB_DRIVE = 7;
-
+		public static final int VISION_ALIGN = 3;
 		public static final int CANCEL_AUTO = 2;
 	}
 

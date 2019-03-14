@@ -113,6 +113,11 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     return inch;
   }
 
+  public double getAverageUltrasonic() {
+    return (getLeftUltrasonic() + getRightUltrasonic()) / 2;
+  }
+
+
   public void set(double left, double right) {
     left = -(normalizeOutput(left));
     right = (normalizeOutput(right));

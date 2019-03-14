@@ -48,6 +48,7 @@ import frc.robot.commands.tuning.TuneClimberPID;
 import frc.robot.commands.tuning.TuneDrivePID;
 import frc.robot.commands.tuning.TuneElevatorPID;
 import frc.robot.logging.Logger;
+import frc.robot.commands.tankdrive.XOffsetVision;
 
 import java.net.SocketException;
 
@@ -68,6 +69,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.TankDrive;
 import frc.robot.vision.MoePiClient;
+import frc.robot.vision.PixyCam;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Climber;
 
@@ -102,6 +104,7 @@ public class OI {
   public Elevator elevator;
   public Climber climber;
   public MoePiClient udp;
+  public PixyCam pixy;
 
   private OI() {
 
@@ -147,6 +150,12 @@ public class OI {
       VisionLight = new DigitalOutput(RobotMap.VISION_LIGHT);
       VisionLight.set(false);
 
+      try {
+        pixy = new PixyCam();
+      } catch(Exception ex) {
+        ex.printStackTrace();
+      }
+
       drive = new TankDrive(Left1, Left2, Right1, Right2, Shifter, navx, LeftDriveEnc, RightDriveEnc, lUltra, rUltra, VisionLight);
 
       JoystickButton shift = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.TOGGLE_GEAR);
@@ -160,6 +169,10 @@ public class OI {
       JoystickButton highGearGoStraightButton = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.HIGHGEAR_GO_STRAIGHT);
       highGearGoStraightButton.whenPressed(new ShiftHighDriveStraight(rightJoystick, drive));
       highGearGoStraightButton.whenReleased(new ShiftLow(drive));
+
+      JoystickButton visionAlign = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.VISION_ALIGN);
+      visionAlign.whenPressed(new XOffsetVision(drive, udp, pixy));
+      visionAlign.whenReleased(new StopSubsystem(drive));
 
       // JoystickButton driveStraightTarget = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.DRIVE_AT_TARGET);
       // driveStraightTarget.whenPressed(new DriveStraightAtTargetJoystick(drive, udp, leftJoystick));

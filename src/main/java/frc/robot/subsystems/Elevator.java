@@ -28,8 +28,8 @@ public class Elevator extends PIDSubsystem {
   private boolean override, shouldReset;
 
   private CANPIDController armPID;
-  private static final double kP = 0.00012, kI = 0.00000125, kD = 0.000275, kFF = 0.00004065;
-  private static final double kMaxOutput = 1.0, kMinOutput = -1.0, kMaxVel = 3000, kMaxAcc = 4500, kAllowedArmErr = 2.5;
+  private static final double kP = 0.00012, kI = 0.00000125, kD = 0.0004, kFF = 0.00004065;
+  private static final double kMaxOutput = 1.0, kMinOutput = -1.0, kMaxVel = 4000, kMaxAcc = 4000, kAllowedArmErr = 3.0;
   
   private static final Value CLOSE = Value.kForward, OPEN = Value.kReverse;
   private Value current;

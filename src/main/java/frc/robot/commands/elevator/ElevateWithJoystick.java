@@ -90,7 +90,7 @@ public class ElevateWithJoystick extends Command {
 
 	@Override
 	protected void end() {
-		elevator.stop();
+		//elevator.stop();
 	}
 
 	public double deadband(double input) {
