@@ -158,6 +158,12 @@ public class OI {
 
       drive = new TankDrive(Left1, Left2, Right1, Right2, Shifter, navx, LeftDriveEnc, RightDriveEnc, lUltra, rUltra, VisionLight);
 
+      try {
+        udp = new MoePiClient(drive);
+      } catch (SocketException ex) {
+        ex.printStackTrace();
+      }
+      
       JoystickButton shift = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.TOGGLE_GEAR);
       shift.whenPressed(new ShiftHigh(drive));
       shift.whenReleased(new ShiftLow(drive));
@@ -181,12 +187,6 @@ public class OI {
       // JoystickButton tunedrivePIDButton = new JoystickButton(switchBox, 2);
       // tunedrivePIDButton.whenPressed(new TuneDrivePID(drive));
       // tunedrivePIDButton.whenReleased(new StopSubsystem(drive));
-      
-      try {
-        udp = new MoePiClient(drive);
-      } catch (SocketException ex) {
-        ex.printStackTrace();
-      }
 
     } catch(Exception ex) {
       Logger.error("Failed to initialize Tank Drive!", ex);

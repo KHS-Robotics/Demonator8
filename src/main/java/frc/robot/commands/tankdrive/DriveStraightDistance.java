@@ -8,6 +8,7 @@
 package frc.robot.commands.tankdrive;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.TankDrive;
 
 public class DriveStraightDistance extends Command {
@@ -41,7 +42,9 @@ public class DriveStraightDistance extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return drive.remainingDistance(distance, initialLeftDist, initialRightDist) <= 0 || this.isTimedOut();
+    double r = drive.remainingDistance(distance, initialLeftDist, initialRightDist);
+    SmartDashboard.putNumber("Drive-AutoDist", r);
+    return r <= 0 || this.isTimedOut();
   }
 
   // Called once after isFinished returns true

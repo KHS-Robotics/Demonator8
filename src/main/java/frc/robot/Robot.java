@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auton.AutoStraightCargoShip;
+import frc.robot.auton.ScoreHatchFrontCargoShip;
 import frc.robot.logging.DemonDashboard;
 
 /**
@@ -43,6 +44,7 @@ public class Robot extends TimedRobot {
 
     m_chooser.setDefaultOption("Nothing", null);
     m_chooser.addOption("Straight Cargoship", new AutoStraightCargoShip(m_oi.drive, 135, 0, 1));
+    m_chooser.addOption("Hatch Cargo Ship", new ScoreHatchFrontCargoShip(m_oi.drive, m_oi.udp, m_oi.pixy, m_oi.elevator));
     SmartDashboard.putData(m_chooser);
   }
 

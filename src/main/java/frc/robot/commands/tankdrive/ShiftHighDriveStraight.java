@@ -15,7 +15,7 @@ public class ShiftHighDriveStraight extends CommandGroup
 {
 	public ShiftHighDriveStraight(Joystick joystick, TankDrive drive)
 	{
-		this.addParallel(new ShiftHigh(drive));
+		this.addSequential(new ShiftHigh(drive));
 		this.addSequential(new DriveStraightJoystick(drive, joystick));
 	}
 }

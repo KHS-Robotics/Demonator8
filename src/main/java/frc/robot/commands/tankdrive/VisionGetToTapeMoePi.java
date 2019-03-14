@@ -6,7 +6,7 @@ import frc.robot.vision.MoePiClient;
 import frc.robot.vision.PixyCam;
 
 public class VisionGetToTapeMoePi extends Command {
-    public static final double kAngleOffset = 5.0; // TODO: find a good angle offset empirically
+    public static final double kAngleOffset = 7.5; // TODO: find a good angle offset empirically
 
     private boolean foundTarget;
 
@@ -33,7 +33,7 @@ public class VisionGetToTapeMoePi extends Command {
     @Override
     protected void execute() {
         if(!foundTarget && !moepi.getBoxes().isEmpty()) {
-            drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset), -1);
+            drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset), -0.75);
             foundTarget = true;
         }
     }

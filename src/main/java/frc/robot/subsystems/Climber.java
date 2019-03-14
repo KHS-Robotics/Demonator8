@@ -153,7 +153,7 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
   }
 
   public void autoClimb() {
-    this.pitchPID.setSetpoint(2); // favor drive wheel side
+    this.pitchPID.setSetpoint(4); // favor drive wheel side
     enablePID();
   }
 
