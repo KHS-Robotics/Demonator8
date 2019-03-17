@@ -9,6 +9,7 @@ package frc.robot.commands.climber;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.robot.logging.Logger;
 import frc.robot.subsystems.Climber;
 
 public class ClimbPID extends Command {
@@ -34,6 +35,7 @@ public class ClimbPID extends Command {
 
   @Override
   protected void end() {
-    climber.stop();
+    climber.disablePID();
+    climber.setPinions(0.21, 0);
   }
 }

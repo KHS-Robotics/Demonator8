@@ -70,6 +70,7 @@ public class DemonDashboard {
 
                         if(oi.udp != null) {
                             SmartDashboard.putNumber("MoePi NumBoxes", oi.udp.getBoxes().size());
+                            SmartDashboard.putBoolean("MoePi Sees 2+", oi.udp.getBoxes().size() >= 2);
 
                             double angle = oi.udp.getAngle();
                             SmartDashboard.putNumber("MoePi CamAngle", angle);
@@ -87,6 +88,10 @@ public class DemonDashboard {
                         SmartDashboard.putBoolean("Elev-LS", oi.elevator.getLS());
 
                         SmartDashboard.putNumber("Arm Rotation", oi.elevator.getArmRotation());
+                    }
+
+                    if(oi.climber != null) {
+                        SmartDashboard.putBoolean("Climber-LS", oi.climber.getLS());
                     }
 
                     // SmartDashboard.putNumber("Analog Button: ",

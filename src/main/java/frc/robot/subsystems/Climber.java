@@ -92,8 +92,12 @@ public class Climber extends SubsystemBase implements PIDSource, PIDOutput {
 
   @Override
   public void pidWrite(double output) {
-    fClimb.set(normalizeOutput(-1.0 + output));
-    bClimb.set(normalizeOutput(-1.0 - output));
+    if(getLS()) {
+      setPinions(0.21, 0);
+    } else {
+      fClimb.set(normalizeOutput(-1.0 + output));
+      bClimb.set(normalizeOutput(-1.0 - output));
+    }
   }
 
   /**

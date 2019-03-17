@@ -25,7 +25,7 @@ public class DriveWithJoysticks extends Command {
   
   @Override
   protected void execute() {
-    drive.set(sensitivity(-left.getY()), sensitivity(-right.getY()));
+    drive.set(sensitivity(right.getY()), sensitivity(left.getY()));
   }
 
   @Override

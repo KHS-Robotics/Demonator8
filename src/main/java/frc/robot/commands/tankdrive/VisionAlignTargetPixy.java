@@ -10,7 +10,7 @@ import io.github.pseudoresonance.pixy2api.Pixy2Line.Vector;
 public class VisionAlignTargetPixy extends Command {
   private static final PowerDistributionPanel pdp = new PowerDistributionPanel();
   private static final int MOTOR1 = 0, MOTOR2 = 1, MOTOR3 = 14, MOTOR4 = 15;
-  private static final double CURRENT_SPIKE = 15;
+  private static final double CURRENT_SPIKE = 12;
 
   private TankDrive drive;
   private PixyCam pixy;
@@ -62,22 +62,17 @@ public class VisionAlignTargetPixy extends Command {
     {
       framesWithoutLine++;
     }
-
-    if(framesWithoutLine > 3)
-    {
-      arrived = true;
-    }
   
     double current = (pdp.getCurrent(MOTOR1) + pdp.getCurrent(MOTOR2) + pdp.getCurrent(MOTOR3) + pdp.getCurrent(MOTOR4)) / 4.0d;
     if(current > CURRENT_SPIKE && loops > 30) {
-      currentSpike = true;
+      arrived = true;
     }
     loops++;
   }
 
   @Override
   protected boolean isFinished() {
-    return arrived || this.isTimedOut() || currentSpike;
+    return arrived || this.isTimedOut();
   }
 
   @Override

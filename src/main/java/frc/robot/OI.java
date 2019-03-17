@@ -16,6 +16,7 @@ import frc.robot.commands.climber.LowerAll;
 import frc.robot.commands.climber.LowerBack;
 import frc.robot.commands.climber.LowerFront;
 import frc.robot.commands.climber.RaiseAll;
+import frc.robot.commands.climber.AutoClimb;
 import frc.robot.commands.climber.ClimbPID;
 import frc.robot.commands.climber.RaiseBack;
 import frc.robot.commands.climber.RaiseFront;
@@ -180,6 +181,9 @@ public class OI {
       visionAlign.whenPressed(new VisionAlignTarget(drive, udp, pixy));
       visionAlign.whenReleased(new StopSubsystem(drive));
 
+      JoystickButton light = new JoystickButton(rightJoystick, 11);
+      light.whenPressed(new ToggleLight(drive));
+
       // JoystickButton driveStraightTarget = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.DRIVE_AT_TARGET);
       // driveStraightTarget.whenPressed(new DriveStraightAtTargetJoystick(drive, udp, leftJoystick));
       // driveStraightTarget.whenReleased(new StopSubsystem(drive));
@@ -248,7 +252,7 @@ public class OI {
       lowerBackClimb.whenReleased(new StopSubsystem(climber));
 
       JoystickButton climb = new JoystickButton(leftJoystick, ButtonMap.LeftJoystick.LOWER_ALL);
-      climb.whenPressed(new ClimbPID(climber));
+      climb.whenPressed(new AutoClimb(climber));
       climb.whenReleased(new HoldFrontClimb(climber));
 
       JoystickButton climbDrive = new JoystickButton(rightJoystick, ButtonMap.RightJoystick.CLIMB_DRIVE);

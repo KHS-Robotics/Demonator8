@@ -85,7 +85,7 @@ public class Elevator extends PIDSubsystem {
 
     this.setAbsoluteTolerance(0.5);
     this.setOutputRange(-1, 1);
-    this.setInputRange(0, 20);
+    // this.setInputRange(0, 20);
   }
 
   public void setNeutralMode(NeutralMode mode) {

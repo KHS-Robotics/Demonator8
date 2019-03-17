@@ -46,6 +46,7 @@ public class ElevateWithJoystick extends Command {
 	protected void execute() {
 		if (elevator.getLS()) {
 			elevator.reset();
+			elevator.disable();
 		}
 
 		if (Robot.enabled()) {

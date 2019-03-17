@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.auton.AutoStraightCargoShip;
+import frc.robot.auton.CrossHabLine;
 import frc.robot.auton.ScoreHatchFrontCargoShip;
 import frc.robot.logging.DemonDashboard;
 
@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
   public static OI m_oi;
 
   CommandGroup m_autonomousCommand;
-  SendableChooser<CommandGroup> m_chooser = new SendableChooser<>();
+  // SendableChooser<CommandGroup> m_chooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -42,10 +42,13 @@ public class Robot extends TimedRobot {
   
     DemonDashboard.start();
 
-    m_chooser.setDefaultOption("Nothing", null);
-    m_chooser.addOption("Straight Cargoship", new AutoStraightCargoShip(m_oi.drive, 135, 0, 1));
-    m_chooser.addOption("Hatch Cargo Ship", new ScoreHatchFrontCargoShip(m_oi.drive, m_oi.udp, m_oi.pixy, m_oi.elevator));
-    SmartDashboard.putData(m_chooser);
+    // m_chooser.setDefaultOption("Nothing", null);
+    // m_chooser.addOption("Forward Cross Hab Line (intake side)", new CrossHabLine(m_oi.drive, 135, 0, 1));
+    // m_chooser.addOption("Backward Cross Hab Line (vision side)", new CrossHabLine(m_oi.drive, 135, 0, -1));
+    // m_chooser.addOption("Score Hatch Cargo Ship Front", new ScoreHatchFrontCargoShip(m_oi.drive, m_oi.udp, m_oi.pixy, m_oi.elevator));
+    // SmartDashboard.putData(m_chooser);
+
+    SmartDashboard.putNumber("Autonomous", 0);
   }
 
   /**
@@ -59,6 +62,7 @@ public class Robot extends TimedRobot {
     m_oi.drive.setNeutralMode(NeutralMode.Brake);
     Scheduler.getInstance().run();
     Scheduler.getInstance().removeAll();
+    m_oi.drive.setLight(false);
   }
 
   @Override
@@ -83,12 +87,26 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     isEnabled = true;
     m_oi.drive.setNeutralMode(NeutralMode.Coast);
-    m_autonomousCommand = m_chooser.getSelected();
+    //m_autonomousCommand = m_chooser.getSelected();
     OI.getInstance().drive.resetEncoders();
     OI.getInstance().drive.resetNavx();
     OI.getInstance().elevator.reset();
 
     OI.getInstance().elevator.open();
+
+    final int autonNumber = (int) SmartDashboard.getNumber("Autonomous", 0);
+    if(autonNumber == 1) {
+      m_autonomousCommand = new CrossHabLine(m_oi.drive, 135, 0, 1);
+    }
+    else if(autonNumber == 2) {
+      m_autonomousCommand = new CrossHabLine(m_oi.drive, 135, 0, -1);
+    }
+    else if(autonNumber == 3) {
+      m_autonomousCommand =  new ScoreHatchFrontCargoShip(m_oi.drive, m_oi.udp, m_oi.pixy, m_oi.elevator);
+    }
+    else {
+      m_autonomousCommand = null;
+    }
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",

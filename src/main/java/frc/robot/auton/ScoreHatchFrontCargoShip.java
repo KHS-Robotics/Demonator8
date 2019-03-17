@@ -17,10 +17,11 @@ import frc.robot.vision.MoePiClient;
 import frc.robot.vision.PixyCam;
 
 public class ScoreHatchFrontCargoShip extends CommandGroup {
+  public static final double DISTANCE_UNTIL_VISION = 72.0;
   
   public ScoreHatchFrontCargoShip(TankDrive drive, MoePiClient moepi, PixyCam pixy, Elevator elevator) {
     addParallel(new RotateArm(elevator, 90));
-    addSequential(new DriveStraightDistance(drive, 72, 0, -1));
+    addSequential(new DriveStraightDistance(drive, DISTANCE_UNTIL_VISION, 0, -1));
     addSequential(new VisionAlignTarget(drive, moepi, pixy));
   }
 }

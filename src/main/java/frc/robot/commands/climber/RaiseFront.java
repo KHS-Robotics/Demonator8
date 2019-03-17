@@ -13,6 +13,7 @@ import frc.robot.subsystems.Climber;
 public class RaiseFront extends Command {
 
 private Climber climber;
+private int loop = 30;
 
   public RaiseFront(Climber climber) {
     this.requires(climber);
@@ -22,12 +23,19 @@ private Climber climber;
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.setPinions(-1,0);
+    climber.setPinions(-0.8, 0);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    // if(loop > 30) {
+    //   climber.setPinions(-0.8,0);
+    // } else {
+    //   climber.setPinions(-1,0);
+    // }
+
+    // loop++;
   }
 
   // Make this return true when this Command no longer needs to run execute()

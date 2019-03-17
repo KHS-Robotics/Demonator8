@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.tankdrive.DriveStraightDistance;
 import frc.robot.subsystems.TankDrive;
 
-public class AutoStraightCargoShip extends CommandGroup {
+public class CrossHabLine extends CommandGroup {
   
-  public AutoStraightCargoShip(TankDrive drive, double distance, double angle, double power) {
+  public CrossHabLine(TankDrive drive, double distance, double angle, double power) {
     addSequential(new DriveStraightDistance(drive, distance, angle, power));
   }
 }

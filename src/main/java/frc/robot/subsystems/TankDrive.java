@@ -78,6 +78,10 @@ public class TankDrive extends SubsystemBase implements PIDSource, PIDOutput {
     setLight(false);
   }
 
+  public boolean getLightState() {
+    return lightOn;
+  }
+
   public void toggleLight() {
     setLight(!lightOn);
   }

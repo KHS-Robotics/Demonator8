@@ -38,7 +38,7 @@ public class DriveStraightJoystick extends InstantCommand {
   }
   @Override
   protected void execute() {
-    drive.setHeading(angle, -joystick.getY());
+    drive.setHeading(angle, joystick.getY());
   }
   @Override
   protected boolean isFinished(){
