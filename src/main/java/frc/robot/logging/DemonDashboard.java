@@ -70,7 +70,8 @@ public class DemonDashboard {
 
                         if(oi.udp != null) {
                             SmartDashboard.putNumber("MoePi NumBoxes", oi.udp.getBoxes().size());
-                            SmartDashboard.putBoolean("MoePi Sees 2+", oi.udp.getBoxes().size() >= 2);
+                            SmartDashboard.putNumber("MoePi NumDeepSpaceTargets", oi.udp.getTargets().size());
+                            SmartDashboard.putBoolean("MoePi Sees DeepSpaceTarget", oi.udp.hasTarget());
 
                             double angle = oi.udp.getAngle();
                             SmartDashboard.putNumber("MoePi CamAngle", angle);
