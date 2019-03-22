@@ -4,10 +4,11 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.TankDrive;
 import frc.robot.vision.MoePiClient;
 import frc.robot.vision.PixyCam;
+import frc.robot.vision.MoePiClient.DeepSpaceVisionTarget;
 
 public class VisionGetToTapeMoePi extends Command {
     public static final double kAngleOffset = 9.5; // TODO: find a good angle offset empirically
-
+    
     private boolean foundTarget;
 
     private TankDrive drive;
@@ -26,29 +27,32 @@ public class VisionGetToTapeMoePi extends Command {
     
     @Override
     protected void initialize() {
-        foundTarget = false;
         drive.stop();
         drive.setLight(true);
+        
+        foundTarget = false;
     }
 
     @Override
     protected void execute() {
-        if(!foundTarget && moepi.getBoxes().size() >= 2) {
-            drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset), -0.75);
-            foundTarget = true;
+        if(!foundTarget && moepi.hasTarget()) {
+            DeepSpaceVisionTarget target = moepi.getCenterTarget();
+
+            if(target.hasOnlyRight()) {
+                drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset - 2.0), -0.75);
+            } else {
+                drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset), -0.75);
+            }
+
             drive.setLight(false);
-        }
-        else if(!foundTarget && moepi.getBoxes().size() == 1 && MoePiClient.Box.TargetType.RIGHT.value == moepi.getBoxes().get(0).type) {
-            drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset-2), -0.75);
             foundTarget = true;
-            drive.setLight(false);
         }
     }
 
     @Override
     protected void end() {
-        drive.setLight(false);
         drive.stop();
+        drive.setLight(false);
     }
 
     @Override
