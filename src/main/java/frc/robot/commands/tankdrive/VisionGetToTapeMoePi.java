@@ -7,7 +7,7 @@ import frc.robot.vision.PixyCam;
 import frc.robot.vision.MoePiClient.DeepSpaceVisionTarget;
 
 public class VisionGetToTapeMoePi extends Command {
-    public static final double kAngleOffset = 9.5; // TODO: find a good angle offset empirically
+    public static final double kAngleOffset = 9.5;
     
     private boolean foundTarget;
 
@@ -38,11 +38,14 @@ public class VisionGetToTapeMoePi extends Command {
         if(!foundTarget && moepi.hasTarget()) {
             DeepSpaceVisionTarget target = moepi.getCenterTarget();
 
+            double offset;
             if(target.hasOnlyRight()) {
-                drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset - 2.0), -0.75);
+                offset = moepi.getAngle(kAngleOffset - 2.0); // TODO: verify if 2.0 is good enough
             } else {
-                drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset), -0.75);
+                offset = moepi.getAngle(kAngleOffset);
             }
+
+            drive.setHeading(drive.getHeading() + offset, -0.75);
 
             drive.setLight(false);
             foundTarget = true;
