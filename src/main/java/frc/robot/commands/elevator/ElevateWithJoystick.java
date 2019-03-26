@@ -19,6 +19,8 @@ import frc.robot.subsystems.Elevator;
 public class ElevateWithJoystick extends Command {
 	public static final double DEADBAND = 0.075;
 	private boolean initializedIdleElev, isIdleElev, initializedIdleArm, isIdleArm, initDisabled;
+	
+	private static final double SENSITIVITY = 0.50; // [0, 1]; 0 for linear, 1 for cubic
 
 	private Joystick stick;
 	private Elevator elevator;
@@ -72,6 +74,7 @@ public class ElevateWithJoystick extends Command {
 			}
 
 			if(!isIdleArm) {
+				//elevator.setArm(cubicSensitivity(inputArm)); // TODO: talk to operator about using cubic going forward
 				elevator.setArm(inputArm);
 				initializedIdleArm = false;
 			}
@@ -101,5 +104,10 @@ public class ElevateWithJoystick extends Command {
 	@Override
 	protected boolean isFinished() {
 		return false;
+	}
+
+	// for elevator's joystick control
+	private static double cubicSensitivity(double input) {
+		return SENSITIVITY * Math.pow(input, 3) + (1 - SENSITIVITY) * input;
 	}
 }

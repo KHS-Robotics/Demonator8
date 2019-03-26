@@ -40,6 +40,8 @@ public class PixyCam {
     public static final double HORIZ_D_PER_P = HORIZ_FOV / CAMERA_MAX_X;
 
     private int currentNumLines;
+    private double lineAngle;
+    private double lineLength;
 
     // used for printData()
     private Vector currentLongestLine;
@@ -151,19 +153,32 @@ public class PixyCam {
 
     public void getRealLine(Vector line) {
         double y0 = CAMERA_HEIGHT * Math.tan(Math.toRadians(PIXY_LENS + (VERT_FOV/2)-(line.getY0()*VERT_D_PER_P)));
-        double x0 = Math.tan(Math.toRadians(line.getX0()*HORIZ_D_PER_P) - (HORIZ_FOV/2)) * CAMERA_HEIGHT * (1/Math.cos(Math.toRadians(PIXY_LENS+(VERT_FOV/2)-(CAMERA_HEIGHT*VERT_D_PER_P))));
+        double x0 = Math.tan(Math.toRadians(line.getX0()*HORIZ_D_PER_P) - (HORIZ_FOV/2)) * CAMERA_HEIGHT * (1/Math.cos(Math.toRadians(PIXY_LENS+(VERT_FOV/2)-(line.getY0()*VERT_D_PER_P))));
         double y1 = CAMERA_HEIGHT * Math.tan(Math.toRadians(PIXY_LENS + (VERT_FOV/2)-(line.getY1()*VERT_D_PER_P)));
-        double x1 = Math.tan(Math.toRadians(line.getX1()*HORIZ_D_PER_P) - (HORIZ_FOV/2)) * CAMERA_HEIGHT * (1/Math.cos(Math.toRadians(PIXY_LENS+(VERT_FOV/2)-(CAMERA_HEIGHT*VERT_D_PER_P))));
+        double x1 = Math.tan(Math.toRadians(line.getX1()*HORIZ_D_PER_P) - (HORIZ_FOV/2)) * CAMERA_HEIGHT * (1/Math.cos(Math.toRadians(PIXY_LENS+(VERT_FOV/2)-(line.getY1()*VERT_D_PER_P))));
 
         double dx = x1 - x0;
         double dy = y1 - y0;
 
-        double angle = Math.toRadians(Math.atan2(dy, dx));
+        double angle = Math.toDegrees(Math.atan2(dy, dx));
         double len = Math.hypot(dx, dy);
 
-        System.out.println("Angle: " + angle);
-        System.out.println("Length: " + len);
+        Logger.debug("{" + line.getX0() + ", " + line.getY0() + "}, {" + line.getX1() + ", " + line.getY1() + "}");
+        Logger.debug("Angle: " + angle);
+        Logger.debug("Length: " + len);
+
+        lineAngle = angle;
+        lineLength = len;
     } 
+
+    public double getLineAngle()
+    {
+        return lineAngle;
+    }
+    public double getLineLength()
+    {
+        return lineLength;
+    }
 
     public synchronized int getNumLines() {
         return currentNumLines;

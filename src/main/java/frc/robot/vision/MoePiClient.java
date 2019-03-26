@@ -152,6 +152,18 @@ public class MoePiClient implements Runnable {
 		return boxVector;
 	}
 
+	public synchronized ArrayList<DeepSpaceVisionTarget> getTargets() {
+		return targetVector;
+	}
+
+	public synchronized DeepSpaceVisionTarget getCenterTarget() {
+		return centerTarget;
+	}
+
+	public synchronized boolean hasTarget() {
+		return centerTarget != null;
+	}
+
 	public synchronized double getLastRobotHeading() {
 		return lastRobotHeading;
 	}

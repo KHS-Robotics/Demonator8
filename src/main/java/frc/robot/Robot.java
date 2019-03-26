@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auton.CrossHabLine;
 import frc.robot.auton.ScoreHatchFrontCargoShip;
 import frc.robot.logging.DemonDashboard;
+import frc.robot.logging.Logger;
+import frc.robot.logging.Severity;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    Logger.setSeverity(Severity.DEBUG);
     m_oi = OI.getInstance();
   
     DemonDashboard.start();

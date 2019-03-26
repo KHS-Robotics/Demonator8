@@ -8,7 +8,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 /**
  * Superclass of all subsystems
@@ -25,13 +24,5 @@ public abstract class SubsystemBase extends Subsystem {
 	@Override
 	protected void initDefaultCommand() {
 		this.setDefaultCommand(null);
-	}
-
-	/**
-	 * <p>Builds values to send to the <code>SmartDashboard</code></p>
-	 */
-	@Override
-	public void initSendable(SendableBuilder builder) {
-		
 	}
 }
