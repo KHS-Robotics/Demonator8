@@ -39,7 +39,7 @@ public class VisionGetToTapeMoePi extends Command {
             drive.setLight(false);
         }
         else if(!foundTarget && moepi.getBoxes().size() == 1 && MoePiClient.Box.TargetType.RIGHT.value == moepi.getBoxes().get(0).type) {
-            drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset-2), -0.75);
+            drive.setHeading(drive.getHeading() + moepi.getAngle(kAngleOffset+2), -0.75);
             foundTarget = true;
             drive.setLight(false);
         }
@@ -53,6 +53,6 @@ public class VisionGetToTapeMoePi extends Command {
 
     @Override
     protected boolean isFinished() {
-        return pixy.getLongestLine() != null || this.isTimedOut();
+        return (pixy.getLongestLine() != null && drive.getAverageUltrasonic() < 30) || this.isTimedOut();
     }
 }

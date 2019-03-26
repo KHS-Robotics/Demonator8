@@ -99,6 +99,12 @@ public class Elevator extends PIDSubsystem {
     this.enable();
   }
 
+  @Override
+  public void setSetpointRelative(double delta) {
+    super.setSetpointRelative(delta);
+    this.enable();
+  }
+
   public boolean armOnTarget(double target) {
     return Math.abs(target - getArmRotation()) < kAllowedArmErr;
   }
