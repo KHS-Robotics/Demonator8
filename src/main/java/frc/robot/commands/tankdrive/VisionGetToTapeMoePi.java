@@ -1,14 +1,19 @@
 package frc.robot.commands.tankdrive;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.logging.Logger;
 import frc.robot.subsystems.TankDrive;
 import frc.robot.vision.MoePiClient;
 import frc.robot.vision.PixyCam;
-import frc.robot.vision.MoePiClient.DeepSpaceVisionTarget;
 
 public class VisionGetToTapeMoePi extends Command {
     public static final double kAngleOffset = 9.5;
-    
+
+    public static final double PIXY_X_OFFSET = 11.5;
+    public static final double PIXY_Y_OFFSET = 14.0;
+    public static final double TAPE_Y_OFFSET = 18.0;
+    public static final double TOTAL_Y_OFFSET = PIXY_Y_OFFSET + TAPE_Y_OFFSET;
+
     private boolean foundTarget;
 
     private TankDrive drive;
@@ -27,35 +32,63 @@ public class VisionGetToTapeMoePi extends Command {
     
     @Override
     protected void initialize() {
-        drive.stop();
-        drive.setLight(true);
-        
         foundTarget = false;
+        drive.stop();
+        //drive.setLight(true);
     }
 
     @Override
     protected void execute() {
-        if(!foundTarget && moepi.hasTarget()) {
-            DeepSpaceVisionTarget target = moepi.getCenterTarget();
+        //getToEdgeofTape();
+        dumbMethodOfApproach();
+    }
 
-            double offset;
-            if(target.hasOnlyRight()) {
-                offset = moepi.getAngle(kAngleOffset + 2.0) * 1.5; // TODO: verify if 2.0 is good enough
-            } else {
-                offset = moepi.getAngle(kAngleOffset) * 1.5;
-            }
+    protected void getToEdgeofTape() {
+        if(!foundTarget && moepi.getBoxes().size() >= 2) {
+            double moepiAngle = moepi.getAngle();
+            double moepiDistance = moepi.getDistance();
 
-            drive.setHeading(drive.getHeading() + offset, -0.75);
+            Logger.debug("moepiAngle = " + moepiAngle + ", moepiDistance = " + moepiDistance);
+            
+            double x = moepiDistance*Math.sin(Math.toRadians(moepiAngle));
+            double y = moepiDistance*Math.cos(Math.toRadians(moepiAngle));
 
-            drive.setLight(false);
+            double targetX = x + PIXY_X_OFFSET;
+            double targetY = y - TOTAL_Y_OFFSET;
+
+            double angle = Math.toDegrees(Math.atan2(targetX, targetY));
+            drive.setHeading(drive.getHeading() + angle, 0.4);
+
+            Logger.debug("X = " + x + ", Y = " + y);
+            Logger.debug("targetX = " + targetX + ", targetY = " + targetY);
+            Logger.debug("angle = " + angle);
+
             foundTarget = true;
+            //drive.setLight(false);
+        }
+    }
+    
+    protected void dumbMethodOfApproach() {
+        if(!foundTarget && moepi.getBoxes().size() >= 2) {
+            double angle = moepi.getAngle(kAngleOffset) * 1.5;
+
+            drive.setHeading(drive.getHeading() + angle, 0.4);
+            foundTarget = true;
+            //drive.setLight(false);
+        }
+        else if(!foundTarget && moepi.getBoxes().size() == 1 && MoePiClient.Box.TargetType.RIGHT.value == moepi.getBoxes().get(0).type) {
+            double angle = moepi.getAngle(kAngleOffset + 2) * 1.5;
+            
+            drive.setHeading(drive.getHeading() + angle, 0.4);
+            foundTarget = true;
+            //drive.setLight(false);
         }
     }
 
     @Override
     protected void end() {
+        //drive.setLight(false);
         drive.stop();
-        drive.setLight(false);
     }
 
     @Override

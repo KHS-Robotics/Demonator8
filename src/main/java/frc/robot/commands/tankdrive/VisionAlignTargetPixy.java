@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.TankDrive;
 import frc.robot.vision.PixyCam;
+import frc.robot.logging.Logger;
 import io.github.pseudoresonance.pixy2api.Pixy2Line.Vector;
 
 public class VisionAlignTargetPixy extends Command {
@@ -40,6 +41,8 @@ public class VisionAlignTargetPixy extends Command {
     
     if(pixyLine != null)
     {
+      //pixy.getRealLine(pixyLine);
+
       framesWithoutLine = 0;
       double pixyX = pixyLine.getX0();
 
@@ -53,17 +56,35 @@ public class VisionAlignTargetPixy extends Command {
       }
 
       pixyX -= 39;
+
+      double lineSlope = ((double)(pixyLine.getX0() - pixyLine.getX1())) / (pixyLine.getY0() - pixyLine.getY1());
   
-      SmartDashboard.putNumber("Pixy X", pixyX);
-  
-      drive.setHeading(drive.getHeading() + pixyX / 4, -0.5);
+      //SmartDashboard.putNumber("Pixy Line Angle", pixy.getLineAngle());
+      Logger.debug("Pixy Line Slope: " +  lineSlope);
+
+      int slopeOffset = (int)(lineSlope * 10);
+
+      Logger.debug("Pixy Slope Offset: " + slopeOffset);
+      Logger.debug("Pixy Current X: " +  pixyX);
+
+      //limit the amount of overcorrectoins
+      if(slopeOffset > 20)
+      {
+        slopeOffset = 20;
+      }
+      else if(slopeOffset < -20)
+      {
+        slopeOffset = -20;
+      }
+      
+      drive.setHeading(drive.getHeading() + (slopeOffset + pixyX) / 4, 0.3);
     }
     else
     {
       framesWithoutLine++;
     }
   
-    double current = (pdp.getCurrent(MOTOR1) + pdp.getCurrent(MOTOR2) + pdp.getCurrent(MOTOR3) + pdp.getCurrent(MOTOR4)) / 4.0d;
+    double current = (pdp.getCurrent(MOTOR1) + pdp.getCurrent(MOTOR2)) + pdp.getCurrent(MOTOR3) + pdp.getCurrent(MOTOR4) / 4.0d;
     if(current > CURRENT_SPIKE && loops > 30) {
       arrived = true;
     }
