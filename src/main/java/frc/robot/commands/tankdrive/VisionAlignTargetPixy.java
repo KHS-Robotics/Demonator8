@@ -77,14 +77,14 @@ public class VisionAlignTargetPixy extends Command {
         slopeOffset = -20;
       }
       
-      drive.setHeading(drive.getHeading() + (slopeOffset + pixyX) / 4, 0.3);
+      drive.setHeading(drive.getHeading() + (slopeOffset + pixyX) / 4, -0.50);
     }
     else
     {
       framesWithoutLine++;
     }
   
-    double current = (pdp.getCurrent(MOTOR1) + pdp.getCurrent(MOTOR2)) + pdp.getCurrent(MOTOR3) + pdp.getCurrent(MOTOR4) / 4.0d;
+    double current = (pdp.getCurrent(MOTOR1) + pdp.getCurrent(MOTOR2) + pdp.getCurrent(MOTOR3) + pdp.getCurrent(MOTOR4)) / 4.0d;
     if(current > CURRENT_SPIKE && loops > 30) {
       arrived = true;
     }

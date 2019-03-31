@@ -57,7 +57,7 @@ public class VisionGetToTapeMoePi extends Command {
             double targetY = y - TOTAL_Y_OFFSET;
 
             double angle = Math.toDegrees(Math.atan2(targetX, targetY));
-            drive.setHeading(drive.getHeading() + angle, 0.4);
+            drive.setHeading(drive.getHeading() + angle, -0.67);
 
             Logger.debug("X = " + x + ", Y = " + y);
             Logger.debug("targetX = " + targetX + ", targetY = " + targetY);
@@ -72,14 +72,14 @@ public class VisionGetToTapeMoePi extends Command {
         if(!foundTarget && moepi.getBoxes().size() >= 2) {
             double angle = moepi.getAngle(kAngleOffset) * 1.5;
 
-            drive.setHeading(drive.getHeading() + angle, 0.4);
+            drive.setHeading(drive.getHeading() + angle, -0.67);
             foundTarget = true;
             //drive.setLight(false);
         }
         else if(!foundTarget && moepi.getBoxes().size() == 1 && MoePiClient.Box.TargetType.RIGHT.value == moepi.getBoxes().get(0).type) {
             double angle = moepi.getAngle(kAngleOffset + 2) * 1.5;
             
-            drive.setHeading(drive.getHeading() + angle, 0.4);
+            drive.setHeading(drive.getHeading() + angle, -0.67);
             foundTarget = true;
             //drive.setLight(false);
         }
