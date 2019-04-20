@@ -14,5 +14,6 @@ public class GrabBall extends CommandGroup {
   public GrabBall(Elevator elevator) {
     addSequential(new ElevateGrab(elevator));
     addSequential(new RotateArm(elevator, -170));
+    addSequential(new Elevate(elevator, 7.3));
   }
 }

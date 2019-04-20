@@ -9,6 +9,6 @@ public class VisionAlignTarget extends CommandGroup {
     public VisionAlignTarget(TankDrive drive, MoePiClient moepi, PixyCam pixy) {
         this.addSequential(new VisionGetToTapeMoePi(drive, moepi, pixy));
         this.addSequential(new VisionAlignTargetPixy(drive, pixy));
-        this.addSequential(new TimedBrake(drive, 2.0));
+        //this.addSequential(new TimedBrake(drive, 2.0));
     }
 }

@@ -12,7 +12,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auton.CrossHabLine;
 import frc.robot.auton.ScoreHatchFrontCargoShip;
@@ -40,7 +39,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    Logger.setSeverity(Severity.DEBUG);
+    Logger.setSeverity(Severity.ERROR);
     m_oi = OI.getInstance();
   
     DemonDashboard.start();
@@ -99,10 +98,10 @@ public class Robot extends TimedRobot {
 
     final int autonNumber = (int) SmartDashboard.getNumber("Autonomous", 0);
     if(autonNumber == 1) {
-      m_autonomousCommand = new CrossHabLine(m_oi.drive, 135, 0, 1);
+      m_autonomousCommand = new CrossHabLine(m_oi.drive, 135, 0, 0.8);
     }
     else if(autonNumber == 2) {
-      m_autonomousCommand = new CrossHabLine(m_oi.drive, 135, 0, -1);
+      m_autonomousCommand = new CrossHabLine(m_oi.drive, 135, 0, -0.8);
     }
     else if(autonNumber == 3) {
       m_autonomousCommand =  new ScoreHatchFrontCargoShip(m_oi.drive, m_oi.udp, m_oi.pixy, m_oi.elevator);

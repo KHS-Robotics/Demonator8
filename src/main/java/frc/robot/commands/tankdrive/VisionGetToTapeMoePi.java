@@ -34,7 +34,7 @@ public class VisionGetToTapeMoePi extends Command {
     protected void initialize() {
         foundTarget = false;
         drive.stop();
-        //drive.setLight(true);
+        drive.setLight(true);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class VisionGetToTapeMoePi extends Command {
             Logger.debug("angle = " + angle);
 
             foundTarget = true;
-            //drive.setLight(false);
+            drive.setLight(false);
         }
     }
     
@@ -74,20 +74,20 @@ public class VisionGetToTapeMoePi extends Command {
 
             drive.setHeading(drive.getHeading() + angle, -0.67);
             foundTarget = true;
-            //drive.setLight(false);
+            drive.setLight(false);
         }
         else if(!foundTarget && moepi.getBoxes().size() == 1 && MoePiClient.Box.TargetType.RIGHT.value == moepi.getBoxes().get(0).type) {
             double angle = moepi.getAngle(kAngleOffset + 2) * 1.5;
             
             drive.setHeading(drive.getHeading() + angle, -0.67);
             foundTarget = true;
-            //drive.setLight(false);
+            drive.setLight(false);
         }
     }
 
     @Override
     protected void end() {
-        //drive.setLight(false);
+        drive.setLight(false);
         drive.stop();
     }
 

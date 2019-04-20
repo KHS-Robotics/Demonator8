@@ -10,6 +10,7 @@ public class TimedBrake extends Command {
 
     public TimedBrake(TankDrive drive, double time) {
         super(time);
+        this.drive = drive;
     }
 
     @Override

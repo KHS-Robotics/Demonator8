@@ -13,6 +13,7 @@ import frc.robot.ButtonMap;
 import frc.robot.subsystems.Elevator;
 
 public class OverrideElevator extends Command {
+	private static final double SENSITIVITY = 0.50; // [0, 1]; 0 for linear, 1 for cubic
 	public static final double DEADBAND = 0.075;
   private Joystick stick;
   private Elevator elevator;
@@ -34,7 +35,7 @@ public class OverrideElevator extends Command {
   @Override
   protected void execute() {
     elevator.set(-deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_AXIS)));
-    elevator.setArm(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ARM_AXIS)));
+    elevator.setArm(cubicSensitivity(ButtonMap.SwitchBox.ARM_AXIS));
     elevator.setIntake(deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS)), deadband(stick.getRawAxis(ButtonMap.SwitchBox.ELEVATOR_INTAKE_AXIS)));
   }
 
@@ -54,4 +55,9 @@ public class OverrideElevator extends Command {
     elevator.setOverride(false);
     elevator.stop();
   }
+
+  // for elevator's joystick control
+	private static double cubicSensitivity(double input) {
+		return SENSITIVITY * Math.pow(input, 3) + (1 - SENSITIVITY) * input;
+	}
 }

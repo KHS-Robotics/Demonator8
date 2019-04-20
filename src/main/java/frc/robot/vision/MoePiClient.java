@@ -26,7 +26,7 @@ public class MoePiClient implements Runnable {
 	public static final double HORIZONTAL_FIELD_OF_VIEW = 57.5;
 	
     /** Width between the two target's x-coordinates in inches. */
-	public static final double TARGET_WIDTH = 10.0; // TODO: find this value
+	public static final double TARGET_WIDTH = 11.5;
 	
 	// MoePi status codes
 	public static final short STATUS_NONE_FOUND = (short) 1;
@@ -43,14 +43,16 @@ public class MoePiClient implements Runnable {
 	/** The size of the buffer for MoePi, in bytes. */
 	public static final int BUFFER_SIZE = 246;
 
+	public static final double CENTER_X = 0.40;
+
 	private double currentRobotHeading, lastRobotHeading;
 
 	private DeepSpaceVisionTarget centerTarget;
 
 	private int lastID;
 	private DatagramSocket socket;
-	private ArrayList<Box> boxVector;
-	private ArrayList<DeepSpaceVisionTarget> targetVector;
+	private volatile ArrayList<Box> boxVector;
+	private volatile ArrayList<DeepSpaceVisionTarget> targetVector;
 
 	public final String Name;
 	public final int Port;
@@ -243,11 +245,11 @@ public class MoePiClient implements Runnable {
 			// start assuming first target is most centered
 			int centerBoxIndex = 0;
 			DeepSpaceVisionTarget closestCenterTarget = targetVector.get(centerBoxIndex);
-			double closestCenterXDiff = Math.abs(closestCenterTarget.x - 0.5);
+			double closestCenterXDiff = Math.abs(closestCenterTarget.x - CENTER_X);
 
 			for(int i = 1; i < targetVector.size(); i++) {
 				// check if this target is closer to the center
-				double boxCenterXDiff = Math.abs(targetVector.get(i).x - 0.5);
+				double boxCenterXDiff = Math.abs(targetVector.get(i).x - CENTER_X);
 				if(boxCenterXDiff < closestCenterXDiff) {
 					centerBoxIndex = i;
 					closestCenterTarget = targetVector.get(i);

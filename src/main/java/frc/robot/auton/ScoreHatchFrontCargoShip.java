@@ -21,7 +21,7 @@ public class ScoreHatchFrontCargoShip extends CommandGroup {
   
   public ScoreHatchFrontCargoShip(TankDrive drive, MoePiClient moepi, PixyCam pixy, Elevator elevator) {
     addParallel(new RotateArm(elevator, 90));
-    addSequential(new DriveStraightDistance(drive, DISTANCE_UNTIL_VISION, 0, -1));
+    addSequential(new DriveStraightDistance(drive, DISTANCE_UNTIL_VISION, 0, -0.8));
     addSequential(new VisionAlignTarget(drive, moepi, pixy));
   }
 }

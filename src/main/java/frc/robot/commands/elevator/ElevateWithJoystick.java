@@ -74,8 +74,7 @@ public class ElevateWithJoystick extends Command {
 			}
 
 			if(!isIdleArm) {
-				//elevator.setArm(cubicSensitivity(inputArm)); // TODO: talk to operator about using cubic going forward
-				elevator.setArm(inputArm);
+				elevator.setArm(cubicSensitivity(inputArm));
 				initializedIdleArm = false;
 			}
 

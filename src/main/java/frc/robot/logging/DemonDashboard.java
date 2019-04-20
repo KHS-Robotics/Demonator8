@@ -82,6 +82,10 @@ public class DemonDashboard {
                             SmartDashboard.putBoolean("Pixy Tape", oi.pixy.getLongestLine() != null);
                             SmartDashboard.putNumber("Pixy NumLines", oi.pixy.getNumLines());
                         }
+
+                        if(oi.udp != null && oi.pixy != null) {
+                            SmartDashboard.putBoolean("VISION", oi.pixy.getLongestLine() != null || oi.udp.hasTarget());
+                        }
                     }
 
                     if (oi.elevator != null) {

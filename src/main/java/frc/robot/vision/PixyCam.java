@@ -1,14 +1,8 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.vision;
 
 import java.util.Arrays;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.SPI;
 
 import io.github.pseudoresonance.pixy2api.Pixy2;
@@ -43,10 +37,13 @@ public class PixyCam {
     private double lineAngle;
     private double lineLength;
 
+    private double period = 0.017;
+
     // used for printData()
     private Vector currentLongestLine;
 
     private final Pixy2 pixy;
+    private Notifier notifier = new Notifier(this::spiLongestLine);
 
     /**
      * Constructs a new <code>PixyCam</code> over SPI using Port.kOnboardCS0.
@@ -56,6 +53,7 @@ public class PixyCam {
      */
     public PixyCam() {
         this(new SPILink(), SPI.Port.kOnboardCS0.value);
+        notifier.startPeriodic(period);
     }
 
     /**
@@ -87,7 +85,7 @@ public class PixyCam {
      * @see PixyCam#getLongestLine()
      */
     public synchronized Tape getTape() {
-        Vector line = this.getLongestLine();
+        Vector line = null;//this.getLongestLine();
         if(line == null) {
             return null;
         }
@@ -114,7 +112,7 @@ public class PixyCam {
      * @see io.github.pseudoresonance.pixy2api.Pixy2Line#getFeatures
      * @see io.github.pseudoresonance.pixy2api.Pixy2Line.Vector
      */
-    public synchronized Vector getLongestLine() {
+    private Vector spiLongestLine() {
         pixy.getLine().getFeatures(Pixy2Line.LINE_GET_MAIN_FEATURES, Pixy2Line.LINE_VECTOR, true);
         Vector[] lines = pixy.getLine().getVectors();
         currentNumLines = 0;
@@ -145,10 +143,18 @@ public class PixyCam {
             line = lines[indexOfLongestLine];
         }
 
-        currentLongestLine = line;
+        setLongestLine(line);
 
         // longest vector
         return line;
+    }
+
+    public synchronized void setLongestLine(Vector line) {
+        currentLongestLine = line;
+    }
+
+    public synchronized Vector getLongestLine() {
+        return currentLongestLine;
     }
 
     public void getRealLine(Vector line) {
