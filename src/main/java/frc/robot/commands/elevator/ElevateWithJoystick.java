@@ -58,7 +58,9 @@ public class ElevateWithJoystick extends Command {
 			isIdleArm = Math.abs(inputArm) < DEADBAND;
 
 			if (isIdleElev && !initializedIdleElev) {
-				elevator.setSetpoint(elevator.getElevatorHeight());
+				//elevator.setSetpoint(elevator.getElevatorHeight());
+				elevator.set(0);
+				elevator.disable();
 				initializedIdleElev = true;
 			}
 
